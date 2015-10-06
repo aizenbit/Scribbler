@@ -13,7 +13,19 @@
   <property name="windowTitle">
    <string>Scribbler</string>
   </property>
-  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTextEdit" name="textEdit"/>
+      <widget class="QGraphicsView" name="graphicsView"/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -36,8 +48,8 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionResize"/>
-    <addaction name="action"/>
+    <addaction name="actionSheetSize"/>
+    <addaction name="actionMargins"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
@@ -66,36 +78,57 @@
    </property>
   </action>
   <action name="actionSave_Font">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save Font</string>
    </property>
   </action>
   <action name="actionPrint_Template">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Print Template</string>
    </property>
   </action>
   <action name="actionPrint_Manuscript">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Print Manuscript</string>
    </property>
   </action>
-  <action name="actionResize">
+  <action name="actionSheetSize">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Sheet Size</string>
    </property>
   </action>
-  <action name="action">
+  <action name="actionMargins">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Margins</string>
    </property>
   </action>
   <action name="actionPreferences">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Preferences</string>
    </property>
   </action>
   <action name="actionHelp">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>How To Use</string>
    </property>
