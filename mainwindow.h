@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+#include "manuscript.h"
+#include "graphics_view_zoom.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,8 +23,10 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
+    Manuscript* manuscript;
+    Graphics_view_zoom* zoom;
 
-
+signals:
 };
 
 #endif // MAINWINDOW_H

@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    manuscript.cpp
+    manuscript.cpp \
+    graphics_view_zoom.cpp
 
 HEADERS  += mainwindow.h \
-    manuscript.h
+    manuscript.h \
+    graphics_view_zoom.h
 
 FORMS    += mainwindow.ui
 
