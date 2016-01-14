@@ -11,6 +11,7 @@ Manuscript::Manuscript(QObject *parent) : QGraphicsScene(parent)
     this->setSceneRect(0, 0, sheetSize.width(), sheetSize.height());
 
     this->addText("test text_ test text_");
+    this->addRect(0,0,sheetSize.width(), sheetSize.height());
 
 }
 

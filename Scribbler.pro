@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     manuscript.cpp \
-    graphics_view_zoom.cpp
+    svgview.cpp
 
 HEADERS  += mainwindow.h \
     manuscript.h \
-    graphics_view_zoom.h
+    svgview.h
 
 FORMS    += mainwindow.ui
 
 CONFIG   += c++11
+
+RC_ICONS = resources\favicon.ico

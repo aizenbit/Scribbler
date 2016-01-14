@@ -21,7 +21,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTextEdit" name="textEdit"/>
-      <widget class="QGraphicsView" name="graphicsView"/>
+      <widget class="SvgView" name="graphicsView"/>
      </widget>
     </item>
    </layout>
@@ -145,6 +145,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SvgView</class>
+   <extends>QGraphicsView</extends>
+   <header>svgview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

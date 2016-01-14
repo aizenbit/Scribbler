@@ -16,16 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->graphicsView->setScene(manuscript);
     ui->graphicsView->setMaximumSize(manuscript->sheetSize);
-    ui->graphicsView->scale(0.3, 0.3);
-    zoom = new Graphics_view_zoom(ui->graphicsView);
-    zoom->set_modifiers(Qt::ControlModifier);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
     delete manuscript;
-    delete zoom;
 }
 
 void MainWindow::showAboutBox()
