@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    manuscript = new Manuscript();
     preferencesDialog = new PreferencesDialog();
 
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
@@ -26,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete manuscript;
     delete preferencesDialog;
 }
 

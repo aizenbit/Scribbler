@@ -14,12 +14,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    manuscript.cpp \
     svgview.cpp \
     preferencesdialog.cpp
 
 HEADERS  += mainwindow.h \
-    manuscript.h \
     svgview.h \
     preferencesdialog.h
 
