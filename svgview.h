@@ -30,6 +30,7 @@ private:
     QGraphicsScene * scene;
     int dpi;
     int dpmm; //dots per mm
+    qreal letterSpacing;
     QRectF sheetRect, marginsRect;
 
     QMultiMap<QChar, QString> font;

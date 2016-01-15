@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "manuscript.h"
+#include "preferencesdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,7 @@ public slots:
 private:
     Ui::MainWindow *ui;
     Manuscript* manuscript;
+    PreferencesDialog * preferencesDialog;
 
 signals:
 };

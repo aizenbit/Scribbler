@@ -10,11 +10,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     manuscript = new Manuscript();
+    preferencesDialog = new PreferencesDialog();
 
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
             this, SLOT(showAboutBox()));
     connect(ui->actionTest_rendering, SIGNAL(triggered()),
             this, SLOT(test_render()));
+    connect(ui->actionPreferences, SIGNAL(triggered()),
+            preferencesDialog, SLOT(exec()));
 
     //ui->graphicsView->setScene(manuscript);
     //ui->graphicsView->setMaximumSize(manuscript->sheetSize);
@@ -24,6 +27,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete manuscript;
+    delete preferencesDialog;
 }
 
 void MainWindow::showAboutBox()

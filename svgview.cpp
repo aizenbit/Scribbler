@@ -1,4 +1,4 @@
-#include "svgview.h"
+﻿#include "svgview.h"
 
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
@@ -15,6 +15,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     sheetRect = QRectF(0, 0, 210 * dpmm, 297 * dpmm);
     marginsRect = QRectF(5 * dpmm, 5 * dpmm, 200 * dpmm, 287 * dpmm);
     fontSize = 6.0;
+    letterSpacing = -10.0;
 
     scene = new QGraphicsScene(sheetRect);
     scene->addRect(sheetRect);
@@ -25,8 +26,6 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     font.insert('a', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A2.svg");
     font.insert('b', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_B.svg");
     font.insert('c', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_C.svg");
-
-    scene->addItem(new QGraphicsSvgItem(font.value('a')));
     setScene(scene);
 }
 
@@ -55,17 +54,32 @@ void SvgView::limitScale(qreal factor)
 void SvgView::renderText(QString text)
 {
     scene->clear();
-    QPointF cursor(10.0,10.0);
+
+    scene->addRect(sheetRect);
+    scene->addRect(marginsRect, QPen(Qt::darkGray));
+
+    QPointF cursor(marginsRect.x(), marginsRect.y() );
     for (QChar symbol : text)
     {
-        cursor += QPointF(cursor.x() > (sheetRect.x() + sheetRect.width()) ? 10.0 - cursor.x() : 25.0,
-                          cursor.x() > (sheetRect.x() + sheetRect.width()) ? 40.0              : 0.0);
+        qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
+
+        if (cursor.x() > (marginsRect.x() + marginsRect.width() - letterWidth))
+            cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight);
 
         if (!font.contains(symbol))
+        {
+            cursor += QPointF(letterWidth, 0.0);
             continue;
+        }
 
         QGraphicsSvgItem * letter = new QGraphicsSvgItem(font.values(symbol).at(qrand() % font.values(symbol).size()));
+
+        letter->setScale(letterHeight / letter->boundingRect().height());
+        letterWidth = letter->boundingRect().width() * letter->scale() + letterSpacing;
         letter->setPos(cursor);
+        cursor += QPointF(letterWidth, 0.0);
+
+
         scene->addItem(letter);
     }
 }

@@ -15,13 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     manuscript.cpp \
-    svgview.cpp
+    svgview.cpp \
+    preferencesdialog.cpp
 
 HEADERS  += mainwindow.h \
     manuscript.h \
-    svgview.h
+    svgview.h \
+    preferencesdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    preferencesdialog.ui
 
 CONFIG   += c++11
 
