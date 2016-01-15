@@ -43,6 +43,7 @@
     <addaction name="actionSave_Font"/>
     <addaction name="actionPrint_Template"/>
     <addaction name="actionPrint_Manuscript"/>
+    <addaction name="actionTest_rendering"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -141,6 +142,11 @@
   <action name="actionLicense">
    <property name="text">
     <string>License</string>
+   </property>
+  </action>
+  <action name="actionTest_rendering">
+   <property name="text">
+    <string>test rendering</string>
    </property>
   </action>
  </widget>

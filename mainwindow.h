@@ -19,6 +19,7 @@ public:
 
 public slots:
     void showAboutBox();
+    void test_render();
 
 private:
     Ui::MainWindow *ui;

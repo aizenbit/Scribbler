@@ -13,9 +13,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
             this, SLOT(showAboutBox()));
+    connect(ui->actionTest_rendering, SIGNAL(triggered()),
+            this, SLOT(test_render()));
 
-    ui->graphicsView->setScene(manuscript);
-    ui->graphicsView->setMaximumSize(manuscript->sheetSize);
+    //ui->graphicsView->setScene(manuscript);
+    //ui->graphicsView->setMaximumSize(manuscript->sheetSize);
 }
 
 MainWindow::~MainWindow()
@@ -30,4 +32,9 @@ void MainWindow::showAboutBox()
     aboutBox.setWindowTitle(tr("About"));
     aboutBox.setText(tr("It's Scribbler. I can't say anything esle."));
     aboutBox.exec();
+}
+
+void MainWindow::test_render()
+{
+    ui->graphicsView->renderText(ui->textEdit->toPlainText());
 }
