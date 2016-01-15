@@ -23,7 +23,6 @@ private:
     qreal maxZoomFactor;
     qreal minZoomFactor;
     qreal scaleFactor;
-    void zoom(QWheelEvent *event);
     void limitScale(qreal factor);
 };
 
