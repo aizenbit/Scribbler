@@ -6,6 +6,9 @@
 #include <QApplication>
 #include <qmath.h>
 #include <QGraphicsSvgItem>
+#include <QRegularExpression>
+#include <QTextCodec>
+
 
 class SvgView : public QGraphicsView
 {
@@ -18,6 +21,7 @@ signals:
 
 public slots:
     void renderText(QString text);
+    void loadFont(QString fontpath);
 
     void wheelEvent(QWheelEvent *event);
 

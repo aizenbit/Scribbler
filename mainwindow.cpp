@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
             this, SLOT(showAboutBox()));
+    connect(ui->actionLoad_Font, SIGNAL(triggered()),
+            this, SLOT(loadFont()));
     connect(ui->actionTest_rendering, SIGNAL(triggered()),
             this, SLOT(test_render()));
     connect(ui->actionPreferences, SIGNAL(triggered()),
@@ -39,4 +41,18 @@ void MainWindow::showAboutBox()
 void MainWindow::test_render()
 {
     ui->graphicsView->renderText(ui->textEdit->toPlainText());
+}
+
+void MainWindow::loadFont()
+{
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Open"), "",
+                                              tr("INI") +
+                                                 "(*.ini);;" +
+                                              tr("All Files") +
+                                                 "(*.*)");
+
+    if (fileName.isEmpty())
+        return;
+
+    ui->graphicsView->loadFont(fileName);
 }

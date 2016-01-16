@@ -39,7 +39,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_Template"/>
+    <addaction name="actionLoad_Font"/>
     <addaction name="actionSave_Font"/>
     <addaction name="actionPrint_Template"/>
     <addaction name="actionPrint_Manuscript"/>
@@ -73,7 +73,7 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionNew_Template">
+  <action name="actionLoad_Font">
    <property name="text">
     <string>Load Font</string>
    </property>

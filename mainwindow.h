@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "preferencesdialog.h"
 
@@ -20,6 +21,7 @@ public:
 public slots:
     void showAboutBox();
     void test_render();
+    void loadFont();
 
 private:
     Ui::MainWindow *ui;
