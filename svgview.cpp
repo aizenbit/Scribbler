@@ -27,6 +27,20 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     settings.beginGroup("Settings");
     loadFont(settings.value("last-used-font", "DefaultFont.ini").toString());
     settings.endGroup();
+
+    QList<QString> aFiles, bFiles;
+    aFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A.svg");
+    aFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A2.svg");
+    bFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_B.svg");
+    QSettings fontSettings("DefaultFont.ini", QSettings::IniFormat);
+    fontSettings.beginGroup("Font");
+    fontSettings.beginGroup("big");
+    fontSettings.setValue(QString("Ы"), QVariant(aFiles));
+    fontSettings.endGroup();
+    fontSettings.beginGroup("small");
+    fontSettings.setValue(QString("Ы"), QVariant(bFiles));
+    fontSettings.endGroup();
+    fontSettings.endGroup();
 }
 
 SvgView::~SvgView()
@@ -102,7 +116,15 @@ void SvgView::loadFont(QString fontpath)
     font.clear();
     for (QString & key : fontSettings.allKeys())
         for (QString & value : fontSettings.value(key).toStringList())
-            font.insert(key[0], fontDirectory + value);
+            font.insert(key[0].toLower(), fontDirectory + value);
+
+    //It's a dirty hack, which helps to distinguish uppercase and lowercase
+    //letters on freaking case-insensetive Windows
+    fontSettings.beginGroup("UpperCase");
+    for (QString & key : fontSettings.allKeys())
+        for (QString & value : fontSettings.value(key).toStringList())
+            font.insert(key[0].toUpper(), fontDirectory + value);
+    fontSettings.endGroup();
 
     fontSettings.endGroup();
 
