@@ -22,6 +22,7 @@ signals:
 public slots:
     void renderText(QString text);
     void loadFont(QString fontpath);
+    void loadSettingsFromFile();
 
     void wheelEvent(QWheelEvent *event);
 

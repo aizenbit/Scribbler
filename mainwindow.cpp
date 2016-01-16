@@ -19,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(test_render()));
     connect(ui->actionPreferences, SIGNAL(triggered()),
             preferencesDialog, SLOT(exec()));
-
+    connect(preferencesDialog, SIGNAL(settingsChanged()),
+            ui->svgView, SLOT(loadSettingsFromFile()));
     //ui->graphicsView->setScene(manuscript);
     //ui->graphicsView->setMaximumSize(manuscript->sheetSize);
 }
@@ -35,13 +36,13 @@ void MainWindow::showAboutBox()
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("About"));
     aboutBox.setIconPixmap(QPixmap("://aboutIcon.ico"));
-    aboutBox.setText(tr("It's Scribbler. I can't say anything esle."));
+    aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe."));
     aboutBox.exec();
 }
 
 void MainWindow::test_render()
 {
-    ui->graphicsView->renderText(ui->textEdit->toPlainText());
+    ui->svgView->renderText(ui->textEdit->toPlainText());
 }
 
 void MainWindow::loadFont()
@@ -55,5 +56,5 @@ void MainWindow::loadFont()
     if (fileName.isEmpty())
         return;
 
-    ui->graphicsView->loadFont(fileName);
+    ui->svgView->loadFont(fileName);
 }

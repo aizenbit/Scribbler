@@ -21,22 +21,12 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     scene->addRect(sheetRect);
     scene->addRect(marginsRect, QPen(Qt::darkGray));
 
-    //for testing
-    /*font.insert('a', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A.svg");
-    font.insert('a', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A2.svg");
-    font.insert('b', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_B.svg");
-    font.insert('c', "E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_C.svg");*/
     setScene(scene);
 
-    QList<QString> aFiles, bFiles;
-    aFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A.svg");
-    aFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A2.svg");
-    bFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_B.svg");
-    QSettings fontSettings("DefaultFont.ini", QSettings::IniFormat);
-    fontSettings.beginGroup("Font");
-    fontSettings.setValue(QString("ы"), QVariant(aFiles));
-    fontSettings.setValue(QString("b"), QVariant(bFiles));
-    fontSettings.endGroup();
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+    loadFont(settings.value("last-used-font", "DefaultFont.ini").toString());
+    settings.endGroup();
 }
 
 SvgView::~SvgView()
@@ -115,4 +105,19 @@ void SvgView::loadFont(QString fontpath)
             font.insert(key[0], fontDirectory + value);
 
     fontSettings.endGroup();
+
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+    settings.setValue("last-used-font", QVariant(fontpath));
+    settings.endGroup();
+}
+
+void SvgView::loadSettingsFromFile()
+{
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+    dpi = settings.value("dpi").toInt();
+    letterSpacing = settings.value("letter-spacing").toDouble();
+    fontSize = settings.value("font-size").toDouble();
+    settings.endGroup();
 }
