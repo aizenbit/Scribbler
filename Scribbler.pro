@@ -27,3 +27,6 @@ FORMS    += mainwindow.ui \
 CONFIG   += c++11
 
 RC_ICONS = resources\favicon.ico
+
+RESOURCES += \
+    resources/resources.qrc

@@ -34,6 +34,7 @@ void MainWindow::showAboutBox()
 {
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("About"));
+    aboutBox.setIconPixmap(QPixmap("://aboutIcon.ico"));
     aboutBox.setText(tr("It's Scribbler. I can't say anything esle."));
     aboutBox.exec();
 }

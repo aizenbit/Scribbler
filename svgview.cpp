@@ -107,7 +107,7 @@ void SvgView::loadFont(QString fontpath)
     }
 
     QString fontDirectory = fontpath;
-    fontDirectory.remove(QRegularExpression("\\w+.ini$"));
+    fontDirectory.remove(QRegularExpression("\\w+.\\w+$"));
 
     font.clear();
     for (QString & key : fontSettings.allKeys())
