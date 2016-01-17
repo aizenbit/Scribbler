@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QPrintDialog>
+#include <QPrinter>
 
 #include "preferencesdialog.h"
 
@@ -23,6 +25,7 @@ public slots:
     void test_render();
     void loadFont();
     void saveSheet();
+    void printSheet();
 
 private:
     Ui::MainWindow *ui;

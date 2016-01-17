@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->svgView, SLOT(loadSettingsFromFile()));
     connect(ui->actionSave_Sheet_as, SIGNAL(triggered()),
             this, SLOT(saveSheet()));
+    connect(ui->actionPrint_Sheet, SIGNAL(triggered()),
+            this, SLOT(printSheet()));
 }
 
 MainWindow::~MainWindow()
@@ -66,5 +68,24 @@ void MainWindow::saveSheet()
                                                  "(*.png);;" +
                                               tr("All Files") +
                                                  "(*.*)");
-    ui->svgView->renderTextToImage(ui->textEdit->toPlainText(), fileName);
+    ui->svgView->renderTextToImage(ui->textEdit->toPlainText()).save(fileName);
+}
+
+void MainWindow::printSheet()
+{
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+    QSizeF paperSize(settings.value("sheet-width", 210.0).toInt(), settings.value("sheet-height", 297.0).toInt());
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPaperSize(paperSize, QPrinter::Millimeter);
+    printer.setResolution(settings.value("dpi", 300).toInt());
+    settings.endGroup();
+    QPainter painter(&printer);
+    painter.setRenderHint(QPainter::Antialiasing);
+    QImage image = ui->svgView->renderTextToImage(ui->textEdit->toPlainText());
+    if (image.format() == QImage::Format_Invalid || !printer.isValid())
+        return;
+    painter.drawImage(0,0,image);
+    painter.end();
+
 }

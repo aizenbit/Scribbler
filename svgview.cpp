@@ -82,7 +82,7 @@ void SvgView::renderText(QString text)
     }
 }
 
-void SvgView::renderTextToImage(QString text, QString filename)
+QImage SvgView::renderTextToImage(QString text)
 {
     renderBorders = false;
     renderText(text);
@@ -91,7 +91,7 @@ void SvgView::renderTextToImage(QString text, QString filename)
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
     scene->render(&painter);
-    image.save(filename);
+    return image;
 }
 
 void SvgView::loadFont(QString fontpath)

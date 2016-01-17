@@ -43,6 +43,7 @@
     <addaction name="actionSave_Font"/>
     <addaction name="actionSave_Sheet_as"/>
     <addaction name="actionTest_rendering"/>
+    <addaction name="actionPrint_Sheet"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -144,6 +145,11 @@
   <action name="actionTest_rendering">
    <property name="text">
     <string>test rendering</string>
+   </property>
+  </action>
+  <action name="actionPrint_Sheet">
+   <property name="text">
+    <string>Print Sheet</string>
    </property>
   </action>
  </widget>

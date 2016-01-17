@@ -21,10 +21,10 @@ signals:
 
 public slots:
     void renderText(QString text = QString());
-    void renderTextToImage(QString text = QString(), QString filename = "Sheet.png");
+    QImage renderTextToImage(QString text = QString());
     void loadFont(QString fontpath);
     void loadSettingsFromFile();
-
+    QGraphicsScene * getScene() {return scene;}
     void wheelEvent(QWheelEvent *event);
 
 private:
