@@ -10,10 +10,6 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     setDragMode(ScrollHandDrag);
     limitScale(0.3);
 
-    //dpi = 300;
-    //dpmm = dpi / 25.4;
-    //sheetRect = QRectF(0, 0, 210 * dpmm, 297 * dpmm);
-
     scene = new QGraphicsScene();
 
     loadSettingsFromFile();
@@ -55,8 +51,13 @@ void SvgView::renderText(QString text)
     {
         qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
 
+        //don't try to go beyond the right margin
         if (cursor.x() > (marginsRect.x() + marginsRect.width() - letterWidth))
             cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight);
+
+        //and stop rendering when you reach the end of sheet
+        if (cursor.y() > marginsRect.bottomRight().y() - letterHeight)
+            return;
 
         if (!font.contains(symbol))
         {
@@ -124,10 +125,13 @@ void SvgView::loadSettingsFromFile()
                        settings.value("sheet-width").toInt() * dpmm,
                        settings.value("sheet-height").toInt() * dpmm);
 
-    marginsRect = QRectF(sheetRect.topLeft() + QPointF(settings.value("left-margins").toInt() * dpmm,
-                                                       settings.value("top-margins").toInt() * dpmm),
-                         sheetRect.bottomRight() - QPointF(settings.value("bottom-margins").toInt() * dpmm,
-                                                           settings.value("right-margins").toInt() * dpmm));
+    marginsRect = QRectF(sheetRect.topLeft() + QPointF(settings.value("left-margin").toInt() * dpmm,
+                                                       settings.value("top-margin").toInt() * dpmm),
+                         sheetRect.bottomRight() - QPointF(settings.value("bottom-margin").toInt() * dpmm,
+                                                           settings.value("right-margin").toInt() * dpmm));
+
+    loadFont(settings.value("last-used-font", "\\Font\\DefaultFont.ini").toString());
+
     settings.endGroup();
 
     scene->setSceneRect(sheetRect);
