@@ -21,6 +21,7 @@ signals:
 
 public slots:
     void renderText(QString text = QString());
+    void renderTextToImage(QString text = QString(), QString filename = "Sheet.png");
     void loadFont(QString fontpath);
     void loadSettingsFromFile();
 
@@ -41,7 +42,7 @@ private:
     QMultiMap<QChar, QString> font;
     qreal fontSize;
 
-
+    bool renderBorders;
 };
 
 #endif // SVGVIEW_H

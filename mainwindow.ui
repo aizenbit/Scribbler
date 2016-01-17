@@ -41,8 +41,7 @@
     </property>
     <addaction name="actionLoad_Font"/>
     <addaction name="actionSave_Font"/>
-    <addaction name="actionPrint_Template"/>
-    <addaction name="actionPrint_Manuscript"/>
+    <addaction name="actionSave_Sheet_as"/>
     <addaction name="actionTest_rendering"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -92,12 +91,12 @@
     <string>Print Template</string>
    </property>
   </action>
-  <action name="actionPrint_Manuscript">
+  <action name="actionSave_Sheet_as">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Print Manuscript</string>
+    <string>Save Sheet as Image</string>
    </property>
   </action>
   <action name="actionSheetSize">

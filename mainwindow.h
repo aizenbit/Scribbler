@@ -22,6 +22,7 @@ public slots:
     void showAboutBox();
     void test_render();
     void loadFont();
+    void saveSheet();
 
 private:
     Ui::MainWindow *ui;

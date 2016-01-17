@@ -10,6 +10,8 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     setDragMode(ScrollHandDrag);
     limitScale(0.3);
 
+    renderBorders = true;
+
     scene = new QGraphicsScene();
 
     loadSettingsFromFile();
@@ -43,8 +45,11 @@ void SvgView::renderText(QString text)
 {
     scene->clear();
 
-    scene->addRect(sheetRect);
-    scene->addRect(marginsRect, QPen(Qt::darkGray));
+    if (renderBorders)
+    {
+        scene->addRect(sheetRect);
+        scene->addRect(marginsRect, QPen(Qt::darkGray));
+    }
 
     QPointF cursor(marginsRect.x(), marginsRect.y() );
     for (QChar symbol : text)
@@ -75,6 +80,18 @@ void SvgView::renderText(QString text)
 
         scene->addItem(letter);
     }
+}
+
+void SvgView::renderTextToImage(QString text, QString filename)
+{
+    renderBorders = false;
+    renderText(text);
+    renderBorders = true;
+    QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    scene->render(&painter);
+    image.save(filename);
 }
 
 void SvgView::loadFont(QString fontpath)

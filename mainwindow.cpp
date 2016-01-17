@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
             preferencesDialog, SLOT(exec()));
     connect(preferencesDialog, SIGNAL(settingsChanged()),
             ui->svgView, SLOT(loadSettingsFromFile()));
+    connect(ui->actionSave_Sheet_as, SIGNAL(triggered()),
+            this, SLOT(saveSheet()));
 }
 
 MainWindow::~MainWindow()
@@ -33,7 +35,7 @@ void MainWindow::showAboutBox()
 {
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("About"));
-    aboutBox.setIconPixmap(QPixmap("://aboutIcon.ico"));
+    aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
     aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe."));
     aboutBox.exec();
 }
@@ -55,4 +57,14 @@ void MainWindow::loadFont()
         return;
 
     ui->svgView->loadFont(fileName);
+}
+
+void MainWindow::saveSheet()
+{
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Save"), "",
+                                              tr("PNG") +
+                                                 "(*.png);;" +
+                                              tr("All Files") +
+                                                 "(*.*)");
+    ui->svgView->renderTextToImage(ui->textEdit->toPlainText(), fileName);
 }
