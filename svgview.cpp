@@ -2,7 +2,7 @@
     #include <QSettings>
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
-    scaleFactor = 1.0;
+    currentScaleFactor = 1.0;
     maxZoomFactor = 2.0;
     minZoomFactor = 0.1;
 
@@ -18,29 +18,13 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     letterSpacing = -10.0;
 
     scene = new QGraphicsScene(sheetRect);
+
     scene->addRect(sheetRect);
     scene->addRect(marginsRect, QPen(Qt::darkGray));
 
     setScene(scene);
 
-    QSettings settings("Settings.ini", QSettings::IniFormat);
-    settings.beginGroup("Settings");
-    loadFont(settings.value("last-used-font", "DefaultFont.ini").toString());
-    settings.endGroup();
-
-    QList<QString> aFiles, bFiles;
-    aFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A.svg");
-    aFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_A2.svg");
-    bFiles.push_back("E:\\Qt\\Projects\\Scribbler\\resources\\Font\\Letter_B.svg");
-    QSettings fontSettings("DefaultFont.ini", QSettings::IniFormat);
-    fontSettings.beginGroup("Font");
-    fontSettings.beginGroup("big");
-    fontSettings.setValue(QString("Ы"), QVariant(aFiles));
-    fontSettings.endGroup();
-    fontSettings.beginGroup("small");
-    fontSettings.setValue(QString("Ы"), QVariant(bFiles));
-    fontSettings.endGroup();
-    fontSettings.endGroup();
+    loadSettingsFromFile();
 }
 
 SvgView::~SvgView()
@@ -57,10 +41,10 @@ void SvgView::wheelEvent(QWheelEvent *event)
 
 void SvgView::limitScale(qreal factor)
 {
-    qreal newFactor = scaleFactor * factor;
+    qreal newFactor = currentScaleFactor * factor;
     if (newFactor < maxZoomFactor && newFactor > minZoomFactor)
     {
-        scaleFactor = newFactor;
+        currentScaleFactor = newFactor;
         scale(factor, factor);
     }
 }
@@ -141,5 +125,12 @@ void SvgView::loadSettingsFromFile()
     dpi = settings.value("dpi").toInt();
     letterSpacing = settings.value("letter-spacing").toDouble();
     fontSize = settings.value("font-size").toDouble();
+    sheetRect = QRectF(0, 0,
+                       settings.value("sheet-width").toInt() * dpmm,
+                       settings.value("sheet-height").toInt() * dpmm);
+    marginsRect = QRectF(sheetRect.topLeft() + QPointF(5.0 * dpmm, 5.0 * dpmm), sheetRect.bottomRight() - QPointF(5.0 * dpmm, 5.0 * dpmm));
     settings.endGroup();
+
+    scene->setSceneRect(sheetRect);
+    renderText();
 }

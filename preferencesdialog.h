@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QSettings>
+#include <QSignalMapper>
 
 namespace Ui {
 class PreferencesDialog;
@@ -25,6 +26,20 @@ signals:
 
 private:
     Ui::PreferencesDialog *ui;
+    QSignalMapper * sheetSizeSignalMapper;
+
+    enum class SheetSize{
+        A4,
+        A4H,
+        A5,
+        Custom
+    };
+
+    bool changedByProgram;
+
+private slots:
+    void setSheetSize(int size);
+
 };
 
 #endif // PREFERENCESDIALOG_H

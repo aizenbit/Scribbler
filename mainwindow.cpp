@@ -21,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
             preferencesDialog, SLOT(exec()));
     connect(preferencesDialog, SIGNAL(settingsChanged()),
             ui->svgView, SLOT(loadSettingsFromFile()));
-    //ui->graphicsView->setScene(manuscript);
-    //ui->graphicsView->setMaximumSize(manuscript->sheetSize);
 }
 
 MainWindow::~MainWindow()

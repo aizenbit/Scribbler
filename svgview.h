@@ -20,7 +20,7 @@ public:
 signals:
 
 public slots:
-    void renderText(QString text);
+    void renderText(QString text = QString());
     void loadFont(QString fontpath);
     void loadSettingsFromFile();
 
@@ -29,7 +29,7 @@ public slots:
 private:
     qreal maxZoomFactor;
     qreal minZoomFactor;
-    qreal scaleFactor;
+    qreal currentScaleFactor;
     void limitScale(qreal factor);
 
     QGraphicsScene * scene;

@@ -49,8 +49,6 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionSheetSize"/>
-    <addaction name="actionMargins"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
