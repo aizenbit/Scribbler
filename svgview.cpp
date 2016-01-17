@@ -3,28 +3,22 @@
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
-    maxZoomFactor = 2.0;
-    minZoomFactor = 0.1;
+    maxZoomFactor = 3.0;
+    minZoomFactor = 0.05;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
     limitScale(0.3);
 
-    dpi = 300;
-    dpmm = dpi / 25.4;
-    sheetRect = QRectF(0, 0, 210 * dpmm, 297 * dpmm);
-    marginsRect = QRectF(5 * dpmm, 5 * dpmm, 200 * dpmm, 287 * dpmm);
-    fontSize = 6.0;
-    letterSpacing = -10.0;
+    //dpi = 300;
+    //dpmm = dpi / 25.4;
+    //sheetRect = QRectF(0, 0, 210 * dpmm, 297 * dpmm);
 
-    scene = new QGraphicsScene(sheetRect);
-
-    scene->addRect(sheetRect);
-    scene->addRect(marginsRect, QPen(Qt::darkGray));
-
-    setScene(scene);
+    scene = new QGraphicsScene();
 
     loadSettingsFromFile();
+
+    setScene(scene);
 }
 
 SvgView::~SvgView()
@@ -123,12 +117,17 @@ void SvgView::loadSettingsFromFile()
     QSettings settings("Settings.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
     dpi = settings.value("dpi").toInt();
+    dpmm = dpi / 25.4;
     letterSpacing = settings.value("letter-spacing").toDouble();
     fontSize = settings.value("font-size").toDouble();
     sheetRect = QRectF(0, 0,
                        settings.value("sheet-width").toInt() * dpmm,
                        settings.value("sheet-height").toInt() * dpmm);
-    marginsRect = QRectF(sheetRect.topLeft() + QPointF(5.0 * dpmm, 5.0 * dpmm), sheetRect.bottomRight() - QPointF(5.0 * dpmm, 5.0 * dpmm));
+
+    marginsRect = QRectF(sheetRect.topLeft() + QPointF(settings.value("left-margins").toInt() * dpmm,
+                                                       settings.value("top-margins").toInt() * dpmm),
+                         sheetRect.bottomRight() - QPointF(settings.value("bottom-margins").toInt() * dpmm,
+                                                           settings.value("right-margins").toInt() * dpmm));
     settings.endGroup();
 
     scene->setSceneRect(sheetRect);

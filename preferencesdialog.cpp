@@ -53,6 +53,10 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("font-size", QVariant(ui->fontSizeSpinBox->value()));
     settings.setValue("sheet-width",QVariant(ui->sheetWidthSpinBox->value()));
     settings.setValue("sheet-height",QVariant(ui->sheetHeightSpinBox->value()));
+    settings.setValue("right-margins",QVariant(ui->rightMarginsSpinBox->value()));
+    settings.setValue("left-margins",QVariant(ui->leftMarginsSpinBox->value()));
+    settings.setValue("top-margins",QVariant(ui->topMarginsSpinBox->value()));
+    settings.setValue("bottom-margins",QVariant(ui->bottomMarginsSpinBox->value()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -67,6 +71,10 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->fontSizeSpinBox->setValue(settings.value("font-size", 6.0).toDouble());
     ui->sheetWidthSpinBox->setValue(settings.value("sheet-width", 210.0).toInt());
     ui->sheetHeightSpinBox->setValue(settings.value("sheet-height", 297.0).toInt());
+    ui->rightMarginsSpinBox->setValue(settings.value("right-margins", 5.0).toInt());
+    ui->leftMarginsSpinBox->setValue(settings.value("left-margins", 5.0).toInt());
+    ui->topMarginsSpinBox->setValue(settings.value("top-margins", 5.0).toInt());
+    ui->bottomMarginsSpinBox->setValue(settings.value("bottom-margins", 5.0).toInt());
     settings.endGroup();
 }
 
