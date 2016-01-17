@@ -30,7 +30,6 @@ private:
 
     enum class SheetSize{
         A4,
-        A4H,
         A5,
         Custom
     };
@@ -39,6 +38,7 @@ private:
 
 private slots:
     void setSheetSize(int size);
+    void setVertical(bool isVertical);
 
 };
 

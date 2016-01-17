@@ -79,6 +79,8 @@ void MainWindow::printSheet()
     QPrinter printer(QPrinter::HighResolution);
     printer.setPaperSize(paperSize, QPrinter::Millimeter);
     printer.setResolution(settings.value("dpi", 300).toInt());
+    bool isPortrait = settings.value("is-sheet-orientation-vertical", true).toBool();
+    printer.setOrientation(isPortrait ? QPrinter::Portrait : QPrinter::Landscape);
     settings.endGroup();
     QPainter painter(&printer);
     painter.setRenderHint(QPainter::Antialiasing);
