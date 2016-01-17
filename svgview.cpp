@@ -13,10 +13,9 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     renderBorders = true;
 
     scene = new QGraphicsScene();
-
-    loadSettingsFromFile();
-
     setScene(scene);
+
+    centerOn(0.0, 0.0);
 }
 
 SvgView::~SvgView()
@@ -144,8 +143,8 @@ void SvgView::loadSettingsFromFile()
 
     marginsRect = QRectF(sheetRect.topLeft() + QPointF(settings.value("left-margin").toInt() * dpmm,
                                                        settings.value("top-margin").toInt() * dpmm),
-                         sheetRect.bottomRight() - QPointF(settings.value("bottom-margin").toInt() * dpmm,
-                                                           settings.value("right-margin").toInt() * dpmm));
+                         sheetRect.bottomRight() - QPointF(settings.value("right-margin").toInt() * dpmm,
+                                                           settings.value("bottom-margin").toInt() * dpmm));
 
     loadFont(settings.value("last-used-font", "\\Font\\DefaultFont.ini").toString());
 

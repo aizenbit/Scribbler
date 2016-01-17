@@ -31,10 +31,6 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
     connect (sheetSizeSignalMapper, SIGNAL(mapped(int)),
              this, SLOT(setSheetSize(int)));
-
-    loadSettingsFromFile();
-    loadSettingsToFile();
-
 }
 
 PreferencesDialog::~PreferencesDialog()
@@ -69,35 +65,59 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->dpiSpinBox->setValue(settings.value("dpi", 300).toInt());
     ui->letterSpacingSpinBox->setValue(settings.value("letter-spacing", -10.0).toDouble());
     ui->fontSizeSpinBox->setValue(settings.value("font-size", 6.0).toDouble());
-    ui->sheetWidthSpinBox->setValue(settings.value("sheet-width", 210.0).toInt());
-    ui->sheetHeightSpinBox->setValue(settings.value("sheet-height", 297.0).toInt());
-    ui->rightMarginsSpinBox->setValue(settings.value("right-margin", 5.0).toInt());
-    ui->leftMarginsSpinBox->setValue(settings.value("left-margin", 5.0).toInt());
-    ui->topMarginsSpinBox->setValue(settings.value("top-margin", 5.0).toInt());
-    ui->bottomMarginsSpinBox->setValue(settings.value("bottom-margin", 5.0).toInt());
+    ui->sheetWidthSpinBox->setValue(settings.value("sheet-width", 148).toInt());
+    ui->sheetHeightSpinBox->setValue(settings.value("sheet-height", 210).toInt());
+    ui->rightMarginsSpinBox->setValue(settings.value("right-margin", 20).toInt());
+    ui->leftMarginsSpinBox->setValue(settings.value("left-margin", 10).toInt());
+    ui->topMarginsSpinBox->setValue(settings.value("top-margin", 10).toInt());
+    ui->bottomMarginsSpinBox->setValue(settings.value("bottom-margin", 5).toInt());
     ui->VRadioButton->setChecked(settings.value("is-sheet-orientation-vertical", true).toBool());
     settings.endGroup();
+    setSheetSize((int)SheetSize::Custom);
 }
 
+//TODO: rewrite this terrible function clearer
 void PreferencesDialog::setSheetSize(int size)
 {
     SheetSize s = SheetSize(size);
+
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+    bool isVertical = settings.value("is-sheet-orientation-vertical", true).toBool();
+    settings.endGroup();
 
     switch (s)
     {
         case SheetSize::A5:
         {
             changedByProgram = true;
-            ui->sheetHeightSpinBox->setValue(148);
-            ui->sheetWidthSpinBox->setValue(210);
+            if (isVertical)
+            {
+                ui->sheetHeightSpinBox->setValue(210);
+                ui->sheetWidthSpinBox->setValue(148);
+            }
+            else
+            {
+                ui->sheetHeightSpinBox->setValue(148);
+                ui->sheetWidthSpinBox->setValue(210);
+            }
+
             changedByProgram = false;
             break;
         }
         case SheetSize::A4:
         {
             changedByProgram = true;
-            ui->sheetHeightSpinBox->setValue(297);
-            ui->sheetWidthSpinBox->setValue(210);
+            if (isVertical)
+            {
+                ui->sheetHeightSpinBox->setValue(297);
+                ui->sheetWidthSpinBox->setValue(210);
+            }
+            else
+            {
+                ui->sheetHeightSpinBox->setValue(210);
+                ui->sheetWidthSpinBox->setValue(297);
+            }
             changedByProgram = false;
             break;
         }
@@ -108,9 +128,17 @@ void PreferencesDialog::setSheetSize(int size)
             int height = ui->sheetHeightSpinBox->value();
             int width = ui->sheetWidthSpinBox->value();
             if ((height == 148 && width == 210) ||
-                (height == 210 && width == 297) ||
-                (height == 297 && width == 210))
+                (height == 210 && width == 148))
+            {
+                ui->A5RadioButton->setChecked(true);
                 return;
+            }
+            if ((height == 210 && width == 297) ||
+                (height == 297 && width == 210))
+            {
+                ui->A4RadioButton->setChecked(true);
+                return;
+            }
 
             ui->CustomRadioButton->setChecked(true);
             break;

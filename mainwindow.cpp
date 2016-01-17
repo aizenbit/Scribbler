@@ -25,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(saveSheet()));
     connect(ui->actionPrint_Sheet, SIGNAL(triggered()),
             this, SLOT(printSheet()));
+
+    preferencesDialog->loadSettingsFromFile();
+    preferencesDialog->loadSettingsToFile();
 }
 
 MainWindow::~MainWindow()
