@@ -87,16 +87,16 @@ void PreferencesDialog::setSheetSize(int size)
         case SheetSize::A4:
         {
             changedByProgram = true;
-            ui->sheetHeightSpinBox->setValue(210);
-            ui->sheetWidthSpinBox->setValue(297);
+            ui->sheetHeightSpinBox->setValue(297);
+            ui->sheetWidthSpinBox->setValue(210);
             changedByProgram = false;
             break;
         }
         case SheetSize::A4H:
         {
             changedByProgram = true;
-            ui->sheetHeightSpinBox->setValue(297);
-            ui->sheetWidthSpinBox->setValue(210);
+            ui->sheetHeightSpinBox->setValue(210);
+            ui->sheetWidthSpinBox->setValue(297);
             changedByProgram = false;
             break;
         }
