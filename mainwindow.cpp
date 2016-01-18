@@ -25,6 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(saveSheet()));
     connect(ui->actionPrint_Sheet, SIGNAL(triggered()),
             this, SLOT(printSheet()));
+    connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
+            ui->toolBar, SLOT(setVisible(bool)));
+    connect(ui->toolBar, SIGNAL(visibilityChanged(bool)),
+            ui->actionShow_ToolBar, SLOT(setChecked(bool)));
+
+    connect(ui->toolBar->addAction("Render"), SIGNAL(triggered(bool)),
+            this, SLOT(test_render()));
+    connect(ui->toolBar->addAction("Save as Image"), SIGNAL(triggered(bool)),
+            this, SLOT(saveSheet()));
 
     preferencesDialog->loadSettingsFromFile();
     preferencesDialog->loadSettingsToFile();

@@ -93,8 +93,8 @@ void PreferencesDialog::setSheetSize(int size)
     bool isVertical = settings.value("is-sheet-orientation-vertical", true).toBool();
     settings.endGroup();
 
-    int height;
-    int width;
+    int height = 0;
+    int width = 0;
 
     SheetSize s = SheetSize(size);
 
