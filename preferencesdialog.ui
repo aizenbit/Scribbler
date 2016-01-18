@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
+    <width>426</width>
     <height>393</height>
    </rect>
   </property>
@@ -81,13 +81,6 @@
       <string>Font Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>letter-spacing (mm)</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="letterSpacingSpinBox">
         <property name="minimum">
@@ -101,10 +94,17 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>letter-spacing (mm):</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>font size (mm)</string>
+         <string>font size (mm):</string>
         </property>
        </widget>
       </item>
@@ -115,6 +115,20 @@
         </property>
         <property name="maximum">
          <double>999.990000000000009</double>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>line-spacing (mm):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDoubleSpinBox" name="lineSpacingSpinBox">
+        <property name="minimum">
+         <double>-99.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -200,7 +214,7 @@
            <string>Vertical</string>
           </property>
           <property name="checked">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -210,7 +224,7 @@
            <string>Horizontal</string>
           </property>
           <property name="checked">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -246,7 +260,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

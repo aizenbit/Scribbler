@@ -31,6 +31,8 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
     connect (sheetSizeSignalMapper, SIGNAL(mapped(int)),
              this, SLOT(setSheetSize(int)));
+
+    changedByProgram = false;
 }
 
 PreferencesDialog::~PreferencesDialog()
@@ -45,6 +47,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.beginGroup("Settings");
     settings.setValue("dpi", QVariant(ui->dpiSpinBox->value()));
     settings.setValue("letter-spacing", QVariant(ui->letterSpacingSpinBox->value()));
+    settings.setValue("line-spacing", QVariant(ui->lineSpacingSpinBox->value()));
     settings.setValue("font-size", QVariant(ui->fontSizeSpinBox->value()));
     settings.setValue("sheet-width",QVariant(ui->sheetWidthSpinBox->value()));
     settings.setValue("sheet-height",QVariant(ui->sheetHeightSpinBox->value()));
@@ -63,7 +66,8 @@ void PreferencesDialog::loadSettingsFromFile()
     QSettings settings("Settings.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
     ui->dpiSpinBox->setValue(settings.value("dpi", 300).toInt());
-    ui->letterSpacingSpinBox->setValue(settings.value("letter-spacing", -10.0).toDouble());
+    ui->letterSpacingSpinBox->setValue(settings.value("letter-spacing", -1.5).toDouble());
+    ui->lineSpacingSpinBox->setValue(settings.value("line-spacing", 0.0).toDouble());
     ui->fontSizeSpinBox->setValue(settings.value("font-size", 6.0).toDouble());
     ui->sheetWidthSpinBox->setValue(settings.value("sheet-width", 148).toInt());
     ui->sheetHeightSpinBox->setValue(settings.value("sheet-height", 210).toInt());

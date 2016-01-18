@@ -57,7 +57,7 @@ void SvgView::renderText(QString text)
 
         //don't try to go beyond the right margin
         if (cursor.x() > (marginsRect.x() + marginsRect.width() - letterWidth))
-            cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight);
+            cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
 
         //and stop rendering when you reach the end of sheet
         if (cursor.y() > marginsRect.bottomRight().y() - letterHeight)
@@ -72,7 +72,7 @@ void SvgView::renderText(QString text)
         QGraphicsSvgItem * letter = new QGraphicsSvgItem(font.values(symbol).at(qrand() % font.values(symbol).size()));
 
         letter->setScale(letterHeight / letter->boundingRect().height());
-        letterWidth = letter->boundingRect().width() * letter->scale() + letterSpacing;
+        letterWidth = letter->boundingRect().width() * letter->scale() + letterSpacing * dpmm;
         letter->setPos(cursor);
         cursor += QPointF(letterWidth, 0.0);
 
@@ -136,6 +136,7 @@ void SvgView::loadSettingsFromFile()
     dpi = settings.value("dpi").toInt();
     dpmm = dpi / 25.4;
     letterSpacing = settings.value("letter-spacing").toDouble();
+    lineSpacing = settings.value("line-spacing").toDouble();
     fontSize = settings.value("font-size").toDouble();
     sheetRect = QRectF(0, 0,
                        settings.value("sheet-width").toInt() * dpmm,
