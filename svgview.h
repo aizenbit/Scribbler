@@ -28,22 +28,17 @@ public slots:
     void wheelEvent(QWheelEvent *event);
 
 private:
-    qreal maxZoomFactor;
-    qreal minZoomFactor;
-    qreal currentScaleFactor;
-    void limitScale(qreal factor);
-
     QGraphicsScene * scene;
-    int dpi;
-    int dpmm; //dots per mm
+    QMultiMap<QChar, QString> font;
+    int dpi;  //dots per inch
+    int dpmm; //dots per millimeter
     int spacesInTab;
-    qreal letterSpacing, lineSpacing;
+    bool renderBorders;
+    qreal maxZoomFactor, minZoomFactor, currentScaleFactor;
+    qreal fontSize, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
 
-    QMultiMap<QChar, QString> font;
-    qreal fontSize;
-
-    bool renderBorders;
+    void limitScale(qreal factor);
 };
 
 #endif // SVGVIEW_H

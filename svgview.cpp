@@ -5,7 +5,6 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     currentScaleFactor = 1.0;
     maxZoomFactor = 3.0;
     minZoomFactor = 0.05;
-    //TODO: remove this
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
@@ -51,7 +50,8 @@ void SvgView::renderText(QString text)
         scene->addRect(marginsRect, QPen(Qt::darkGray));
     }
 
-    QPointF cursor(marginsRect.x(), marginsRect.y() );
+    QPointF cursor(marginsRect.x(), marginsRect.y());
+
     for (QChar symbol : text)
     {
         qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
@@ -109,10 +109,12 @@ QImage SvgView::renderTextToImage(QString text)
     renderBorders = false;
     renderText(text);
     renderBorders = true;
+
     QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
     scene->render(&painter);
+
     return image;
 }
 

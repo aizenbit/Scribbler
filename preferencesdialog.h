@@ -17,12 +17,12 @@ public:
     explicit PreferencesDialog(QWidget *parent = 0);
     ~PreferencesDialog();
 
+signals:
+    void settingsChanged();
+
 public slots:
     void loadSettingsToFile();
     void loadSettingsFromFile();
-
-signals:
-    void settingsChanged();
 
 private:
     Ui::PreferencesDialog *ui;
@@ -38,8 +38,7 @@ private:
 
 private slots:
     void setSheetSize(int size);
-    void setVertical(bool isVertical);
-
+    void changeSheetOrientation();
 };
 
 #endif // PREFERENCESDIALOG_H

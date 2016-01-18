@@ -39,9 +39,12 @@ MainWindow::~MainWindow()
 void MainWindow::showAboutBox()
 {
     QMessageBox aboutBox;
-    aboutBox.setWindowTitle(tr("About"));
+    aboutBox.setWindowTitle(tr("About") + " Scribbler");
     aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
-    aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe."));
+    aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe. <br><br>"
+                        "<strong>Scribbler</strong> 0.1 alpha"));
+    aboutBox.setInformativeText("<p>" + tr("Distributed under <a href=https://github.com/aizenbit/Scribbler/blob/master/LICENSE>The MIT License</a>.") +
+                                "<br><br><a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");
     aboutBox.exec();
 }
 
@@ -57,7 +60,6 @@ void MainWindow::loadFont()
                                                  "(*.ini);;" +
                                               tr("All Files") +
                                                  "(*.*)");
-
     if (fileName.isEmpty())
         return;
 
@@ -76,23 +78,30 @@ void MainWindow::saveSheet()
 
 void MainWindow::printSheet()
 {
-    QSettings settings("Settings.ini", QSettings::IniFormat);
-    settings.beginGroup("Settings");
-    QSizeF paperSize(settings.value("sheet-width", 210.0).toInt(), settings.value("sheet-height", 297.0).toInt());
     QPrinter printer(QPrinter::HighResolution);
     QPrintDialog dialog(&printer);
     if (dialog.exec() != QPrintDialog::Accepted)
         return;
+
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+
+    QSizeF paperSize(settings.value("sheet-width", 210.0).toInt(), settings.value("sheet-height", 297.0).toInt());
+    bool isPortrait = settings.value("is-sheet-orientation-vertical", true).toBool();
+
     printer.setPaperSize(paperSize, QPrinter::Millimeter);
     printer.setResolution(settings.value("dpi", 300).toInt());
-    bool isPortrait = settings.value("is-sheet-orientation-vertical", true).toBool();
     printer.setOrientation(isPortrait ? QPrinter::Portrait : QPrinter::Landscape);
+
     settings.endGroup();
+
     QPainter painter(&printer);
     painter.setRenderHint(QPainter::Antialiasing);
     QImage image = ui->svgView->renderTextToImage(ui->textEdit->toPlainText());
+
     if (image.format() == QImage::Format_Invalid || !printer.isValid())
         return;
+
     painter.drawImage(0,0,image);
     painter.end();
 
