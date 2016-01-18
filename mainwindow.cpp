@@ -80,6 +80,9 @@ void MainWindow::printSheet()
     settings.beginGroup("Settings");
     QSizeF paperSize(settings.value("sheet-width", 210.0).toInt(), settings.value("sheet-height", 297.0).toInt());
     QPrinter printer(QPrinter::HighResolution);
+    QPrintDialog dialog(&printer);
+    if (dialog.exec() != QPrintDialog::Accepted)
+        return;
     printer.setPaperSize(paperSize, QPrinter::Millimeter);
     printer.setResolution(settings.value("dpi", 300).toInt());
     bool isPortrait = settings.value("is-sheet-orientation-vertical", true).toBool();
