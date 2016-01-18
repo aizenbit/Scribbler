@@ -45,10 +45,10 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionCreate_Font"/>
     <addaction name="actionLoad_Font"/>
-    <addaction name="actionSave_Font"/>
+    <addaction name="actionRender"/>
     <addaction name="actionSave_Sheet_as"/>
-    <addaction name="actionTest_rendering"/>
     <addaction name="actionPrint_Sheet"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -86,12 +86,12 @@
     <string>Load Font</string>
    </property>
   </action>
-  <action name="actionSave_Font">
+  <action name="actionCreate_Font">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Save Font</string>
+    <string>Create Font</string>
    </property>
   </action>
   <action name="actionPrint_Template">
@@ -152,9 +152,9 @@
     <string>License</string>
    </property>
   </action>
-  <action name="actionTest_rendering">
+  <action name="actionRender">
    <property name="text">
-    <string>test rendering</string>
+    <string>Render</string>
    </property>
   </action>
   <action name="actionPrint_Sheet">

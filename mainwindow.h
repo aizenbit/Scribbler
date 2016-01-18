@@ -22,7 +22,7 @@ public:
 
 public slots:
     void showAboutBox();
-    void test_render();
+    void render();
     void loadFont();
     void saveSheet();
     void printSheet();

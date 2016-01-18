@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(showAboutBox()));
     connect(ui->actionLoad_Font, SIGNAL(triggered()),
             this, SLOT(loadFont()));
-    connect(ui->actionTest_rendering, SIGNAL(triggered()),
-            this, SLOT(test_render()));
+    connect(ui->actionRender, SIGNAL(triggered()),
+            this, SLOT(render()));
     connect(ui->actionPreferences, SIGNAL(triggered()),
             preferencesDialog, SLOT(exec()));
     connect(preferencesDialog, SIGNAL(settingsChanged()),
@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(saveSheet()));
     connect(ui->actionPrint_Sheet, SIGNAL(triggered()),
             this, SLOT(printSheet()));
+
     connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
             ui->toolBar, SLOT(setVisible(bool)));
     connect(ui->toolBar, SIGNAL(visibilityChanged(bool)),
@@ -34,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(test_render()));
     connect(ui->toolBar->addAction("Save as Image"), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
+
+    /*ui->toolBar->addSeparator();
+    ui->toolBar->addAction("Next");
+    ui->toolBar->addAction("Previous");*/
 
     preferencesDialog->loadSettingsFromFile();
     preferencesDialog->loadSettingsToFile();
@@ -57,7 +62,7 @@ void MainWindow::showAboutBox()
     aboutBox.exec();
 }
 
-void MainWindow::test_render()
+void MainWindow::render()
 {
     ui->svgView->renderText(ui->textEdit->toPlainText());
 }
