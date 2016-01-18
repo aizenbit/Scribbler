@@ -5,6 +5,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     currentScaleFactor = 1.0;
     maxZoomFactor = 3.0;
     minZoomFactor = 0.05;
+    //TODO: remove this
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
@@ -62,6 +63,28 @@ void SvgView::renderText(QString text)
         //and stop rendering when you reach the end of sheet
         if (cursor.y() > marginsRect.bottomRight().y() - letterHeight)
             return;
+
+        if (symbol.isSpace())
+        {
+            switch (symbol.toLatin1())
+            {
+                case '\t':
+                {
+                    cursor += QPointF(letterWidth * spacesInTab, 0.0);
+                    continue;
+                }
+                case '\n':
+                {
+                    cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
+                    continue;
+                }
+                default:
+                {
+                    cursor += QPointF(letterWidth, 0.0);
+                    continue;
+                }
+            }
+        }
 
         if (!font.contains(symbol))
         {
@@ -137,6 +160,7 @@ void SvgView::loadSettingsFromFile()
     dpmm = dpi / 25.4;
     letterSpacing = settings.value("letter-spacing").toDouble();
     lineSpacing = settings.value("line-spacing").toDouble();
+    spacesInTab = settings.value("spaces-in-tab").toInt();
     fontSize = settings.value("font-size").toDouble();
     sheetRect = QRectF(0, 0,
                        settings.value("sheet-width").toInt() * dpmm,

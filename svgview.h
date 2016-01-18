@@ -36,6 +36,7 @@ private:
     QGraphicsScene * scene;
     int dpi;
     int dpmm; //dots per mm
+    int spacesInTab;
     qreal letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
 
