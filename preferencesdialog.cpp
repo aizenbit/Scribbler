@@ -9,7 +9,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(accepted()),
             this, SLOT(loadSettingsToFile()));
     connect(ui->buttonBox, SIGNAL(rejected()),
-            this, SLOT(loadSettingsToFile()));
+            this, SLOT(loadSettingsFromFile()));
     connect(ui->VRadioButton, SIGNAL(toggled(bool)),
             this, SLOT(changeSheetOrientation()));
 

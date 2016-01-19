@@ -76,7 +76,6 @@ void MainWindow::showLicensesBox()
 {
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("Licenses and Credits"));
-    //aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
     aboutBox.setText(tr("<strong>Scribbler</strong> 0.2 alpha"));
     aboutBox.setInformativeText(tr("<p>The MIT License (MIT)<br><br>"
                                    "Copyright © 2016 <a href=https://github.com/aizenbit>aizenbit</a><br><br>"
