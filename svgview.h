@@ -33,10 +33,11 @@ private:
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
-    bool renderBorders;
+    bool renderBorders, useCustomFontColor;
     qreal maxZoomFactor, minZoomFactor, currentScaleFactor;
     qreal fontSize, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
+    QColor fontColor;
 
     void limitScale(qreal factor);
 };

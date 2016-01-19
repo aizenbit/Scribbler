@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QSettings>
 #include <QSignalMapper>
+#include <QColorDialog>
 
 namespace Ui {
 class PreferencesDialog;
@@ -38,6 +39,7 @@ private:
 
 private slots:
     void setSheetSize(int size);
+    void setColor();
     void changeSheetOrientation();
 };
 

@@ -1,5 +1,7 @@
 ﻿#include "svgview.h"
-    #include <QSettings>
+#include <QSettings>
+#include <QGraphicsColorizeEffect>
+
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
@@ -97,7 +99,14 @@ int SvgView::renderText(const QStringRef &text)
             continue;
         }
 
+
         QGraphicsSvgItem * letter = new QGraphicsSvgItem(font.values(symbol).at(qrand() % font.values(symbol).size()));
+        if (useCustomFontColor)
+        {
+            QGraphicsColorizeEffect* colorEffect = new QGraphicsColorizeEffect();
+            colorEffect->setColor(fontColor);
+            letter->setGraphicsEffect(colorEffect);
+        }
 
         letter->setScale(letterHeight / letter->boundingRect().height());
         letterWidth = letter->boundingRect().width() * letter->scale() + letterSpacing * dpmm;
@@ -181,6 +190,9 @@ void SvgView::loadSettingsFromFile()
                                                            settings.value("bottom-margin").toInt() * dpmm));
 
     loadFont(settings.value("last-used-font", "\\Font\\DefaultFont.ini").toString());
+
+    fontColor = QColor(settings.value("font-color").toString());
+    useCustomFontColor = settings.value("use-custom-font-color").toBool();
 
     settings.endGroup();
 

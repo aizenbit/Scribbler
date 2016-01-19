@@ -12,6 +12,8 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
             this, SLOT(loadSettingsFromFile()));
     connect(ui->VRadioButton, SIGNAL(toggled(bool)),
             this, SLOT(changeSheetOrientation()));
+    connect(ui->colorButton, SIGNAL(clicked()),
+            this, SLOT(setColor()));
 
     sheetSizeSignalMapper = new QSignalMapper(this);
 
@@ -41,6 +43,7 @@ PreferencesDialog::~PreferencesDialog()
     delete sheetSizeSignalMapper;
 }
 
+//BUG: after start color always is f0f0f0
 void PreferencesDialog::loadSettingsToFile()
 {
     QSettings settings("Settings.ini", QSettings::IniFormat);
@@ -50,6 +53,9 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("line-spacing", QVariant(ui->lineSpacingSpinBox->value()));
     settings.setValue("spaces-in-tab", QVariant(ui->spacesInTabSpinBox->value()));
     settings.setValue("font-size", QVariant(ui->fontSizeSpinBox->value()));
+    QString color = ui->colorButton->palette().background().color().name();
+    settings.setValue("font-color", QVariant(color));
+    settings.setValue("use-custom-font-color", QVariant(ui->fontColorCheckBox->isChecked()));
     settings.setValue("sheet-width", QVariant(ui->sheetWidthSpinBox->value()));
     settings.setValue("sheet-height", QVariant(ui->sheetHeightSpinBox->value()));
     settings.setValue("right-margin", QVariant(ui->rightMarginsSpinBox->value()));
@@ -62,6 +68,7 @@ void PreferencesDialog::loadSettingsToFile()
     emit settingsChanged();
 }
 
+//BUG: after start color always is f0f0f0, even after setStyleSheet()
 void PreferencesDialog::loadSettingsFromFile()
 {
     QSettings settings("Settings.ini", QSettings::IniFormat);
@@ -78,6 +85,13 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->topMarginsSpinBox->setValue(    settings.value("top-margin", 10).toInt());
     ui->bottomMarginsSpinBox->setValue( settings.value("bottom-margin", 5).toInt());
     ui->VRadioButton->setChecked(       settings.value("is-sheet-orientation-vertical", true).toBool());
+    ui->fontColorCheckBox->setChecked(settings.value("use-custom-font-color", false).toBool());
+
+    QString colorFromFile = settings.value("font-color", "#0097ff").toString();
+    QString colorButtonSS = QString("QPushButton { background-color : %1; border-style: inset;}")
+                                    .arg(colorFromFile);
+    ui->colorButton->setStyleSheet(colorButtonSS);
+
     settings.endGroup();
 
     setSheetSize((int)SheetSize::Custom); //needs to set radioButtons values correctly
@@ -156,4 +170,13 @@ void PreferencesDialog::changeSheetOrientation()
     ui->sheetHeightSpinBox->setValue(ui->sheetWidthSpinBox->value());
     ui->sheetWidthSpinBox->setValue(temp);
     changedByProgram = false;
+}
+
+void PreferencesDialog::setColor()
+{
+    QColor currentColor = ui->colorButton->palette().brush(QPalette::Window).color();
+    QColor newColor = QColorDialog::getColor(currentColor);
+
+    if (newColor.isValid())
+        ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}").arg(newColor.name()));
 }
