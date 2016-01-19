@@ -8,7 +8,8 @@
 #include <QGraphicsSvgItem>
 #include <QRegularExpression>
 #include <QTextCodec>
-
+#include <QSettings>
+#include <QGraphicsColorizeEffect>
 
 class SvgView : public QGraphicsView
 {

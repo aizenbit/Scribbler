@@ -43,7 +43,6 @@ PreferencesDialog::~PreferencesDialog()
     delete sheetSizeSignalMapper;
 }
 
-//BUG: after start color always is f0f0f0
 void PreferencesDialog::loadSettingsToFile()
 {
     QSettings settings("Settings.ini", QSettings::IniFormat);
@@ -53,8 +52,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("line-spacing", QVariant(ui->lineSpacingSpinBox->value()));
     settings.setValue("spaces-in-tab", QVariant(ui->spacesInTabSpinBox->value()));
     settings.setValue("font-size", QVariant(ui->fontSizeSpinBox->value()));
-    QString color = ui->colorButton->palette().background().color().name();
-    settings.setValue("font-color", QVariant(color));
+    settings.setValue("font-color", QVariant(ui->colorButton->palette().background().color().name()));
     settings.setValue("use-custom-font-color", QVariant(ui->fontColorCheckBox->isChecked()));
     settings.setValue("sheet-width", QVariant(ui->sheetWidthSpinBox->value()));
     settings.setValue("sheet-height", QVariant(ui->sheetHeightSpinBox->value()));
@@ -68,7 +66,6 @@ void PreferencesDialog::loadSettingsToFile()
     emit settingsChanged();
 }
 
-//BUG: after start color always is f0f0f0, even after setStyleSheet()
 void PreferencesDialog::loadSettingsFromFile()
 {
     QSettings settings("Settings.ini", QSettings::IniFormat);
@@ -86,11 +83,8 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->bottomMarginsSpinBox->setValue( settings.value("bottom-margin", 5).toInt());
     ui->VRadioButton->setChecked(       settings.value("is-sheet-orientation-vertical", true).toBool());
     ui->fontColorCheckBox->setChecked(settings.value("use-custom-font-color", false).toBool());
-
-    QString colorFromFile = settings.value("font-color", "#0097ff").toString();
-    QString colorButtonSS = QString("QPushButton { background-color : %1; border-style: inset;}")
-                                    .arg(colorFromFile);
-    ui->colorButton->setStyleSheet(colorButtonSS);
+    ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
+                                           .arg(settings.value("font-color", "#0097ff").toString()));
 
     settings.endGroup();
 

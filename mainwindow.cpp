@@ -1,8 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QMessageBox>
-#include <QWheelEvent>
-#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -51,6 +48,19 @@ MainWindow::MainWindow(QWidget *parent) :
     currentSheetNumber = 0;
 
     preferencesDialog->loadSettingsFromFile();
+
+    /* This is a hack to avoid a bug. When program starts, it needs some time
+     * (at least 1 ms on my configuration, but I set delay to 100 ms just to be sure
+     * that it will work on weaker machines) before it can write settings to file,
+     * otherwise ui->colorButton->palette().background().color() will return
+     * default buttons background color, which will be written to settings
+     * file at once program launches.
+     */
+
+    QTime dieTime= QTime::currentTime().addMSecs(100);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
     preferencesDialog->loadSettingsToFile();
 }
 

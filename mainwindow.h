@@ -5,6 +5,10 @@
 #include <QFileDialog>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QMessageBox>
+#include <QWheelEvent>
+#include <QScrollBar>
+#include <QTime>
 
 #include "preferencesdialog.h"
 

@@ -1,6 +1,4 @@
 ﻿#include "svgview.h"
-#include <QSettings>
-#include <QGraphicsColorizeEffect>
 
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
