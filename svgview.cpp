@@ -111,10 +111,10 @@ int SvgView::renderText(const QStringRef &text)
     return endOfSheet;
 }
 
-QImage SvgView::renderTextToImage(QString text)
+QImage SvgView::renderTextToImage(const QStringRef &text)
 {
     renderBorders = false;
-    renderText(QStringRef(&text));
+    renderText(text);
     renderBorders = true;
 
     QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32_Premultiplied);

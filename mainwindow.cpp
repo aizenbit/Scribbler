@@ -21,9 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
             preferencesDialog, SLOT(exec()));
     connect(preferencesDialog, SIGNAL(settingsChanged()),
             ui->svgView, SLOT(loadSettingsFromFile()));
-    connect(ui->actionSave_Sheet_as, SIGNAL(triggered()),
+    connect(ui->actionSave_Current_Sheet_as, SIGNAL(triggered()),
             this, SLOT(saveSheet()));
-    connect(ui->actionPrint_Sheet, SIGNAL(triggered()),
+    connect(ui->actionPrint_Current_Sheet, SIGNAL(triggered()),
             this, SLOT(printSheet()));
 
     connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->toolBar->addAction("Render"), SIGNAL(triggered(bool)),
             this, SLOT(render()));
-    connect(ui->toolBar->addAction("Save as Image"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction("Save"), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
     ui->toolBar->addSeparator();
     connect(ui->toolBar->addAction("Next"), SIGNAL(triggered(bool)),
@@ -140,7 +140,11 @@ void MainWindow::saveSheet()
                                                  "(*.png);;" +
                                               tr("All Files") +
                                                  "(*.*)");
-    ui->svgView->renderTextToImage(ui->textEdit->toPlainText()).save(fileName);
+    QString text = ui->textEdit->toPlainText();
+    int sheetBegin = sheetPointers.at(currentSheetNumber);
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+
+    ui->svgView->renderTextToImage(QStringRef(&text, sheetBegin, lettersToTheEnd)).save(fileName);
 }
 
 void MainWindow::printSheet()
@@ -164,7 +168,11 @@ void MainWindow::printSheet()
 
     QPainter painter(&printer);
     painter.setRenderHint(QPainter::Antialiasing);
-    QImage image = ui->svgView->renderTextToImage(ui->textEdit->toPlainText());
+    QString text = ui->textEdit->toPlainText();
+    int sheetBegin = sheetPointers.at(currentSheetNumber);
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+
+    QImage image = ui->svgView->renderTextToImage(QStringRef(&text, sheetBegin, lettersToTheEnd));
 
     if (image.format() == QImage::Format_Invalid || !printer.isValid())
         return;

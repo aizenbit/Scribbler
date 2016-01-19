@@ -21,7 +21,7 @@ signals:
 
 public slots:
     int renderText(const QStringRef &text = QStringRef());
-    QImage renderTextToImage(QString text = QString());
+    QImage renderTextToImage(const QStringRef &text = QStringRef());
     void loadFont(QString fontpath);
     void loadSettingsFromFile();
     QGraphicsScene * getScene() {return scene;}
