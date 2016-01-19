@@ -63,6 +63,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionHelp"/>
+    <addaction name="actionLicenses_and_Credits"/>
     <addaction name="actionAbout_Scribbler"/>
    </widget>
    <addaction name="menuFile"/>
@@ -171,6 +172,11 @@
    </property>
    <property name="text">
     <string>Show ToolBar</string>
+   </property>
+  </action>
+  <action name="actionLicenses_and_Credits">
+   <property name="text">
+    <string>Licenses and Credits</string>
    </property>
   </action>
  </widget>

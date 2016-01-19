@@ -22,6 +22,7 @@ public:
 
 public slots:
     void showAboutBox();
+    void showLicensesBox();
     void render();
     void renderNextSheet();
     void renderPreviousSheet();

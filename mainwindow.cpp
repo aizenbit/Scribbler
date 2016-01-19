@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
             this, SLOT(showAboutBox()));
+    connect(ui->actionLicenses_and_Credits, SIGNAL(triggered()),
+            this, SLOT(showLicensesBox()));
     connect(ui->actionLoad_Font, SIGNAL(triggered()),
             this, SLOT(loadFont()));
     connect(ui->actionRender, SIGNAL(triggered()),
@@ -31,14 +33,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->toolBar, SIGNAL(visibilityChanged(bool)),
             ui->actionShow_ToolBar, SLOT(setChecked(bool)));
 
-    connect(ui->toolBar->addAction("Render"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://render.ico"),"Render"), SIGNAL(triggered(bool)),
             this, SLOT(render()));
-    connect(ui->toolBar->addAction("Save"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://printer.ico"),"Render"), SIGNAL(triggered(bool)),
+            this, SLOT(printSheet()));
+    connect(ui->toolBar->addAction(QIcon("://save.ico"),"Save"), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
     ui->toolBar->addSeparator();
-    connect(ui->toolBar->addAction("Next"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://right.ico"), "Next"), SIGNAL(triggered(bool)),
             this, SLOT(renderNextSheet()));
-    connect(ui->toolBar->addAction("Previous"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://left.ico"), "Previous"), SIGNAL(triggered(bool)),
             this, SLOT(renderPreviousSheet()));
 
     ui->toolBar->actions()[3]->setDisabled(true);
@@ -63,8 +67,45 @@ void MainWindow::showAboutBox()
     aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
     aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe. <br><br>"
                         "<strong>Scribbler</strong> 0.2 alpha"));
-    aboutBox.setInformativeText("<p>" + tr("Distributed under <a href=https://github.com/aizenbit/Scribbler/blob/master/LICENSE>The MIT License</a>.") +
+    aboutBox.setInformativeText("<p>" + tr("Distributed under The MIT License. See License and Credist page.") +
                                 "<br><br><a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");
+    aboutBox.exec();
+}
+
+void MainWindow::showLicensesBox()
+{
+    QMessageBox aboutBox;
+    aboutBox.setWindowTitle(tr("Licenses and Credits"));
+    //aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
+    aboutBox.setText(tr("<strong>Scribbler</strong> 0.2 alpha"));
+    aboutBox.setInformativeText(tr("<p>The MIT License (MIT)<br><br>"
+                                   "Copyright © 2016 <a href=https://github.com/aizenbit>aizenbit</a><br><br>"
+                                   "Permission is hereby granted, free of charge, to any person obtaining a copy "
+                                   "of this software and associated documentation files (the \"Software\"), to deal "
+                                   "in the Software without restriction, including without limitation the rights "
+                                   "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell "
+                                   "copies of the Software, and to permit persons to whom the Software is "
+                                   "furnished to do so, subject to the following conditions:<br><br>"
+
+                                   "The above copyright notice and this permission notice shall be included in all "
+                                   "copies or substantial portions of the Software.<br><br>"
+
+                                   "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR "
+                                   "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, "
+                                   "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE "
+                                   "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER "
+                                   "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, "
+                                   "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE "
+                                   "SOFTWARE.<br><br>"
+                                   "<strong>Credits:</strong><br>"
+                                   "General Icon (\"one-eyed Blot\") made by <a href=https://virink.com/NH>Nuclear Hound</a> "
+                                   "is licensed by <a href=https://www.gnu.org/licenses/gpl-3.0.html>GNU GPLv3</a>.<br>"
+                                   "Tool Bar Icons made by <a href=http://www.flaticon.com/authors/picol title=Picol>Picol</a>, "
+                                   "<a href=http://www.freepik.com title=Freepik>Freepik</a> from "
+                                   "<a href=http://www.flaticon.com title=Flaticon>www.flaticon.com</a> "
+                                   "is licensed by <a href=http://creativecommons.org/licenses/by/3.0/ "
+                                   "title=Creative Commons BY 3.0>CC BY 3.0</a>.<br><br>"
+                                   "Thanks to <a href=https://virink.com/domerk>Daniel Domerk</a> for a help."));
     aboutBox.exec();
 }
 
