@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->toolBar->addAction("Previous"), SIGNAL(triggered(bool)),
             this, SLOT(renderPreviousSheet()));
 
+    ui->toolBar->actions()[3]->setDisabled(true);
     ui->toolBar->actions()[4]->setDisabled(true);
     sheetPointers.push_back(0);
     currentSheetNumber = 0;
@@ -61,7 +62,7 @@ void MainWindow::showAboutBox()
     aboutBox.setWindowTitle(tr("About") + " Scribbler");
     aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
     aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe. <br><br>"
-                        "<strong>Scribbler</strong> 0.1 alpha"));
+                        "<strong>Scribbler</strong> 0.2 alpha"));
     aboutBox.setInformativeText("<p>" + tr("Distributed under <a href=https://github.com/aizenbit/Scribbler/blob/master/LICENSE>The MIT License</a>.") +
                                 "<br><br><a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");
     aboutBox.exec();
@@ -75,15 +76,9 @@ void MainWindow::render()
     QString text = ui->textEdit->toPlainText();
     int endOfSheet = ui->svgView->renderText(QStringRef(&text));
     sheetPointers.push_back(endOfSheet);
-    /*for (int i = text.length(); i >= endOfSheet; i--)
-    {
-        if (!text.at(i).isSpace())
-            break;
 
-        text.remove(text.length() - 1, 1);
-    }
-    if ()*/
-    ui->toolBar->actions()[3]->setEnabled(true);
+    bool isThereMoreThanOneSheet = text.length() - 1 >= endOfSheet;
+    ui->toolBar->actions()[3]->setEnabled(isThereMoreThanOneSheet);
     ui->toolBar->actions()[4]->setDisabled(true);
 }
 
