@@ -32,13 +32,18 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->actionShow_ToolBar, SLOT(setChecked(bool)));
 
     connect(ui->toolBar->addAction("Render"), SIGNAL(triggered(bool)),
-            this, SLOT(test_render()));
+            this, SLOT(render()));
     connect(ui->toolBar->addAction("Save as Image"), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
+    ui->toolBar->addSeparator();
+    connect(ui->toolBar->addAction("Next"), SIGNAL(triggered(bool)),
+            this, SLOT(renderNextSheet()));
+    connect(ui->toolBar->addAction("Previous"), SIGNAL(triggered(bool)),
+            this, SLOT(renderPreviousSheet()));
 
-    /*ui->toolBar->addSeparator();
-    ui->toolBar->addAction("Next");
-    ui->toolBar->addAction("Previous");*/
+    ui->toolBar->actions()[4]->setDisabled(true);
+    sheetPointers.push_back(0);
+    currentSheetNumber = 0;
 
     preferencesDialog->loadSettingsFromFile();
     preferencesDialog->loadSettingsToFile();
@@ -64,7 +69,60 @@ void MainWindow::showAboutBox()
 
 void MainWindow::render()
 {
-    ui->svgView->renderText(ui->textEdit->toPlainText());
+    sheetPointers.clear();
+    currentSheetNumber = 0;
+    sheetPointers.push_back(0);
+    QString text = ui->textEdit->toPlainText();
+    int endOfSheet = ui->svgView->renderText(QStringRef(&text));
+    sheetPointers.push_back(endOfSheet);
+    /*for (int i = text.length(); i >= endOfSheet; i--)
+    {
+        if (!text.at(i).isSpace())
+            break;
+
+        text.remove(text.length() - 1, 1);
+    }
+    if ()*/
+    ui->toolBar->actions()[3]->setEnabled(true);
+    ui->toolBar->actions()[4]->setDisabled(true);
+}
+
+void MainWindow::renderNextSheet()
+{
+    QString text = ui->textEdit->toPlainText();
+    currentSheetNumber++;
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+    int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
+    endOfSheet += sheetPointers.at(currentSheetNumber);
+
+    ui->toolBar->actions()[4]->setEnabled(true);
+
+    if (endOfSheet >= text.length())
+    {
+        ui->toolBar->actions()[3]->setDisabled(true);
+        return;
+    }
+
+    if (currentSheetNumber >= sheetPointers.count() - 1)
+    {
+        sheetPointers.push_back(endOfSheet);
+    }
+}
+
+void MainWindow::renderPreviousSheet()
+{
+    QString text = ui->textEdit->toPlainText();
+    currentSheetNumber--;
+    int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
+    ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
+
+    ui->toolBar->actions()[3]->setEnabled(true);
+
+    if (currentSheetNumber == 0)
+    {
+        ui->toolBar->actions()[4]->setDisabled(true);
+        return;
+    }
 }
 
 void MainWindow::loadFont()

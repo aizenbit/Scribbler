@@ -40,7 +40,7 @@ void SvgView::limitScale(qreal factor)
     }
 }
 
-void SvgView::renderText(QString text)
+int SvgView::renderText(const QStringRef &text)
 {
     scene->clear();
 
@@ -51,6 +51,7 @@ void SvgView::renderText(QString text)
     }
 
     QPointF cursor(marginsRect.x(), marginsRect.y());
+    int endOfSheet = 0;
 
     for (QChar symbol : text)
     {
@@ -62,7 +63,7 @@ void SvgView::renderText(QString text)
 
         //and stop rendering when you reach the end of sheet
         if (cursor.y() > marginsRect.bottomRight().y() - letterHeight)
-            return;
+            return endOfSheet;
 
         if (symbol.isSpace())
         {
@@ -71,16 +72,19 @@ void SvgView::renderText(QString text)
                 case '\t':
                 {
                     cursor += QPointF(letterWidth * spacesInTab, 0.0);
+                    endOfSheet++;
                     continue;
                 }
                 case '\n':
                 {
                     cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
+                    endOfSheet++;
                     continue;
                 }
                 default:
                 {
                     cursor += QPointF(letterWidth, 0.0);
+                    endOfSheet++;
                     continue;
                 }
             }
@@ -89,6 +93,7 @@ void SvgView::renderText(QString text)
         if (!font.contains(symbol))
         {
             cursor += QPointF(letterWidth, 0.0);
+            endOfSheet++;
             continue;
         }
 
@@ -99,15 +104,17 @@ void SvgView::renderText(QString text)
         letter->setPos(cursor);
         cursor += QPointF(letterWidth, 0.0);
 
-
         scene->addItem(letter);
+        endOfSheet++;
     }
+
+    return endOfSheet;
 }
 
 QImage SvgView::renderTextToImage(QString text)
 {
     renderBorders = false;
-    renderText(text);
+    renderText(QStringRef(&text));
     renderBorders = true;
 
     QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32_Premultiplied);

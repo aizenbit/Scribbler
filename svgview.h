@@ -20,7 +20,7 @@ public:
 signals:
 
 public slots:
-    void renderText(QString text = QString());
+    int renderText(const QStringRef &text = QStringRef());
     QImage renderTextToImage(QString text = QString());
     void loadFont(QString fontpath);
     void loadSettingsFromFile();

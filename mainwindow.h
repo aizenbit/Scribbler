@@ -23,6 +23,8 @@ public:
 public slots:
     void showAboutBox();
     void render();
+    void renderNextSheet();
+    void renderPreviousSheet();
     void loadFont();
     void saveSheet();
     void printSheet();
@@ -30,6 +32,8 @@ public slots:
 private:
     Ui::MainWindow *ui;
     PreferencesDialog * preferencesDialog;
+    QVector<int> sheetPointers;
+    int currentSheetNumber;
 
 signals:
 };
