@@ -82,7 +82,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->topMarginsSpinBox->setValue(    settings.value("top-margin", 10).toInt());
     ui->bottomMarginsSpinBox->setValue( settings.value("bottom-margin", 5).toInt());
     ui->VRadioButton->setChecked(       settings.value("is-sheet-orientation-vertical", true).toBool());
-    ui->fontColorCheckBox->setChecked(settings.value("use-custom-font-color", false).toBool());
+    ui->fontColorCheckBox->setChecked(settings.value("use-custom-font-color", true).toBool());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
 

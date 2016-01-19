@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toolBar->actions()[5]->setDisabled(true);
     sheetPointers.push_back(0);
     currentSheetNumber = 0;
+    version = "0.2 alpha";
 
     preferencesDialog->loadSettingsFromFile();
 
@@ -57,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
      * file at once program launches.
      */
 
-    QTime dieTime= QTime::currentTime().addMSecs(100);
+    QTime dieTime = QTime::currentTime().addMSecs(100);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 
@@ -76,7 +77,7 @@ void MainWindow::showAboutBox()
     aboutBox.setWindowTitle(tr("About") + " Scribbler");
     aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
     aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe. <br><br>"
-                        "<strong>Scribbler</strong> 0.2 alpha"));
+                        "<strong>Scribbler</strong> ") + version);
     aboutBox.setInformativeText("<p>" + tr("Distributed under The MIT License. See License and Credist page.") +
                                 "<br><br><a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");
     aboutBox.exec();
@@ -86,7 +87,7 @@ void MainWindow::showLicensesBox()
 {
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("Licenses and Credits"));
-    aboutBox.setText(tr("<strong>Scribbler</strong> 0.2 alpha"));
+    aboutBox.setText(tr("<strong>Scribbler</strong> ") + version);
     aboutBox.setInformativeText(tr("<p>The MIT License (MIT)<br><br>"
                                    "Copyright © 2016 <a href=https://github.com/aizenbit>aizenbit</a><br><br>"
                                    "Permission is hereby granted, free of charge, to any person obtaining a copy "

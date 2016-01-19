@@ -39,6 +39,7 @@ private:
     PreferencesDialog * preferencesDialog;
     QVector<int> sheetPointers;
     int currentSheetNumber;
+    QString version;
 
 signals:
 };
