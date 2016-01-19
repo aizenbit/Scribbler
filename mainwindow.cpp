@@ -35,18 +35,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->toolBar->addAction(QIcon("://render.ico"),"Render"), SIGNAL(triggered(bool)),
             this, SLOT(render()));
-    connect(ui->toolBar->addAction(QIcon("://printer.ico"),"Render"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://printer.ico"),"Print Current Sheet"), SIGNAL(triggered(bool)),
             this, SLOT(printSheet()));
-    connect(ui->toolBar->addAction(QIcon("://save.ico"),"Save"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://save.ico"),"Save Current Sheet as Image"), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
     ui->toolBar->addSeparator();
-    connect(ui->toolBar->addAction(QIcon("://right.ico"), "Next"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://right.ico"), "Next Sheet"), SIGNAL(triggered(bool)),
             this, SLOT(renderNextSheet()));
-    connect(ui->toolBar->addAction(QIcon("://left.ico"), "Previous"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QIcon("://left.ico"), "Previous Sheet"), SIGNAL(triggered(bool)),
             this, SLOT(renderPreviousSheet()));
 
-    ui->toolBar->actions()[3]->setDisabled(true);
     ui->toolBar->actions()[4]->setDisabled(true);
+    ui->toolBar->actions()[5]->setDisabled(true);
     sheetPointers.push_back(0);
     currentSheetNumber = 0;
 
@@ -119,8 +119,8 @@ void MainWindow::render()
     sheetPointers.push_back(endOfSheet);
 
     bool isThereMoreThanOneSheet = text.length() - 1 >= endOfSheet;
-    ui->toolBar->actions()[3]->setEnabled(isThereMoreThanOneSheet);
-    ui->toolBar->actions()[4]->setDisabled(true);
+    ui->toolBar->actions()[4]->setEnabled(isThereMoreThanOneSheet);
+    ui->toolBar->actions()[5]->setDisabled(true);
 }
 
 void MainWindow::renderNextSheet()
@@ -131,11 +131,11 @@ void MainWindow::renderNextSheet()
     int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
     endOfSheet += sheetPointers.at(currentSheetNumber);
 
-    ui->toolBar->actions()[4]->setEnabled(true);
+    ui->toolBar->actions()[5]->setEnabled(true);
 
     if (endOfSheet >= text.length())
     {
-        ui->toolBar->actions()[3]->setDisabled(true);
+        ui->toolBar->actions()[4]->setDisabled(true);
         return;
     }
 
@@ -152,11 +152,11 @@ void MainWindow::renderPreviousSheet()
     int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
-    ui->toolBar->actions()[3]->setEnabled(true);
+    ui->toolBar->actions()[4]->setEnabled(true);
 
     if (currentSheetNumber == 0)
     {
-        ui->toolBar->actions()[4]->setDisabled(true);
+        ui->toolBar->actions()[5]->setDisabled(true);
         return;
     }
 }
