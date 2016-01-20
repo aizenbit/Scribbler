@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(saveSheet()));
     connect(ui->actionPrint_Current_Sheet, SIGNAL(triggered()),
             this, SLOT(printSheet()));
+    connect(ui->actionPrint_All, SIGNAL(triggered()),
+            this, SLOT(printAllSheets()));
 
     connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
             ui->toolBar, SLOT(setVisible(bool)));
@@ -162,9 +164,7 @@ void MainWindow::renderNextSheet()
     }
 
     if (currentSheetNumber >= sheetPointers.count() - 1)
-    {
         sheetPointers.push_back(endOfSheet);
-    }
 }
 
 void MainWindow::renderPreviousSheet()
@@ -184,10 +184,8 @@ void MainWindow::renderPreviousSheet()
     ui->toolBar->actions()[4]->setEnabled(true);
 
     if (currentSheetNumber == 0)
-    {
         ui->toolBar->actions()[5]->setDisabled(true);
-        return;
-    }
+
 }
 
 void MainWindow::loadFont()
@@ -211,8 +209,12 @@ void MainWindow::saveSheet(QString fileName)
                                                      "(*.png);;" +
                                                   tr("All Files") +
                                                      "(*.*)");
+    if (fileName.isEmpty())
+        return;
+
     ui->svgView->hideBorders(true);
     ui->svgView->saveRenderToImage().save(fileName);
+    ui->svgView->hideBorders(false);
 }
 
 void MainWindow::saveAllSheets()
@@ -270,6 +272,48 @@ void MainWindow::printSheet()
         return;
 
     painter.drawImage(0,0,image);
+    painter.end();
+
+}
+
+void MainWindow::printAllSheets()
+{
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintDialog dialog(&printer);
+    if (dialog.exec() != QPrintDialog::Accepted)
+        return;
+
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+
+    QSizeF paperSize(settings.value("sheet-width", 210.0).toInt(), settings.value("sheet-height", 297.0).toInt());
+    bool isPortrait = settings.value("is-sheet-orientation-vertical", true).toBool();
+
+    printer.setPaperSize(paperSize, QPrinter::Millimeter);
+    printer.setResolution(settings.value("dpi", 300).toInt());
+    printer.setOrientation(isPortrait ? QPrinter::Portrait : QPrinter::Landscape);
+
+    settings.endGroup();
+
+    QPainter painter(&printer);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    //ui->svgView->hideBorders(true);
+    currentSheetNumber = -1;
+    ui->toolBar->actions()[4]->setEnabled(true);
+
+    while (ui->toolBar->actions()[4]->isEnabled())
+    {
+        renderNextSheet();
+        ui->svgView->hideBorders(true);
+        QImage image = ui->svgView->saveRenderToImage();
+        if (image.format() == QImage::Format_Invalid || !printer.isValid())
+            return;
+        painter.drawImage(0,0,image);
+        printer.newPage();
+    }
+    //ui->svgView->hideBorders(false);
+
     painter.end();
 
 }

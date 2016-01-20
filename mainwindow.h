@@ -34,6 +34,7 @@ public slots:
     void saveSheet(QString fileName = QString());
     void saveAllSheets();
     void printSheet();
+    void printAllSheets();
 
 private:
     Ui::MainWindow *ui;
