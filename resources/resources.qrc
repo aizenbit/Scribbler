@@ -1,10 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file>aboutIcon.png</file>
-        <file>left.ico</file>
-        <file>printer.ico</file>
-        <file>right.ico</file>
-        <file>save.ico</file>
-        <file>render.ico</file>
+        <file>left.png</file>
+        <file>printer.png</file>
+        <file>render.png</file>
+        <file>right.png</file>
+        <file>save.png</file>
     </qresource>
 </RCC>
