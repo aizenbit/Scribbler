@@ -28,6 +28,7 @@ public slots:
     QGraphicsScene * getScene() {return scene;}
     void wheelEvent(QWheelEvent *event);
     void hideBorders(bool hide);
+    void changeLeftRightMargins(bool change);
 
 private:
     QGraphicsScene * scene;
@@ -35,7 +36,7 @@ private:
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
-    bool useCustomFontColor;
+    bool useCustomFontColor, changeMargins;
     qreal maxZoomFactor, minZoomFactor, currentScaleFactor;
     qreal fontSize, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;

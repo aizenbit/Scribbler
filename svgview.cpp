@@ -5,6 +5,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     currentScaleFactor = 1.0;
     maxZoomFactor = 3.0;
     minZoomFactor = 0.05;
+    changeMargins = false;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
@@ -42,10 +43,19 @@ int SvgView::renderText(const QStringRef &text)
 {
     scene->clear();
 
-    scene->addRect(sheetRect);
-    scene->addRect(marginsRect, QPen(Qt::darkGray));
+    QRectF currentMarginsRect;
+    if(changeMargins)
+        currentMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
+                                            marginsRect.topLeft().y()),
+                                    QPointF(sheetRect.bottomRight().x() - marginsRect.bottomLeft().x(),
+                                            marginsRect.bottomRight().y()));
+    else
+        currentMarginsRect = marginsRect;
 
-    QPointF cursor(marginsRect.x(), marginsRect.y());
+    scene->addRect(sheetRect);
+    scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
+
+    QPointF cursor(currentMarginsRect.x(), currentMarginsRect.y());
     int endOfSheet = 0;
 
     for (QChar symbol : text)
@@ -53,11 +63,11 @@ int SvgView::renderText(const QStringRef &text)
         qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
 
         //don't try to go beyond the right margin
-        if (cursor.x() > (marginsRect.x() + marginsRect.width() - letterWidth))
-            cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
+        if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
+            cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
 
         //and stop rendering when you reach the end of sheet
-        if (cursor.y() > marginsRect.bottomRight().y() - letterHeight)
+        if (cursor.y() > currentMarginsRect.bottomRight().y() - letterHeight)
             return endOfSheet;
 
         if (symbol.isSpace())
@@ -72,7 +82,7 @@ int SvgView::renderText(const QStringRef &text)
                 }
                 case '\n':
                 {
-                    cursor += QPointF(marginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
+                    cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
                     endOfSheet++;
                     continue;
                 }
@@ -193,4 +203,9 @@ void SvgView::hideBorders(bool hide)
 {
     scene->items(Qt::AscendingOrder).at(0)->setVisible(!hide);
     scene->items(Qt::AscendingOrder).at(1)->setVisible(!hide);
+}
+
+void SvgView::changeLeftRightMargins(bool change)
+{
+    changeMargins = change;
 }

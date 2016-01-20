@@ -61,6 +61,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("top-margin", QVariant(ui->topMarginsSpinBox->value()));
     settings.setValue("bottom-margin", QVariant(ui->bottomMarginsSpinBox->value()));
     settings.setValue("is-sheet-orientation-vertical", QVariant(ui->VRadioButton->isChecked()));
+    settings.setValue("alternate-margins-of-even-sheets", QVariant(ui->alternateMarginsCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -85,7 +86,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->fontColorCheckBox->setChecked(settings.value("use-custom-font-color", true).toBool());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
-
+    ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     settings.endGroup();
 
     setSheetSize((int)SheetSize::Custom); //needs to set radioButtons values correctly
@@ -173,4 +174,9 @@ void PreferencesDialog::setColor()
 
     if (newColor.isValid())
         ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}").arg(newColor.name()));
+}
+
+bool PreferencesDialog::alternateMargins()
+{
+    return ui->alternateMarginsCheckBox->isChecked();
 }

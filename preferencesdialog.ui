@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>399</height>
+    <width>510</width>
+    <height>424</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,41 +22,6 @@
         <string>Sheet size</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="3" column="0" colspan="2">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Height (mm):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QSpinBox" name="sheetWidthSpinBox">
-          <property name="maximum">
-           <number>999</number>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Width (mm):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QSpinBox" name="sheetHeightSpinBox">
-          <property name="maximum">
-           <number>999</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QRadioButton" name="CustomRadioButton">
-          <property name="text">
-           <string>Custom</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QRadioButton" name="A5RadioButton">
           <property name="text">
@@ -74,6 +39,41 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Height (mm):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Width (mm):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QSpinBox" name="sheetWidthSpinBox">
+          <property name="maximum">
+           <number>999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QSpinBox" name="sheetHeightSpinBox">
+          <property name="maximum">
+           <number>999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QRadioButton" name="CustomRadioButton">
+          <property name="text">
+           <string>Custom</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -83,13 +83,6 @@
         <string>Margins</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Left (mm):</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QSpinBox" name="leftMarginsSpinBox">
           <property name="value">
@@ -97,15 +90,22 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_7">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>Right (mm):</string>
+           <string>Left (mm):</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
          <widget class="QSpinBox" name="rightMarginsSpinBox">
+          <property name="value">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="topMarginsSpinBox">
           <property name="value">
            <number>5</number>
           </property>
@@ -118,10 +118,10 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="topMarginsSpinBox">
-          <property name="value">
-           <number>5</number>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Right (mm):</string>
           </property>
          </widget>
         </item>
@@ -136,6 +136,13 @@
          <widget class="QSpinBox" name="bottomMarginsSpinBox">
           <property name="value">
            <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QCheckBox" name="alternateMarginsCheckBox">
+          <property name="text">
+           <string>Alternate Margins of even Sheets</string>
           </property>
          </widget>
         </item>

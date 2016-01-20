@@ -144,6 +144,12 @@ void MainWindow::renderNextSheet()
     currentSheetNumber++;
     int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
     ui->svgView->hideBorders(false);
+
+    if (preferencesDialog->alternateMargins())
+        ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
+    else
+        ui->svgView->changeLeftRightMargins(false);
+
     int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
     endOfSheet += sheetPointers.at(currentSheetNumber);
 
@@ -167,6 +173,12 @@ void MainWindow::renderPreviousSheet()
     ui->svgView->hideBorders(false);
     currentSheetNumber--;
     int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
+
+    if (preferencesDialog->alternateMargins())
+        ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
+    else
+        ui->svgView->changeLeftRightMargins(false);
+
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
     ui->toolBar->actions()[4]->setEnabled(true);
@@ -213,9 +225,8 @@ void MainWindow::saveAllSheets()
     int indexOfExtension = fileName.indexOf(QRegularExpression("\\.\\w+$"), 0);
     if (indexOfExtension == -1)
         return;
-    QString text = ui->textEdit->toPlainText();
-    QString currentFileName;
 
+    QString currentFileName;
     currentSheetNumber = -1;
     ui->toolBar->actions()[4]->setEnabled(true);
 

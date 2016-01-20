@@ -24,6 +24,7 @@ signals:
 public slots:
     void loadSettingsToFile();
     void loadSettingsFromFile();
+    bool alternateMargins();
 
 private:
     Ui::PreferencesDialog *ui;
