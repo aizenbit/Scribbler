@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
             preferencesDialog, SLOT(exec()));
     connect(preferencesDialog, SIGNAL(settingsChanged()),
             ui->svgView, SLOT(loadSettingsFromFile()));
+    connect(ui->actionSave_All_Sheets, SIGNAL(triggered()),
+            this, SLOT(saveAllSheets()));
     connect(ui->actionSave_Current_Sheet_as, SIGNAL(triggered()),
             this, SLOT(saveSheet()));
     connect(ui->actionPrint_Current_Sheet, SIGNAL(triggered()),
@@ -107,14 +109,16 @@ void MainWindow::showLicensesBox()
                                    "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, "
                                    "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE "
                                    "SOFTWARE.<br><br>"
+
                                    "<strong>Credits:</strong><br>"
                                    "General Icon (\"one-eyed Blot\") made by <a href=https://virink.com/NH>Nuclear Hound</a> "
                                    "is licensed by <a href=https://www.gnu.org/licenses/gpl-3.0.html>GNU GPLv3</a>.<br>"
                                    "Tool Bar Icons made by <a href=http://www.flaticon.com/authors/picol title=Picol>Picol</a>, "
                                    "<a href=http://www.freepik.com title=Freepik>Freepik</a> from "
                                    "<a href=http://www.flaticon.com title=Flaticon>www.flaticon.com</a> "
-                                   "is licensed by <a href=http://creativecommons.org/licenses/by/3.0/ "
+                                   "are licensed by <a href=http://creativecommons.org/licenses/by/3.0/ "
                                    "title=Creative Commons BY 3.0>CC BY 3.0</a>.<br><br>"
+
                                    "Thanks to <a href=https://virink.com/domerk>Daniel Domerk</a> for a help."));
     aboutBox.exec();
 }
@@ -184,18 +188,44 @@ void MainWindow::loadFont()
     ui->svgView->loadFont(fileName);
 }
 
-void MainWindow::saveSheet()
+void MainWindow::saveSheet(QString fileName)
+{
+    if (fileName.isEmpty())
+        fileName = QFileDialog::getSaveFileName(0, tr("Save"), "",
+                                                  tr("PNG") +
+                                                     "(*.png);;" +
+                                                  tr("All Files") +
+                                                     "(*.*)");
+    QString text = ui->textEdit->toPlainText();
+    int sheetBegin = sheetPointers.at(currentSheetNumber);
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+
+    ui->svgView->renderTextToImage(QStringRef(&text, sheetBegin, lettersToTheEnd)).save(fileName);
+}
+
+void MainWindow::saveAllSheets()
 {
     QString fileName = QFileDialog::getSaveFileName(0, tr("Save"), "",
                                               tr("PNG") +
                                                  "(*.png);;" +
                                               tr("All Files") +
                                                  "(*.*)");
+    int indexOfExtension = fileName.indexOf(QRegularExpression("\\.\\w+$"), 0);
+    if (indexOfExtension == -1)
+        return;
     QString text = ui->textEdit->toPlainText();
-    int sheetBegin = sheetPointers.at(currentSheetNumber);
-    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+    QString currentFileName = fileName;
+    currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
+    render();
+    saveSheet(currentFileName);
 
-    ui->svgView->renderTextToImage(QStringRef(&text, sheetBegin, lettersToTheEnd)).save(fileName);
+    while (ui->toolBar->actions()[4]->isEnabled())
+    {
+        renderNextSheet();
+        currentFileName = fileName;
+        currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
+        saveSheet(currentFileName);
+    }
 }
 
 void MainWindow::printSheet()

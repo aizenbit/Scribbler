@@ -31,7 +31,8 @@ public slots:
     void renderNextSheet();
     void renderPreviousSheet();
     void loadFont();
-    void saveSheet();
+    void saveSheet(QString fileName = QString());
+    void saveAllSheets();
     void printSheet();
 
 private:
