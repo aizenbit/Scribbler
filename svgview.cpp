@@ -10,8 +10,6 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     setDragMode(ScrollHandDrag);
     limitScale(0.3);
 
-    renderBorders = true;
-
     scene = new QGraphicsScene();
     setScene(scene);
 
@@ -44,11 +42,8 @@ int SvgView::renderText(const QStringRef &text)
 {
     scene->clear();
 
-    if (renderBorders)
-    {
-        scene->addRect(sheetRect);
-        scene->addRect(marginsRect, QPen(Qt::darkGray));
-    }
+    scene->addRect(sheetRect);
+    scene->addRect(marginsRect, QPen(Qt::darkGray));
 
     QPointF cursor(marginsRect.x(), marginsRect.y());
     int endOfSheet = 0;
@@ -118,12 +113,8 @@ int SvgView::renderText(const QStringRef &text)
     return endOfSheet;
 }
 
-QImage SvgView::renderTextToImage(const QStringRef &text)
+QImage SvgView::saveRenderToImage()
 {
-    renderBorders = false;
-    renderText(text);
-    renderBorders = true;
-
     QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -196,4 +187,10 @@ void SvgView::loadSettingsFromFile()
 
     scene->setSceneRect(sheetRect);
     renderText();
+}
+
+void SvgView::hideBorders(bool hide)
+{
+    scene->items(Qt::AscendingOrder).at(0)->setVisible(!hide);
+    scene->items(Qt::AscendingOrder).at(1)->setVisible(!hide);
 }

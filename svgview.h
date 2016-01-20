@@ -22,11 +22,12 @@ signals:
 
 public slots:
     int renderText(const QStringRef &text = QStringRef());
-    QImage renderTextToImage(const QStringRef &text = QStringRef());
+    QImage saveRenderToImage();
     void loadFont(QString fontpath);
     void loadSettingsFromFile();
     QGraphicsScene * getScene() {return scene;}
     void wheelEvent(QWheelEvent *event);
+    void hideBorders(bool hide);
 
 private:
     QGraphicsScene * scene;
@@ -34,7 +35,7 @@ private:
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
-    bool renderBorders, useCustomFontColor;
+    bool useCustomFontColor;
     qreal maxZoomFactor, minZoomFactor, currentScaleFactor;
     qreal fontSize, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;

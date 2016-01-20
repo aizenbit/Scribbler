@@ -129,6 +129,7 @@ void MainWindow::render()
     currentSheetNumber = 0;
     sheetPointers.push_back(0);
     QString text = ui->textEdit->toPlainText();
+    ui->svgView->hideBorders(false);
     int endOfSheet = ui->svgView->renderText(QStringRef(&text));
     sheetPointers.push_back(endOfSheet);
 
@@ -142,6 +143,7 @@ void MainWindow::renderNextSheet()
     QString text = ui->textEdit->toPlainText();
     currentSheetNumber++;
     int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+    ui->svgView->hideBorders(false);
     int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
     endOfSheet += sheetPointers.at(currentSheetNumber);
 
@@ -162,6 +164,7 @@ void MainWindow::renderNextSheet()
 void MainWindow::renderPreviousSheet()
 {
     QString text = ui->textEdit->toPlainText();
+    ui->svgView->hideBorders(false);
     currentSheetNumber--;
     int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
@@ -196,11 +199,8 @@ void MainWindow::saveSheet(QString fileName)
                                                      "(*.png);;" +
                                                   tr("All Files") +
                                                      "(*.*)");
-    QString text = ui->textEdit->toPlainText();
-    int sheetBegin = sheetPointers.at(currentSheetNumber);
-    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
-
-    ui->svgView->renderTextToImage(QStringRef(&text, sheetBegin, lettersToTheEnd)).save(fileName);
+    ui->svgView->hideBorders(true);
+    ui->svgView->saveRenderToImage().save(fileName);
 }
 
 void MainWindow::saveAllSheets()
@@ -214,10 +214,10 @@ void MainWindow::saveAllSheets()
     if (indexOfExtension == -1)
         return;
     QString text = ui->textEdit->toPlainText();
-    QString currentFileName = fileName;
-    currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
-    render();
-    saveSheet(currentFileName);
+    QString currentFileName;
+
+    currentSheetNumber = -1;
+    ui->toolBar->actions()[4]->setEnabled(true);
 
     while (ui->toolBar->actions()[4]->isEnabled())
     {
@@ -226,6 +226,7 @@ void MainWindow::saveAllSheets()
         currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
         saveSheet(currentFileName);
     }
+    ui->svgView->hideBorders(false);
 }
 
 void MainWindow::printSheet()
@@ -249,11 +250,10 @@ void MainWindow::printSheet()
 
     QPainter painter(&printer);
     painter.setRenderHint(QPainter::Antialiasing);
-    QString text = ui->textEdit->toPlainText();
-    int sheetBegin = sheetPointers.at(currentSheetNumber);
-    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
 
-    QImage image = ui->svgView->renderTextToImage(QStringRef(&text, sheetBegin, lettersToTheEnd));
+    ui->svgView->hideBorders(true);
+    QImage image = ui->svgView->saveRenderToImage();
+    ui->svgView->hideBorders(false);
 
     if (image.format() == QImage::Format_Invalid || !printer.isValid())
         return;
