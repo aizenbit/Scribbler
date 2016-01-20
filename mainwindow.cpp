@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     preferencesDialog = new PreferencesDialog();
 
+    //menu actions connections
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
             this, SLOT(showAboutBox()));
     connect(ui->actionLicenses_and_Credits, SIGNAL(triggered()),
@@ -29,18 +30,22 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPrint_All, SIGNAL(triggered()),
             this, SLOT(printAllSheets()));
 
+    //connect menu action "Show Toolbar"
     connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
             ui->toolBar, SLOT(setVisible(bool)));
     connect(ui->toolBar, SIGNAL(visibilityChanged(bool)),
             ui->actionShow_ToolBar, SLOT(setChecked(bool)));
 
+    //add actions to tool bar and connect them to slots
     connect(ui->toolBar->addAction(QPixmap("://render.png"),"Render"), SIGNAL(triggered(bool)),
             this, SLOT(render()));
     connect(ui->toolBar->addAction(QPixmap("://printer.png"),"Print Current Sheet"), SIGNAL(triggered(bool)),
             this, SLOT(printSheet()));
     connect(ui->toolBar->addAction(QPixmap("://save.png"),"Save Current Sheet as Image"), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
+
     ui->toolBar->addSeparator();
+
     connect(ui->toolBar->addAction(QPixmap("://right.png"), "Next Sheet"), SIGNAL(triggered(bool)),
             this, SLOT(renderNextSheet()));
     connect(ui->toolBar->addAction(QPixmap("://left.png"), "Previous Sheet"), SIGNAL(triggered(bool)),
@@ -48,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->toolBar->actions()[4]->setDisabled(true);
     ui->toolBar->actions()[5]->setDisabled(true);
+
+    //initialize some class members
     sheetPointers.push_back(0);
     currentSheetNumber = 0;
     version = "0.2 alpha";
@@ -132,9 +139,10 @@ void MainWindow::render()
     sheetPointers.push_back(0);
     QString text = ui->textEdit->toPlainText();
     ui->svgView->hideBorders(false);
-    int endOfSheet = ui->svgView->renderText(QStringRef(&text));
-    sheetPointers.push_back(endOfSheet);
 
+    int endOfSheet = ui->svgView->renderText(QStringRef(&text));
+
+    sheetPointers.push_back(endOfSheet);
     bool isThereMoreThanOneSheet = text.length() - 1 >= endOfSheet;
     ui->toolBar->actions()[4]->setEnabled(isThereMoreThanOneSheet);
     ui->toolBar->actions()[5]->setDisabled(true);
@@ -155,16 +163,16 @@ void MainWindow::renderNextSheet()
     int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
     endOfSheet += sheetPointers.at(currentSheetNumber);
 
-    ui->toolBar->actions()[5]->setEnabled(true);
+    ui->toolBar->actions()[5]->setEnabled(true); //enable "Previous Sheet" tool button
 
-    if (endOfSheet >= text.length())
+    if (endOfSheet >= text.length())    //this sheet is the last
     {
-        ui->toolBar->actions()[4]->setDisabled(true);
+        ui->toolBar->actions()[4]->setDisabled(true); //disable "Next Sheet" tool button
         return;
     }
 
-    if (currentSheetNumber >= sheetPointers.count() - 1)
-        sheetPointers.push_back(endOfSheet);
+    if (currentSheetNumber >= sheetPointers.count() - 1) //if this sheet has not yet been rendered,
+        sheetPointers.push_back(endOfSheet);             //remember, where the next sheet begins
 }
 
 void MainWindow::renderPreviousSheet()
@@ -181,10 +189,10 @@ void MainWindow::renderPreviousSheet()
 
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
-    ui->toolBar->actions()[4]->setEnabled(true);
+    ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
 
     if (currentSheetNumber == 0)
-        ui->toolBar->actions()[5]->setDisabled(true);
+        ui->toolBar->actions()[5]->setDisabled(true); //disable "Previous Sheet" tool button
 
 }
 
@@ -197,6 +205,13 @@ void MainWindow::loadFont()
                                                  "(*.*)");
     if (fileName.isEmpty())
         return;
+
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    file.close();
 
     ui->svgView->loadFont(fileName);
 }
@@ -230,10 +245,10 @@ void MainWindow::saveAllSheets()
 
     QString currentFileName;
     currentSheetNumber = -1;
-    ui->toolBar->actions()[4]->setEnabled(true);
+    ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
 
-    while (ui->toolBar->actions()[4]->isEnabled())
-    {
+    while (ui->toolBar->actions()[4]->isEnabled()) //while "Next Sheet" tool button is enabled,
+    {                                              //i.e. render all sheets
         renderNextSheet();
         currentFileName = fileName;
         currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
@@ -298,22 +313,23 @@ void MainWindow::printAllSheets()
     QPainter painter(&printer);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    //ui->svgView->hideBorders(true);
     currentSheetNumber = -1;
-    ui->toolBar->actions()[4]->setEnabled(true);
+    ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
 
-    while (ui->toolBar->actions()[4]->isEnabled())
-    {
+    while (ui->toolBar->actions()[4]->isEnabled())//while "Next Sheet" tool button is enabled,
+    {                                             //i.e. print all sheets
         renderNextSheet();
         ui->svgView->hideBorders(true);
         QImage image = ui->svgView->saveRenderToImage();
         if (image.format() == QImage::Format_Invalid || !printer.isValid())
             return;
         painter.drawImage(0,0,image);
-        printer.newPage();
+
+        if (ui->toolBar->actions()[4]->isEnabled()) //if "Next Sheet" tool button is disabled,
+            printer.newPage();                      //i.e this sheet is the last
     }
-    //ui->svgView->hideBorders(false);
 
     painter.end();
+    ui->svgView->hideBorders(false);
 
 }

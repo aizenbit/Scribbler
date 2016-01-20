@@ -21,14 +21,17 @@ public:
 signals:
 
 public slots:
+    QGraphicsScene * getScene() {return scene;}
+
     int renderText(const QStringRef &text = QStringRef());
     QImage saveRenderToImage();
     void loadFont(QString fontpath);
     void loadSettingsFromFile();
-    QGraphicsScene * getScene() {return scene;}
-    void wheelEvent(QWheelEvent *event);
     void hideBorders(bool hide);
     void changeLeftRightMargins(bool change);
+
+protected:
+    void wheelEvent(QWheelEvent *event);
 
 private:
     QGraphicsScene * scene;
@@ -42,7 +45,7 @@ private:
     QRectF sheetRect, marginsRect;
     QColor fontColor;
 
-    void limitScale(qreal factor);
+    void limitScale(qreal factor);  //limited view zoom
 };
 
 #endif // SVGVIEW_H

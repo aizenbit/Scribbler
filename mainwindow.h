@@ -24,7 +24,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
+private slots:
     void showAboutBox();
     void showLicensesBox();
     void render();
@@ -39,9 +39,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
     PreferencesDialog * preferencesDialog;
-    QVector<int> sheetPointers;
-    int currentSheetNumber;
-    QString version;
+    QVector<int> sheetPointers; //pointers to the beginning of the sheets
+    int currentSheetNumber;     //number of sheet that is displaying or rendering now
+    QString version;            //program version
 
 signals:
 };
