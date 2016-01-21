@@ -33,3 +33,5 @@ RC_ICONS = resources\favicon.ico
 
 RESOURCES += \
     resources/resources.qrc
+
+TRANSLATIONS += Scribbler-ru_RU.ts

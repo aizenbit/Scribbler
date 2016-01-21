@@ -97,36 +97,12 @@
     <string>Font Editor</string>
    </property>
   </action>
-  <action name="actionPrint_Template">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Print Template</string>
-   </property>
-  </action>
   <action name="actionSave_Current_Sheet_as">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>Save Current Sheet as Image</string>
-   </property>
-  </action>
-  <action name="actionSheetSize">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Sheet Size</string>
-   </property>
-  </action>
-  <action name="actionMargins">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Margins</string>
    </property>
   </action>
   <action name="actionPreferences">

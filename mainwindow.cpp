@@ -40,18 +40,18 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->actionShow_ToolBar, SLOT(setChecked(bool)));
 
     //add actions to tool bar and connect them to slots
-    connect(ui->toolBar->addAction(QPixmap("://render.png"),"Render"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QPixmap("://render.png"), tr("Render")), SIGNAL(triggered(bool)),
             this, SLOT(render()));
-    connect(ui->toolBar->addAction(QPixmap("://printer.png"),"Print Current Sheet"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QPixmap("://printer.png"), tr("Print Current Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(printSheet()));
-    connect(ui->toolBar->addAction(QPixmap("://save.png"),"Save Current Sheet as Image"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QPixmap("://save.png"), tr("Save Current Sheet as Image")), SIGNAL(triggered(bool)),
             this, SLOT(saveSheet()));
 
     ui->toolBar->addSeparator();
 
-    connect(ui->toolBar->addAction(QPixmap("://right.png"), "Next Sheet"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QPixmap("://right.png"), tr("Next Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(renderNextSheet()));
-    connect(ui->toolBar->addAction(QPixmap("://left.png"), "Previous Sheet"), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QPixmap("://left.png"), tr("Previous Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(renderPreviousSheet()));
 
     connect(fontDialog, SIGNAL(fontReady()),
