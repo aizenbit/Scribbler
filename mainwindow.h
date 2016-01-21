@@ -35,7 +35,7 @@ private slots:
     void saveSheet(QString fileName = QString());
     void saveAllSheets();
     void printSheet();
-    void printAllSheets();
+    void printAllSheets(QPrinter * printer = new QPrinter(QPrinter::HighResolution));
 
 private:
     Ui::MainWindow *ui;
@@ -44,7 +44,9 @@ private:
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
     QString version;            //program version
-
+    void saveAllSheetsToImages(QString &fileName, int indexOfExtension);
+    void saveAllSheetsToPDF(QString &fileName);
+    void preparePrinter(QPrinter *printer);
 signals:
 };
 
