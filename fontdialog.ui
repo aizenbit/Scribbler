@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Font Editor - Scribbler</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -42,7 +42,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPlainTextEdit" name="choosenSymbolTextEdit">
+      <widget class="QTextEdit" name="choosenSymbolTextEdit">
        <property name="maximumSize">
         <size>
          <width>16777215</width>

@@ -136,6 +136,17 @@ QImage SvgView::saveRenderToImage()
 
 void SvgView::loadFont(QString fontpath)
 {
+    if (fontpath.isEmpty())
+    {
+        QSettings settings("Settings.ini", QSettings::IniFormat);
+        settings.beginGroup("Settings");
+        fontpath = settings.value("last-used-font", QString()).toString();
+        settings.endGroup();
+    }
+
+    if (fontpath.isEmpty())
+        return;
+
     QSettings fontSettings(fontpath, QSettings::IniFormat);
     fontSettings.beginGroup("Font");
     fontSettings.setIniCodec(QTextCodec::codecForName("UTF-8"));

@@ -25,7 +25,7 @@ public slots:
 
     int renderText(const QStringRef &text = QStringRef());
     QImage saveRenderToImage();
-    void loadFont(QString fontpath);
+    void loadFont(QString fontpath = QString());
     void loadSettingsFromFile();
     void hideBorders(bool hide);
     void changeLeftRightMargins(bool change);

@@ -54,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->toolBar->addAction(QPixmap("://left.png"), "Previous Sheet"), SIGNAL(triggered(bool)),
             this, SLOT(renderPreviousSheet()));
 
+    connect(fontDialog, SIGNAL(fontReady()),
+            ui->svgView, SLOT(loadFont()));
+
     ui->toolBar->actions()[4]->setDisabled(true);
     ui->toolBar->actions()[5]->setDisabled(true);
 
