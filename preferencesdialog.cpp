@@ -31,8 +31,8 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     sheetSizeSignalMapper->setMapping(ui->sheetHeightSpinBox, (int)SheetSize::Custom);
     sheetSizeSignalMapper->setMapping(ui->sheetWidthSpinBox, (int)SheetSize::Custom);
 
-    connect (sheetSizeSignalMapper, SIGNAL(mapped(int)),
-             this, SLOT(setSheetSize(int)));
+    connect(sheetSizeSignalMapper, SIGNAL(mapped(int)),
+            this, SLOT(setSheetSize(int)));
 
     changedByProgram = false;
 }

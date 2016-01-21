@@ -45,7 +45,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionCreate_Font"/>
+    <addaction name="actionFont_Editor"/>
     <addaction name="actionLoad_Font"/>
     <addaction name="actionRender"/>
     <addaction name="actionSave_Current_Sheet_as"/>
@@ -89,12 +89,12 @@
     <string>Load Font</string>
    </property>
   </action>
-  <action name="actionCreate_Font">
+  <action name="actionFont_Editor">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Create Font</string>
+    <string>Font Editor</string>
    </property>
   </action>
   <action name="actionPrint_Template">

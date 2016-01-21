@@ -7,12 +7,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     preferencesDialog = new PreferencesDialog();
+    fontDialog = new FontDialog();
 
     //menu actions connections
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
             this, SLOT(showAboutBox()));
     connect(ui->actionLicenses_and_Credits, SIGNAL(triggered()),
             this, SLOT(showLicensesBox()));
+    connect(ui->actionFont_Editor, SIGNAL(triggered()),
+            fontDialog, SLOT(exec()));
     connect(ui->actionLoad_Font, SIGNAL(triggered()),
             this, SLOT(loadFont()));
     connect(ui->actionRender, SIGNAL(triggered()),
@@ -80,6 +83,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete preferencesDialog;
+    delete fontDialog;
 }
 
 void MainWindow::showAboutBox()
@@ -286,7 +290,7 @@ void MainWindow::printSheet()
     if (image.format() == QImage::Format_Invalid || !printer.isValid())
         return;
 
-    painter.drawImage(0,0,image);
+    painter.drawImage(0, 0, image);
     painter.end();
 
 }
@@ -323,7 +327,7 @@ void MainWindow::printAllSheets()
         QImage image = ui->svgView->saveRenderToImage();
         if (image.format() == QImage::Format_Invalid || !printer.isValid())
             return;
-        painter.drawImage(0,0,image);
+        painter.drawImage(0, 0, image);
 
         if (ui->toolBar->actions()[4]->isEnabled()) //if "Next Sheet" tool button is disabled,
             printer.newPage();                      //i.e this sheet is the last

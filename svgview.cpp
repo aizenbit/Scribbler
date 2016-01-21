@@ -44,6 +44,7 @@ int SvgView::renderText(const QStringRef &text)
     scene->clear();
 
     QRectF currentMarginsRect;
+
     if(changeMargins)
         currentMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
                                             marginsRect.topLeft().y()),

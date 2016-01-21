@@ -11,6 +11,7 @@
 #include <QTime>
 
 #include "preferencesdialog.h"
+#include "fontdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -39,6 +40,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     PreferencesDialog * preferencesDialog;
+    FontDialog * fontDialog;
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
     QString version;            //program version
