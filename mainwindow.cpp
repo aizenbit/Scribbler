@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //initialize some class members
     sheetPointers.push_back(0);
     currentSheetNumber = 0;
-    version = "0.2 alpha";
+    version = "0.3 alpha";
 
     preferencesDialog->loadSettingsFromFile();
 

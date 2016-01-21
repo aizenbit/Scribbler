@@ -80,11 +80,15 @@ void FontDialog::saveFont()
         if (key.isUpper())
         {
             fontSettings.beginGroup("UpperCase");
+            fontSettings.remove(key);
             fontSettings.setValue(key, QVariant(font.values(key)));
             fontSettings.endGroup();
         }
         else
+        {
+            fontSettings.remove(key);
             fontSettings.setValue(key, QVariant(font.values(key)));
+        }
     fontSettings.endGroup();
 
     emit fontReady();
