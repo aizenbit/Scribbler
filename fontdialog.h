@@ -29,7 +29,7 @@ private slots:
     void loadFont();
     void loadletters();
     void saveFont();
-    void decline();
+    void rejectChanges();
     void deleteLetter();
 
     void limitTextEdit();

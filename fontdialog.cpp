@@ -16,7 +16,7 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(ui->buttonBox, SIGNAL(accepted()),
             this, SLOT(saveFont()));
     connect(ui->buttonBox, SIGNAL(rejected()),
-            this, SLOT(decline()));
+            this, SLOT(rejectChanges()));
     connect(ui->treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
             this, SLOT(setTextFromitem(QTreeWidgetItem*)));
     connect(ui->deleteSymbolButton, SIGNAL(pressed()),
@@ -156,11 +156,14 @@ void FontDialog::saveFont()
     emit fontReady();
 }
 
-void FontDialog::decline()
+void FontDialog::rejectChanges()
 {
     font.clear();
     fontFileName.clear();
     ui->SymbolFilesPushButton->setEnabled(false);
+    ui->choosenSymbolTextEdit->clear();
+    ui->fontFileTextEdit->clear();
+    ui->treeWidget->clear();
 }
 
 void FontDialog::limitTextEdit()
