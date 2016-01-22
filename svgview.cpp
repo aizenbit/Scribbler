@@ -161,14 +161,14 @@ void SvgView::loadFont(QString fontpath)
     fontDirectory.remove(QRegularExpression("\\w+.\\w+$"));
 
     font.clear();
-    for (QString & key : fontSettings.allKeys())
+    for (QString & key : fontSettings.childKeys())
         for (QString & value : fontSettings.value(key).toStringList())
             font.insert(key[0].toLower(), fontDirectory + value);
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
-    for (QString & key : fontSettings.allKeys())
+    for (QString & key : fontSettings.childKeys())
         for (QString & value : fontSettings.value(key).toStringList())
             font.insert(key[0].toUpper(), fontDirectory + value);
     fontSettings.endGroup();

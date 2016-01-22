@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>154</height>
+    <width>515</width>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,6 +31,15 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QTreeWidget" name="treeWidget">
+     <column>
+      <property name="text">
+       <string notr="true">Letters</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
