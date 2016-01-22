@@ -30,6 +30,7 @@ private slots:
     void loadletters();
     void saveFont();
     void decline();
+    void deleteLetter();
 
     void limitTextEdit();
     void setTextFromitem(QTreeWidgetItem * item);

@@ -19,17 +19,13 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(decline()));
     connect(ui->treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
             this, SLOT(setTextFromitem(QTreeWidgetItem*)));
+    connect(ui->deleteSymbolButton, SIGNAL(pressed()),
+            this, SLOT(deleteLetter()));
 
     ui->SymbolFilesPushButton->setEnabled(false);
+    ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
 
     ui->treeWidget->setColumnCount(1);
-    /*QList<QTreeWidgetItem *> items;
-    for (int i = 0; i < 10; ++i)
-        items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
-    for (QTreeWidgetItem * parent : items)
-        parent->addChild(new QTreeWidgetItem(parent, QStringList(QString("item: %1").arg((int)parent))));
-    ui->treeWidget->insertTopLevelItems(0, items);*/
-
 }
 
 FontDialog::~FontDialog()
@@ -48,6 +44,7 @@ void FontDialog::loadFont()
     if (fontFileName.isEmpty())
         return;
 
+    ui->fontFileTextEdit->setText(fontFileName);
     ui->SymbolFilesPushButton->setEnabled(true);
 
     QSettings fontSettings(fontFileName, QSettings::IniFormat);
@@ -133,6 +130,9 @@ void FontDialog::loadletters()
 
 void FontDialog::saveFont()
 {
+    QFile file (fontFileName);
+    file.remove();
+
     QSettings fontSettings(fontFileName, QSettings::IniFormat);
     fontSettings.beginGroup("Font");
     fontSettings.setIniCodec(QTextCodec::codecForName("UTF-8"));
@@ -177,4 +177,12 @@ void FontDialog::setTextFromitem(QTreeWidgetItem * item)
 {
     if (item->parent() == 0)
         ui->choosenSymbolTextEdit->setText(item->text(0));
+}
+
+void FontDialog::deleteLetter()
+{
+    QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
+    QTreeWidgetItem * letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
+    delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
+    font.remove(letter);
 }

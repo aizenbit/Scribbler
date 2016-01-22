@@ -24,6 +24,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QTextEdit" name="fontFileTextEdit">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>47</height>
+        </size>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="fontFilePushButton">
        <property name="text">
         <string>Browse</string>
@@ -57,6 +70,13 @@
          <width>16777215</width>
          <height>30</height>
         </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteSymbolButton">
+       <property name="text">
+        <string>Delete</string>
        </property>
       </widget>
      </item>
