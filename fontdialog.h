@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QTextCodec>
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class FontDialog;
@@ -31,6 +32,7 @@ private slots:
     void decline();
 
     void limitTextEdit();
+    void setTextFromitem(QTreeWidgetItem * item);
 
 };
 

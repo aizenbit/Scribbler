@@ -17,6 +17,8 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(saveFont()));
     connect(ui->buttonBox, SIGNAL(rejected()),
             this, SLOT(decline()));
+    connect(ui->treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
+            this, SLOT(setTextFromitem(QTreeWidgetItem*)));
 
     ui->SymbolFilesPushButton->setEnabled(false);
 
@@ -112,6 +114,8 @@ void FontDialog::loadletters()
 
     letterItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(letter)));
 
+    letterItem->text(0);
+
     for (QString fileName : files)
         font.insert(letter, QFileInfo(fileName).fileName());
 
@@ -119,6 +123,8 @@ void FontDialog::loadletters()
     {
         QTreeWidgetItem * valueItem = new QTreeWidgetItem(letterItem, QStringList(QFileInfo(value).fileName()));
         letterItem->addChild(valueItem);
+
+
     }
     ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
 
@@ -165,4 +171,10 @@ void FontDialog::limitTextEdit()
         text = text.left(1);
         ui->choosenSymbolTextEdit->setText(text);
     }
+}
+
+void FontDialog::setTextFromitem(QTreeWidgetItem * item)
+{
+    if (item->parent() == 0)
+        ui->choosenSymbolTextEdit->setText(item->text(0));
 }
