@@ -61,7 +61,7 @@ int SvgView::renderText(const QStringRef &text)
 
     for (QChar symbol : text)
     {
-        qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
+        qreal letterWidth = fontSize * dpmm / 4, letterHeight = fontSize * dpmm;
 
         //don't try to go beyond the right margin
         if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))

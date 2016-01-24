@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
             fontDialog, SLOT(exec()));
     connect(ui->actionLoad_Font, SIGNAL(triggered()),
             this, SLOT(loadFont()));
-    connect(ui->actionRender, SIGNAL(triggered()),
+    connect(ui->actionConvert_to_Handwritten, SIGNAL(triggered()),
             this, SLOT(render()));
     connect(ui->actionPreferences, SIGNAL(triggered()),
             preferencesDialog, SLOT(exec()));
@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->actionShow_ToolBar, SLOT(setChecked(bool)));
 
     //add actions to tool bar and connect them to slots
-    connect(ui->toolBar->addAction(QPixmap("://render.png"), tr("Render")), SIGNAL(triggered(bool)),
+    connect(ui->toolBar->addAction(QPixmap("://render.png"), tr("Convert to Handwritten")), SIGNAL(triggered(bool)),
             this, SLOT(render()));
     connect(ui->toolBar->addAction(QPixmap("://printer.png"), tr("Print Current Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(printSheet()));
