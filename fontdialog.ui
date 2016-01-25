@@ -49,7 +49,7 @@
     <widget class="QTreeWidget" name="treeWidget">
      <column>
       <property name="text">
-       <string notr="true">Letters</string>
+       <string>Letters</string>
       </property>
      </column>
     </widget>

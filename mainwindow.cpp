@@ -273,6 +273,9 @@ void MainWindow::saveAllSheetsToImages(QString & fileName, int indexOfExtension)
         saveSheet(currentFileName);
     }
     ui->svgView->hideBorders(false);
+
+    if (currentSheetNumber == 0)
+        ui->toolBar->actions()[5]->setDisabled(true); //disable "Previous Sheet" tool button
 }
 
 void MainWindow::saveAllSheetsToPDF(QString &fileName)
@@ -344,6 +347,9 @@ void MainWindow::printAllSheets(QPrinter *printer)
     ui->svgView->hideBorders(false);
 
     delete printer;
+
+    if (currentSheetNumber == 0)
+        ui->toolBar->actions()[5]->setDisabled(true); //disable "Previous Sheet" tool button
 }
 
 void MainWindow::preparePrinter(QPrinter * printer)
