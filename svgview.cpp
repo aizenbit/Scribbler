@@ -65,9 +65,13 @@ int SvgView::renderText(const QStringRef &text)
 
         //don't try to go beyond the right margin
         if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
+        {
+            if (symbol.isSpace())   //ignore whitespace-symbols at the end of the current line
+                continue;
             cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
+        }
 
-        //and stop rendering when you reach the end of sheet
+        //stop rendering when you reach the end of sheet
         if (cursor.y() > currentMarginsRect.bottomRight().y() - letterHeight)
             return endOfSheet;
 

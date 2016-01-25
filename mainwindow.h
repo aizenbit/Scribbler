@@ -47,6 +47,7 @@ private:
     void saveAllSheetsToImages(QString &fileName, int indexOfExtension);
     void saveAllSheetsToPDF(QString &fileName);
     void preparePrinter(QPrinter *printer);
+    QString simplifyEnd(const QString& str);
 signals:
 };
 

@@ -145,6 +145,7 @@ void MainWindow::render()
     currentSheetNumber = 0;
     sheetPointers.push_back(0);
     QString text = ui->textEdit->toPlainText();
+    text = simplifyEnd(text);
     ui->svgView->hideBorders(false);
 
     int endOfSheet = ui->svgView->renderText(QStringRef(&text));
@@ -158,6 +159,7 @@ void MainWindow::render()
 void MainWindow::renderNextSheet()
 {
     QString text = ui->textEdit->toPlainText();
+    text = simplifyEnd(text);
     currentSheetNumber++;
     int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
     ui->svgView->hideBorders(false);
@@ -365,4 +367,15 @@ void MainWindow::preparePrinter(QPrinter * printer)
     printer->setOrientation(isPortrait ? QPrinter::Portrait : QPrinter::Landscape);
 
     settings.endGroup();
+}
+
+QString MainWindow::simplifyEnd(const QString& str)
+{
+    int n = str.size() - 1;
+
+    for (; n >= 0; --n)
+        if (!str.at(n).isSpace())
+            return str.left(n + 1);
+
+    return "";
 }
