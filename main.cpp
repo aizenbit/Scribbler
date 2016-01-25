@@ -10,6 +10,8 @@ int main(int argc, char *argv[])
     myTranslator.load("Scribbler-" + QLocale::system().name());
     a.installTranslator(&myTranslator);
 
+    qApp->addLibraryPath("./plugins");
+
     MainWindow w;
     w.show();
 
