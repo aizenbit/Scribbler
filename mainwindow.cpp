@@ -9,41 +9,47 @@ MainWindow::MainWindow(QWidget *parent) :
     preferencesDialog = new PreferencesDialog();
     fontDialog = new FontDialog();
 
-    //menu actions connections
-    connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
-            this, SLOT(showAboutBox()));
-    connect(ui->actionLicenses_and_Credits, SIGNAL(triggered()),
-            this, SLOT(showLicensesBox()));
-    connect(ui->actionFont_Editor, SIGNAL(triggered()),
-            fontDialog, SLOT(exec()));
+    //----File----
+    connect(ui->actionConvert_to_Handwritten, SIGNAL(triggered()),
+            this, SLOT(renderFirstSheet()));
+    connect(ui->actionLoad_Text_from_File, SIGNAL(triggered()),
+            this, SLOT(loadTextFromFile()));
     connect(ui->actionLoad_Font, SIGNAL(triggered()),
             this, SLOT(loadFont()));
-    connect(ui->actionConvert_to_Handwritten, SIGNAL(triggered()),
-            this, SLOT(render()));
-    connect(ui->actionPreferences, SIGNAL(triggered()),
-            preferencesDialog, SLOT(exec()));
-    connect(preferencesDialog, SIGNAL(settingsChanged()),
-            ui->svgView, SLOT(loadSettingsFromFile()));
-    connect(ui->actionSave_All_Sheets, SIGNAL(triggered()),
-            this, SLOT(saveAllSheets()));
+    connect(ui->actionFont_Editor, SIGNAL(triggered()),
+            fontDialog, SLOT(exec()));
     connect(ui->actionSave_Current_Sheet_as, SIGNAL(triggered()),
             this, SLOT(saveSheet()));
+    connect(ui->actionSave_All_Sheets, SIGNAL(triggered()),
+            this, SLOT(saveAllSheets()));
     connect(ui->actionPrint_Current_Sheet, SIGNAL(triggered()),
             this, SLOT(printSheet()));
     connect(ui->actionPrint_All, SIGNAL(triggered()),
             this, SLOT(printAllSheets()));
-    connect(ui->actionLoad_Text_from_File, SIGNAL(triggered()),
-            this, SLOT(loadTextFromFile()));
 
+    //----Edit----
     //connect menu action "Show Toolbar"
     connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
             ui->toolBar, SLOT(setVisible(bool)));
     connect(ui->toolBar, SIGNAL(visibilityChanged(bool)),
             ui->actionShow_ToolBar, SLOT(setChecked(bool)));
 
+    //preferencesDialog connections
+    connect(ui->actionPreferences, SIGNAL(triggered()),
+            preferencesDialog, SLOT(exec()));
+    connect(preferencesDialog, SIGNAL(settingsChanged()),
+            ui->svgView, SLOT(loadSettingsFromFile()));
+
+    //----Help----
+    connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
+            this, SLOT(showAboutBox()));
+    connect(ui->actionLicenses_and_Credits, SIGNAL(triggered()),
+            this, SLOT(showLicensesBox()));
+
+    //----ToolBar----
     //add actions to tool bar and connect them to slots
     connect(ui->toolBar->addAction(QPixmap("://render.png"), tr("Convert to Handwritten")), SIGNAL(triggered(bool)),
-            this, SLOT(render()));
+            this, SLOT(renderFirstSheet()));
     connect(ui->toolBar->addAction(QPixmap("://printer.png"), tr("Print Current Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(printSheet()));
     connect(ui->toolBar->addAction(QPixmap("://save.png"), tr("Save Current Sheet as Image")), SIGNAL(triggered(bool)),
@@ -141,7 +147,7 @@ void MainWindow::showLicensesBox()
     aboutBox.exec();
 }
 
-void MainWindow::render()
+void MainWindow::renderFirstSheet()
 {
     sheetPointers.clear();
     currentSheetNumber = 0;
@@ -246,12 +252,12 @@ void MainWindow::saveSheet(QString fileName)
 void MainWindow::saveAllSheets()
 {
     QString fileName = QFileDialog::getSaveFileName(0, tr("Save"), "",
-                                              tr("PNG") +
-                                                 "(*.png);;" +
-                                              tr("PDF") +
-                                                 "(*.pdf);;" +
-                                              tr("All Files") +
-                                                 "(*.*)");
+                                                       tr("PNG") +
+                                                          "(*.png);;" +
+                                                       tr("PDF") +
+                                                          "(*.pdf);;" +
+                                                       tr("All Files") +
+                                                          "(*.*)");
     int indexOfExtension = fileName.indexOf(QRegularExpression("\\.\\w+$"), 0);
     if (indexOfExtension == -1)
         return;
@@ -263,7 +269,7 @@ void MainWindow::saveAllSheets()
         saveAllSheetsToPDF(fileName);
 }
 
-void MainWindow::saveAllSheetsToImages(QString & fileName, int indexOfExtension)
+void MainWindow::saveAllSheetsToImages(QString &fileName, int indexOfExtension)
 {
     QString currentFileName;
     currentSheetNumber = -1;
@@ -284,7 +290,7 @@ void MainWindow::saveAllSheetsToImages(QString & fileName, int indexOfExtension)
 
 void MainWindow::saveAllSheetsToPDF(QString &fileName)
 {
-    QPrinter * printer = new QPrinter(QPrinter::PrinterResolution);
+    QPrinter *printer = new QPrinter(QPrinter::PrinterResolution);
     printer->setOutputFormat(QPrinter::PdfFormat);
     printer->setOutputFileName(fileName);
     printAllSheets(printer);
@@ -374,7 +380,7 @@ void MainWindow::loadTextFromFile()
     ui->textEdit->setText(in.readAll());
 }
 
-void MainWindow::preparePrinter(QPrinter * printer)
+void MainWindow::preparePrinter(QPrinter *printer)
 {
     QSettings settings("Settings.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");

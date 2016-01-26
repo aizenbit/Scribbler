@@ -1,10 +1,10 @@
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
-#include <QDialog>
-#include <QSettings>
-#include <QSignalMapper>
-#include <QColorDialog>
+#include <QtCore/QSettings>
+#include <QtCore/QSignalMapper>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QColorDialog>
 
 namespace Ui {
 class PreferencesDialog;
@@ -18,17 +18,17 @@ public:
     explicit PreferencesDialog(QWidget *parent = 0);
     ~PreferencesDialog();
 
-signals:
-    void settingsChanged();
-
 public slots:
     void loadSettingsToFile();
     void loadSettingsFromFile();
     bool alternateMargins();
 
+signals:
+    void settingsChanged();
+
 private:
     Ui::PreferencesDialog *ui;
-    QSignalMapper * sheetSizeSignalMapper;  //is necessary to connect QRadioButtons
+    QSignalMapper *sheetSizeSignalMapper;  //is necessary to connect QRadioButtons
                                             //from the sheetSize group to setSheetSize()
 
     enum class SheetSize{

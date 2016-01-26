@@ -1,11 +1,11 @@
 #ifndef FONTDIALOG_H
 #define FONTDIALOG_H
 
-#include <QDialog>
-#include <QFileDialog>
-#include <QSettings>
-#include <QTextCodec>
-#include <QTreeWidgetItem>
+#include <QtCore/QSettings>
+#include <QtCore/QTextCodec>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QTreeWidgetItem>
 
 namespace Ui {
 class FontDialog;
@@ -21,19 +21,21 @@ public:
 
 signals:
     void fontReady();
+
 private:
     Ui::FontDialog *ui;
     QString fontFileName;
     QMultiMap<QChar, QString> font;
+
 private slots:
     void loadFont();
-    void loadletters();
+    void loadLetters();
     void saveFont();
     void rejectChanges();
     void deleteLetter();
 
     void limitTextEdit();
-    void setTextFromitem(QTreeWidgetItem * item);
+    void setTextFromItem(QTreeWidgetItem *item);
 
 };
 

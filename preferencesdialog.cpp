@@ -83,13 +83,13 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->topMarginsSpinBox->setValue(    settings.value("top-margin", 10).toInt());
     ui->bottomMarginsSpinBox->setValue( settings.value("bottom-margin", 5).toInt());
     ui->VRadioButton->setChecked(       settings.value("is-sheet-orientation-vertical", true).toBool());
-    ui->fontColorCheckBox->setChecked(settings.value("use-custom-font-color", true).toBool());
+    ui->fontColorCheckBox->setChecked(  settings.value("use-custom-font-color", true).toBool());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     settings.endGroup();
 
-    setSheetSize((int)SheetSize::Custom); //needs to set radioButtons values correctly
+    setSheetSize(static_cast<int>(SheetSize::Custom)); //needs to set radioButtons values correctly
 }
 
 void PreferencesDialog::setSheetSize(int size)
@@ -105,47 +105,44 @@ void PreferencesDialog::setSheetSize(int size)
     int height = 0;
     int width = 0;
 
-    SheetSize s = SheetSize(size);
+    SheetSize s = static_cast<SheetSize>(size);
 
     switch (s)
     {
-        case SheetSize::A5:
-        {
-            height = 210;
-            width = 148;
-            break;
-        }
-        case SheetSize::A4:
-        {
-            height = 297;
-            width = 210;
-            break;
-        }
-        case SheetSize::Custom:
-        {
-            //first, check if values fit A4 or A5;
-            //in this case set appropriate radioButton checked
-            height = ui->sheetHeightSpinBox->value();
-            width = ui->sheetWidthSpinBox->value();
+    case SheetSize::A5:
+        height = 210;
+        width = 148;
+        break;
 
-            if (!isVertical)
-                qSwap(height, width);
+    case SheetSize::A4:
+        height = 297;
+        width = 210;
+        break;
 
-            if (height == 210 && width == 148)
-            {
-                ui->A5RadioButton->setChecked(true);
-                return;
-            }
-            if (height == 297 && width == 210)
-            {
-                ui->A4RadioButton->setChecked(true);
-                return;
-            }
+    case SheetSize::Custom:
+        //first, check if values fit A4 or A5;
+        //in this case set appropriate radioButton checked
+        height = ui->sheetHeightSpinBox->value();
+        width = ui->sheetWidthSpinBox->value();
 
-            //if they dont fit, set CustomRadioButton checked
-            ui->CustomRadioButton->setChecked(true);
+        if (!isVertical)
+            qSwap(height, width);
+
+        if (height == 210 && width == 148)
+        {
+            ui->A5RadioButton->setChecked(true);
             return;
         }
+
+        if (height == 297 && width == 210)
+        {
+            ui->A4RadioButton->setChecked(true);
+            return;
+        }
+
+        //if they dont fit, set CustomRadioButton checked
+        ui->CustomRadioButton->setChecked(true);
+        return;
     }
 
     //set values if A4 or A5 is selected

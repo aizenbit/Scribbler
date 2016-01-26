@@ -1,24 +1,23 @@
 #ifndef SVGVIEW_H
 #define SVGVIEW_H
 
-#include <QGraphicsView>
-#include <QWheelEvent>
-#include <QApplication>
-#include <qmath.h>
-#include <QGraphicsSvgItem>
-#include <QRegularExpression>
-#include <QTextCodec>
-#include <QSettings>
-#include <QGraphicsColorizeEffect>
+#include <QtCore/QRegularExpression>
+#include <QtCore/QTextCodec>
+#include <QtCore/QSettings>
+#include <QtCore/QtMath>
+#include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QGraphicsColorizeEffect>
+#include <QtWidgets/QApplication>
+#include <QtGui/QWheelEvent>
+#include <QtSvg/QGraphicsSvgItem>
 
 class SvgView : public QGraphicsView
 {
     Q_OBJECT
+
 public:
     explicit SvgView(QWidget *parent = 0);
     ~SvgView();
-
-signals:
 
 public slots:
     QGraphicsScene * getScene() {return scene;}
@@ -34,7 +33,7 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
-    QGraphicsScene * scene;
+    QGraphicsScene *scene;
     QMultiMap<QChar, QString> font;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter

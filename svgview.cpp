@@ -31,7 +31,7 @@ void SvgView::wheelEvent(QWheelEvent *event)
 
 void SvgView::limitScale(qreal factor)
 {
-    qreal newFactor = currentScaleFactor * factor;
+    qreal newFactor = currentScaleFactor *factor;
     if (newFactor < maxZoomFactor && newFactor > minZoomFactor)
     {
         currentScaleFactor = newFactor;
@@ -45,7 +45,7 @@ int SvgView::renderText(const QStringRef &text)
 
     QRectF currentMarginsRect;
 
-    if(changeMargins)
+    if (changeMargins)
         currentMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
                                             marginsRect.topLeft().y()),
                                     QPointF(sheetRect.bottomRight().x() - marginsRect.bottomLeft().x(),
@@ -79,24 +79,20 @@ int SvgView::renderText(const QStringRef &text)
         {
             switch (symbol.toLatin1())
             {
-                case '\t':
-                {
-                    cursor += QPointF(letterWidth * spacesInTab, 0.0);
-                    endOfSheet++;
-                    continue;
-                }
-                case '\n':
-                {
-                    cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
-                    endOfSheet++;
-                    continue;
-                }
-                default:
-                {
-                    cursor += QPointF(letterWidth, 0.0);
-                    endOfSheet++;
-                    continue;
-                }
+            case '\t':
+                cursor += QPointF(letterWidth * spacesInTab, 0.0);
+                endOfSheet++;
+                continue;
+
+            case '\n':
+                cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
+                endOfSheet++;
+                continue;
+
+            default:
+                cursor += QPointF(letterWidth, 0.0);
+                endOfSheet++;
+                continue;
             }
         }
 
@@ -108,10 +104,10 @@ int SvgView::renderText(const QStringRef &text)
         }
 
 
-        QGraphicsSvgItem * letter = new QGraphicsSvgItem(font.values(symbol).at(qrand() % font.values(symbol).size()));
+        QGraphicsSvgItem *letter = new QGraphicsSvgItem(font.values(symbol).at(qrand() % font.values(symbol).size()));
         if (useCustomFontColor)
         {
-            QGraphicsColorizeEffect* colorEffect = new QGraphicsColorizeEffect();
+            QGraphicsColorizeEffect *colorEffect = new QGraphicsColorizeEffect();
             colorEffect->setColor(fontColor);
             letter->setGraphicsEffect(colorEffect);
         }
@@ -165,16 +161,16 @@ void SvgView::loadFont(QString fontpath)
     fontDirectory.remove(QRegularExpression("\\w+.\\w+$"));
 
     font.clear();
-    for (QString & key : fontSettings.childKeys())
-        for (QString & value : fontSettings.value(key).toStringList())
-            font.insert(key[0].toLower(), fontDirectory + value);
+    for (QString &key : fontSettings.childKeys())
+        for (QString &value : fontSettings.value(key).toStringList())
+            font.insert(key.at(0).toLower(), fontDirectory + value);
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
-    for (QString & key : fontSettings.childKeys())
-        for (QString & value : fontSettings.value(key).toStringList())
-            font.insert(key[0].toUpper(), fontDirectory + value);
+    for (QString &key : fontSettings.childKeys())
+        for (QString &value : fontSettings.value(key).toStringList())
+            font.insert(key.at(0).toUpper(), fontDirectory + value);
     fontSettings.endGroup();
 
     fontSettings.endGroup();

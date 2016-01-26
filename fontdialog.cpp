@@ -12,13 +12,13 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(ui->fontFilePushButton, SIGNAL(clicked()),
             this, SLOT(loadFont()));
     connect(ui->SymbolFilesPushButton, SIGNAL(clicked()),
-            this, SLOT(loadletters()));
+            this, SLOT(loadLetters()));
     connect(ui->buttonBox, SIGNAL(accepted()),
             this, SLOT(saveFont()));
     connect(ui->buttonBox, SIGNAL(rejected()),
             this, SLOT(rejectChanges()));
-    connect(ui->treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
-            this, SLOT(setTextFromitem(QTreeWidgetItem*)));
+    connect(ui->treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*, int)),
+            this, SLOT(setTextFromItem(QTreeWidgetItem*)));
     connect(ui->deleteSymbolButton, SIGNAL(pressed()),
             this, SLOT(deleteLetter()));
 
@@ -58,41 +58,41 @@ void FontDialog::loadFont()
     }
 
     font.clear();
-    for (QString & key : fontSettings.childKeys())
-        for (QString & value : fontSettings.value(key).toStringList())
-            font.insert(key[0].toLower(), value);
+    for (QString &key : fontSettings.childKeys())
+        for (QString &value : fontSettings.value(key).toStringList())
+            font.insert(key.at(0).toLower(), value);
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
-    for (QString & key : fontSettings.childKeys())
-        for (QString & value : fontSettings.value(key).toStringList())
-            font.insert(key[0].toUpper(), value);
+    for (QString &key : fontSettings.childKeys())
+        for (QString &value : fontSettings.value(key).toStringList())
+            font.insert(key.at(0).toUpper(), value);
     fontSettings.endGroup();
 
     fontSettings.endGroup();
 
     ui->treeWidget->clear();
 
-    for(QChar letter : font.uniqueKeys())
+    for (QChar letter : font.uniqueKeys())
     {
-        QTreeWidgetItem * letterItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(letter)));
+        QTreeWidgetItem *letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));
         for (QString value : font.values(letter))
         {
-            QTreeWidgetItem * valueItem = new QTreeWidgetItem(letterItem, QStringList(value));
+            QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(value));
             letterItem->addChild(valueItem);
         }
         ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
     }
 }
 
-void FontDialog::loadletters()
+void FontDialog::loadLetters()
 {
     QStringList files = QFileDialog::getOpenFileNames(0, tr("Choose"), "",
-                                                      tr("SVG") +
-                                                         "(*.svg);;" +
-                                                      tr("All Files") +
-                                                         "(*.*)");
+                                                         tr("SVG") +
+                                                            "(*.svg);;" +
+                                                         tr("All Files") +
+                                                            "(*.*)");
     if (files.isEmpty())
         return;
 
@@ -109,7 +109,7 @@ void FontDialog::loadletters()
         delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
     }
 
-    letterItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(letter)));
+    letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));
 
     letterItem->text(0);
 
@@ -118,7 +118,7 @@ void FontDialog::loadletters()
 
     for (QString value : files)
     {
-        QTreeWidgetItem * valueItem = new QTreeWidgetItem(letterItem, QStringList(QFileInfo(value).fileName()));
+        QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(QFileInfo(value).fileName()));
         letterItem->addChild(valueItem);
 
 
@@ -137,7 +137,7 @@ void FontDialog::saveFont()
     fontSettings.beginGroup("Font");
     fontSettings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
-    for (QChar & key : font.keys())
+    for (QChar &key : font.keys())
         if (key.isUpper())
         {
             fontSettings.beginGroup("UpperCase");
@@ -176,16 +176,16 @@ void FontDialog::limitTextEdit()
     }
 }
 
-void FontDialog::setTextFromitem(QTreeWidgetItem * item)
+void FontDialog::setTextFromItem(QTreeWidgetItem * item)
 {
-    if (item->parent() == 0)
+    if (item->parent() == nullptr)
         ui->choosenSymbolTextEdit->setText(item->text(0));
 }
 
 void FontDialog::deleteLetter()
 {
     QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
-    QTreeWidgetItem * letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
+    QTreeWidgetItem *letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
     delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
     font.remove(letter);
 }
