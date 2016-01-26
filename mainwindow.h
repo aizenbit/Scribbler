@@ -9,6 +9,7 @@
 #include <QWheelEvent>
 #include <QScrollBar>
 #include <QTime>
+#include <QTextStream>
 
 #include "preferencesdialog.h"
 #include "fontdialog.h"
@@ -36,6 +37,7 @@ private slots:
     void saveAllSheets();
     void printSheet();
     void printAllSheets(QPrinter * printer = new QPrinter(QPrinter::HighResolution));
+    void loadTextFromFile();
 
 private:
     Ui::MainWindow *ui;

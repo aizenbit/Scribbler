@@ -45,9 +45,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionFont_Editor"/>
-    <addaction name="actionLoad_Font"/>
     <addaction name="actionConvert_to_Handwritten"/>
+    <addaction name="actionLoad_Text_from_File"/>
+    <addaction name="actionLoad_Font"/>
+    <addaction name="actionFont_Editor"/>
     <addaction name="actionSave_Current_Sheet_as"/>
     <addaction name="actionSave_All_Sheets"/>
     <addaction name="actionPrint_Current_Sheet"/>
@@ -165,6 +166,11 @@
   <action name="actionPrint_All">
    <property name="text">
     <string>Print All Sheets</string>
+   </property>
+  </action>
+  <action name="actionLoad_Text_from_File">
+   <property name="text">
+    <string>Load Text from File</string>
    </property>
   </action>
  </widget>

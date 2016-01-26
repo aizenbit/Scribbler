@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(printSheet()));
     connect(ui->actionPrint_All, SIGNAL(triggered()),
             this, SLOT(printAllSheets()));
+    connect(ui->actionLoad_Text_from_File, SIGNAL(triggered()),
+            this, SLOT(loadTextFromFile()));
 
     //connect menu action "Show Toolbar"
     connect(ui->actionShow_ToolBar, SIGNAL(triggered(bool)),
@@ -352,6 +354,24 @@ void MainWindow::printAllSheets(QPrinter *printer)
 
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[5]->setDisabled(true); //disable "Previous Sheet" tool button
+}
+
+void MainWindow::loadTextFromFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Open"), "",
+                                              tr("txt") +
+                                                 "(*.txt);;" +
+                                              tr("All Files") +
+                                                 "(*.*)");
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream in(&file);
+    in.setCodec(QTextCodec::codecForName("UTF-8")); //TODO: add ability to change codec
+
+    ui->textEdit->setText(in.readAll());
 }
 
 void MainWindow::preparePrinter(QPrinter * printer)
