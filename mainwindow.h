@@ -33,8 +33,8 @@ private:
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
     QString version;            //program version
-    void saveAllSheetsToImages(QString &fileName, int indexOfExtension);
-    void saveAllSheetsToPDF(QString &fileName);
+    void saveAllSheetsToImages(const QString &fileName, const int indexOfExtension);
+    void saveAllSheetsToPDF(const QString &fileName);
     void preparePrinter(QPrinter *printer);
     QString simplifyEnd(const QString &str);
 

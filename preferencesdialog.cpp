@@ -26,10 +26,10 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     connect(ui->sheetWidthSpinBox, SIGNAL(valueChanged(int)),
             sheetSizeSignalMapper, SLOT(map()));
 
-    sheetSizeSignalMapper->setMapping(ui->A4RadioButton, (int)SheetSize::A4);
-    sheetSizeSignalMapper->setMapping(ui->A5RadioButton, (int)SheetSize::A5);
-    sheetSizeSignalMapper->setMapping(ui->sheetHeightSpinBox, (int)SheetSize::Custom);
-    sheetSizeSignalMapper->setMapping(ui->sheetWidthSpinBox, (int)SheetSize::Custom);
+    sheetSizeSignalMapper->setMapping(ui->A4RadioButton, static_cast<int>(SheetSize::A4));
+    sheetSizeSignalMapper->setMapping(ui->A5RadioButton, static_cast<int>(SheetSize::A5));
+    sheetSizeSignalMapper->setMapping(ui->sheetHeightSpinBox, static_cast<int>(SheetSize::Custom));
+    sheetSizeSignalMapper->setMapping(ui->sheetWidthSpinBox, static_cast<int>(SheetSize::Custom));
 
     connect(sheetSizeSignalMapper, SIGNAL(mapped(int)),
             this, SLOT(setSheetSize(int)));
@@ -170,7 +170,8 @@ void PreferencesDialog::setColor()
     QColor newColor = QColorDialog::getColor(currentColor);
 
     if (newColor.isValid())
-        ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}").arg(newColor.name()));
+        ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
+                                       .arg(newColor.name()));
 }
 
 bool PreferencesDialog::alternateMargins()

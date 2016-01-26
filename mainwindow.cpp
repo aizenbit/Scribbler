@@ -150,26 +150,25 @@ void MainWindow::showLicensesBox()
 void MainWindow::renderFirstSheet()
 {
     sheetPointers.clear();
-    currentSheetNumber = 0;
     sheetPointers.push_back(0);
-    QString text = ui->textEdit->toPlainText();
-    text = simplifyEnd(text);
+
+    currentSheetNumber = 0;
     ui->svgView->hideBorders(false);
 
+    QString text = ui->textEdit->toPlainText();
+    text = simplifyEnd(text);
     int endOfSheet = ui->svgView->renderText(QStringRef(&text));
 
     sheetPointers.push_back(endOfSheet);
-    bool isThereMoreThanOneSheet = text.length() - 1 >= endOfSheet;
-    ui->toolBar->actions()[4]->setEnabled(isThereMoreThanOneSheet);
-    ui->toolBar->actions()[5]->setDisabled(true);
+
+    bool isThereMoreThanOneSheet = (text.length() - 1) >= endOfSheet;
+    ui->toolBar->actions()[4]->setEnabled(isThereMoreThanOneSheet); //enable "Next Sheet" tool button
+    ui->toolBar->actions()[5]->setDisabled(true);                   //disable "Previous Sheet" tool button
 }
 
 void MainWindow::renderNextSheet()
 {
-    QString text = ui->textEdit->toPlainText();
-    text = simplifyEnd(text);
     currentSheetNumber++;
-    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
     ui->svgView->hideBorders(false);
 
     if (preferencesDialog->alternateMargins())
@@ -177,6 +176,9 @@ void MainWindow::renderNextSheet()
     else
         ui->svgView->changeLeftRightMargins(false);
 
+    QString text = ui->textEdit->toPlainText();
+    text = simplifyEnd(text);
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
     int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
     endOfSheet += sheetPointers.at(currentSheetNumber);
 
@@ -194,23 +196,22 @@ void MainWindow::renderNextSheet()
 
 void MainWindow::renderPreviousSheet()
 {
-    QString text = ui->textEdit->toPlainText();
-    ui->svgView->hideBorders(false);
     currentSheetNumber--;
-    int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
+    ui->svgView->hideBorders(false);
 
     if (preferencesDialog->alternateMargins())
         ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
     else
         ui->svgView->changeLeftRightMargins(false);
 
+    QString text = ui->textEdit->toPlainText();
+    int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
     ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
 
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[5]->setDisabled(true); //disable "Previous Sheet" tool button
-
 }
 
 void MainWindow::loadFont()
@@ -269,7 +270,7 @@ void MainWindow::saveAllSheets()
         saveAllSheetsToPDF(fileName);
 }
 
-void MainWindow::saveAllSheetsToImages(QString &fileName, int indexOfExtension)
+void MainWindow::saveAllSheetsToImages(const QString &fileName, const int indexOfExtension)
 {
     QString currentFileName;
     currentSheetNumber = -1;
@@ -288,7 +289,7 @@ void MainWindow::saveAllSheetsToImages(QString &fileName, int indexOfExtension)
         ui->toolBar->actions()[5]->setDisabled(true); //disable "Previous Sheet" tool button
 }
 
-void MainWindow::saveAllSheetsToPDF(QString &fileName)
+void MainWindow::saveAllSheetsToPDF(const QString &fileName)
 {
     QPrinter *printer = new QPrinter(QPrinter::PrinterResolution);
     printer->setOutputFormat(QPrinter::PdfFormat);

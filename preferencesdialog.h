@@ -31,7 +31,7 @@ private:
     QSignalMapper *sheetSizeSignalMapper;  //is necessary to connect QRadioButtons
                                             //from the sheetSize group to setSheetSize()
 
-    enum class SheetSize{
+    enum class SheetSize {
         A4,
         A5,
         Custom

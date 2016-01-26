@@ -67,7 +67,10 @@ int SvgView::renderText(const QStringRef &text)
         if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
         {
             if (symbol.isSpace())   //ignore whitespace-symbols at the end of the current line
+            {
+                endOfSheet++;
                 continue;
+            }
             cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
         }
 
