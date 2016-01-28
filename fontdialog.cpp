@@ -7,6 +7,15 @@ FontDialog::FontDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    svgWidget = new QSvgWidget();
+
+    QPalette svgPalette = svgWidget->palette();
+    svgPalette.setColor(QPalette::Background, Qt::white);
+    svgWidget->setAutoFillBackground(true);
+    svgWidget->setPalette(svgPalette);
+
+    ui->horizontalLayout_4->addWidget(svgWidget);
+
     connect(ui->choosenSymbolTextEdit, SIGNAL(textChanged()),
             this, SLOT(limitTextEdit()));
     connect(ui->fontFilePushButton, SIGNAL(clicked()),
@@ -24,6 +33,8 @@ FontDialog::FontDialog(QWidget *parent) :
 
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
+    ui->fontFileTextEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->fontFileTextEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->treeWidget->setColumnCount(1);
 }
@@ -31,6 +42,7 @@ FontDialog::FontDialog(QWidget *parent) :
 FontDialog::~FontDialog()
 {
     delete ui;
+    delete svgWidget;
 }
 
 void FontDialog::loadFont()
@@ -180,6 +192,13 @@ void FontDialog::setTextFromItem(QTreeWidgetItem * item)
 {
     if (item->parent() == nullptr)
         ui->choosenSymbolTextEdit->setText(item->text(0));
+    else
+    {
+        ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
+        svgWidget->load(QFileInfo(fontFileName).path() + "//" + item->text(0));
+        QSize letterSize = svgWidget->renderer()->defaultSize();
+        svgWidget->setFixedWidth(letterSize.width() * static_cast<qreal>(ui->treeWidget->height()) / letterSize.height());
+    }
 }
 
 void FontDialog::deleteLetter()

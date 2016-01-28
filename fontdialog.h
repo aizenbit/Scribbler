@@ -6,6 +6,8 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QTreeWidgetItem>
+#include <QtSvg/QSvgWidget>
+#include <QtSvg/QSvgRenderer>
 
 namespace Ui {
 class FontDialog;
@@ -24,6 +26,9 @@ signals:
 
 private:
     Ui::FontDialog *ui;
+    QSvgWidget *svgWidget;
+    QSvgRenderer *svgRenderer;
+
     QString fontFileName;
     QMultiMap<QChar, QString> font;
 
