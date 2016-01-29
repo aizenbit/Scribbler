@@ -106,8 +106,9 @@ int SvgView::renderText(const QStringRef &text)
             continue;
         }
 
+        Letter letterData = font.values(symbol).at(qrand() % font.values(symbol).size());
 
-        QGraphicsSvgItem *letter = new QGraphicsSvgItem(font.values(symbol).at(qrand() % font.values(symbol).size()));
+        QGraphicsSvgItem *letter = new QGraphicsSvgItem(letterData.fileName);
         if (useCustomFontColor)
         {
             QGraphicsColorizeEffect *colorEffect = new QGraphicsColorizeEffect();
@@ -164,16 +165,23 @@ void SvgView::loadFont(QString fontpath)
     fontDirectory.remove(QRegularExpression("\\w+.\\w+$"));
 
     font.clear();
-    for (QString &key : fontSettings.childKeys())
-        for (QString &value : fontSettings.value(key).toStringList())
-            font.insert(key.at(0).toLower(), fontDirectory + value);
+    for (const QString &key : fontSettings.childKeys())
+        for (Letter &value : fontSettings.value(key).value<QList<Letter>>())
+        {
+            value.fileName = fontDirectory + value.fileName;
+            font.insert(key.at(0).toLower(), value);
+        }
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
-    for (QString &key : fontSettings.childKeys())
-        for (QString &value : fontSettings.value(key).toStringList())
-            font.insert(key.at(0).toUpper(), fontDirectory + value);
+    for (const QString &key : fontSettings.childKeys())
+        for (Letter &value : fontSettings.value(key).value<QList<Letter>>())
+        {
+            value.fileName = fontDirectory + value.fileName;
+            font.insert(key.at(0).toUpper(), value);
+        }
+
     fontSettings.endGroup();
 
     fontSettings.endGroup();

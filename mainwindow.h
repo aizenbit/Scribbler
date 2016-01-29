@@ -32,7 +32,7 @@ private:
     FontDialog *fontDialog;
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
-    QString version;            //program version
+    const QString version = "0.4 alpha";
     void saveAllSheetsToImages(const QString &fileName, const int indexOfExtension);
     void saveAllSheetsToPDF(const QString &fileName);
     void preparePrinter(QPrinter *printer);

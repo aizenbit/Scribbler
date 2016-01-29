@@ -9,6 +9,8 @@
 #include <QtSvg/QSvgWidget>
 #include <QtSvg/QSvgRenderer>
 
+#include "letter.h"
+
 namespace Ui {
 class FontDialog;
 }
@@ -30,7 +32,7 @@ private:
     QSvgRenderer *svgRenderer;
 
     QString fontFileName;
-    QMultiMap<QChar, QString> font;
+    QMultiMap<QChar, Letter> font;
 
 private slots:
     void loadFont();

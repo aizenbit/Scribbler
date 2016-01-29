@@ -11,6 +11,8 @@
 #include <QtGui/QWheelEvent>
 #include <QtSvg/QGraphicsSvgItem>
 
+#include "letter.h"
+
 class SvgView : public QGraphicsView
 {
     Q_OBJECT
@@ -34,7 +36,7 @@ protected:
 
 private:
     QGraphicsScene *scene;
-    QMultiMap<QChar, QString> font;
+    QMultiMap<QChar, Letter> font;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;

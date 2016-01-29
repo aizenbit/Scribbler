@@ -70,15 +70,15 @@ void FontDialog::loadFont()
     }
 
     font.clear();
-    for (QString &key : fontSettings.childKeys())
-        for (QString &value : fontSettings.value(key).toStringList())
+    for (const QString &key : fontSettings.childKeys())
+        for (const Letter &value : fontSettings.value(key).value<QList<Letter>>())
             font.insert(key.at(0).toLower(), value);
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
-    for (QString &key : fontSettings.childKeys())
-        for (QString &value : fontSettings.value(key).toStringList())
+    for (const QString &key : fontSettings.childKeys())
+        for (const Letter &value : fontSettings.value(key).value<QList<Letter>>())
             font.insert(key.at(0).toUpper(), value);
     fontSettings.endGroup();
 
@@ -86,12 +86,12 @@ void FontDialog::loadFont()
 
     ui->treeWidget->clear();
 
-    for (QChar letter : font.uniqueKeys())
+    for (QChar key : font.uniqueKeys())
     {
-        QTreeWidgetItem *letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));
-        for (QString value : font.values(letter))
+        QTreeWidgetItem *letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(key)));
+        for (const Letter & value : font.values(key))
         {
-            QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(value));
+            QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(value.fileName));
             letterItem->addChild(valueItem);
         }
         ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
@@ -114,7 +114,9 @@ void FontDialog::loadLetters()
 
     if (font.contains(letter))
     {
-        files += font.values(letter);
+        for (const Letter & value : font.values(letter))
+            files += value.fileName;
+
         files.removeDuplicates();
         font.remove(letter);
         letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
@@ -126,7 +128,7 @@ void FontDialog::loadLetters()
     letterItem->text(0);
 
     for (QString fileName : files)
-        font.insert(letter, QFileInfo(fileName).fileName());
+        font.insert(letter, {QFileInfo(fileName).fileName()});
 
     for (QString value : files)
     {
@@ -154,13 +156,13 @@ void FontDialog::saveFont()
         {
             fontSettings.beginGroup("UpperCase");
             fontSettings.remove(key);
-            fontSettings.setValue(key, QVariant(font.values(key)));
+            fontSettings.setValue(key, QVariant::fromValue(font.values(key)));
             fontSettings.endGroup();
         }
         else
         {
             fontSettings.remove(key);
-            fontSettings.setValue(key, QVariant(font.values(key)));
+            fontSettings.setValue(key, QVariant::fromValue(font.values(key)));
         }
 
     fontSettings.endGroup();
