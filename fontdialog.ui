@@ -96,6 +96,16 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="SvgEditor" name="svgEditor" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -156,6 +166,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SvgEditor</class>
+   <extends>QWidget</extends>
+   <header>svgeditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
