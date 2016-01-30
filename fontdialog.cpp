@@ -31,8 +31,6 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->deleteSymbolButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
-    ui->fontFileTextEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->fontFileTextEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->treeWidget->setColumnCount(1);
     lastItem = nullptr;
@@ -45,6 +43,7 @@ FontDialog::~FontDialog()
 
 void FontDialog::loadFont()
 {
+    lastItem = nullptr;
     fontFileName.clear();
     fontFileName = QFileDialog::getSaveFileName(0, tr("Choose"), "",
                                                    tr("INI") +
@@ -206,8 +205,8 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         QChar key = lastItem->parent()->text(0).at(0);
         QList<Letter> letterList = font.values(key);
 
-        for (Letter & letter : letterList)
-            if (letter.fileName == item->text(0))
+        for (Letter &letter : letterList)
+            if (letter.fileName == lastItem->text(0))
             {
                 letter = newLetter;
                 break;
@@ -215,7 +214,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 
         font.remove(key);
 
-        for(const Letter & letter : letterList)
+        for (const Letter &letter : letterList)
             font.insert(key, letter);
     }
 
@@ -233,7 +232,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         ui->svgEditor->load(QFileInfo(fontFileName).path() + "//" + item->text(0));
         QList<Letter> letterList = font.values(item->parent()->text(0).at(0));
 
-        for (const Letter & letter : letterList)
+        for (const Letter &letter : letterList)
             if (letter.fileName == item->text(0))
             {
                 ui->svgEditor->setLetterData(letter.inPoint, letter.outPoint, letter.limits);

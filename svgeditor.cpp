@@ -7,6 +7,8 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     setAutoFillBackground(true);
     setPalette(svgPalette);
     inPoint = QPointF(-1.0, -1.0);
+    outPoint = QPointF(-1.0, -1.0);
+    limits = QRectF(-1.0,-1.0,-1.0,-1.0);
     drawInPoint = false;
     drawOutPoint = false;
     drawLimits = false;
@@ -50,12 +52,19 @@ void SvgEditor::mousePressEvent(QMouseEvent *event)
 
 void SvgEditor::mouseMoveEvent(QMouseEvent *event)
 {
-    if (drawLimits && event->button() == Qt::LeftButton)
-    {
+    if (drawLimits)
+    {  
         limitsBottomRight = event->pos();
+
+        if (limitsBottomRight.x() > this->width())
+            limitsBottomRight.rx() = this->width() - 1;
+
+        if (limitsBottomRight.y() > this->height())
+            limitsBottomRight.ry() = this->height() - 1;
+
         limits = QRectF(limitsTopLeft, limitsBottomRight);
         showLimits = true;
-        repaint(); //update() and repaint() don't work here
+        update();
     }
 }
 
@@ -74,13 +83,14 @@ void SvgEditor::paintEvent(QPaintEvent *event)
 {
     QSvgWidget::paintEvent(event);
     QPainter painter(this);
+    painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
     if (showInPoint)
     {
         painter.save();
         painter.setPen(Qt::darkCyan);
         painter.setBrush(Qt::darkCyan);
-        painter.drawRect(inPoint.x(), inPoint.y(), 2, 2);
+        painter.drawRect(inPoint.x(), inPoint.y(), 5, 5);
         painter.restore();
     }
 
@@ -89,7 +99,7 @@ void SvgEditor::paintEvent(QPaintEvent *event)
         painter.save();
         painter.setPen(Qt::darkMagenta);
         painter.setBrush(Qt::darkMagenta);
-        painter.drawRect(outPoint.x(), outPoint.y(), 2, 2);
+        painter.drawRect(outPoint.x(), outPoint.y(), 5, 5);
         painter.restore();
     }
 
