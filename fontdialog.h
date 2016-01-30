@@ -28,6 +28,7 @@ signals:
 private:
     Ui::FontDialog *ui;
     QSvgRenderer *svgRenderer;
+    QTreeWidgetItem *lastItem;
 
     QString fontFileName;
     QMultiMap<QChar, Letter> font;

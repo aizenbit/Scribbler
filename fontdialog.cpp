@@ -21,6 +21,12 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(setTextFromItem(QTreeWidgetItem*)));
     connect(ui->deleteSymbolButton, SIGNAL(pressed()),
             this, SLOT(deleteLetter()));
+    connect(ui->drawInPointButton, SIGNAL(clicked()),
+            ui->svgEditor, SLOT(enableInPointDrawing()));
+    connect(ui->drawOutPointButton, SIGNAL(clicked()),
+            ui->svgEditor, SLOT(enableOutPointDrawing()));
+    connect(ui->drawLimitsButton, SIGNAL(clicked()),
+            ui->svgEditor, SLOT(enableLimitsDrawing()));
 
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->deleteSymbolButton->setEnabled(false);
@@ -29,6 +35,7 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->fontFileTextEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->treeWidget->setColumnCount(1);
+    lastItem = nullptr;
 }
 
 FontDialog::~FontDialog()
@@ -189,13 +196,52 @@ void FontDialog::limitTextEdit()
 
 void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 {
+    if (lastItem != nullptr)
+    {
+        Letter newLetter;
+        newLetter.fileName = lastItem->text(0);
+        newLetter.inPoint = ui->svgEditor->getInPoint();
+        newLetter.outPoint = ui->svgEditor->getOutPoint();
+        newLetter.limits = ui->svgEditor->getLimits();
+        QChar key = lastItem->parent()->text(0).at(0);
+        QList<Letter> letterList = font.values(key);
+
+        for (Letter & letter : letterList)
+            if (letter.fileName == item->text(0))
+            {
+                letter = newLetter;
+                break;
+            }
+
+        font.remove(key);
+
+        for(const Letter & letter : letterList)
+            font.insert(key, letter);
+    }
+
     if (item->parent() == nullptr)
+    {
         ui->choosenSymbolTextEdit->setText(item->text(0));
+        ui->svgEditor->drawInPoint = false;
+        ui->svgEditor->drawOutPoint = false;
+        ui->svgEditor->drawLimits = false;
+        lastItem = nullptr;
+    }
     else
     {
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
         ui->svgEditor->load(QFileInfo(fontFileName).path() + "//" + item->text(0));
-    }
+        QList<Letter> letterList = font.values(item->parent()->text(0).at(0));
+
+        for (const Letter & letter : letterList)
+            if (letter.fileName == item->text(0))
+            {
+                ui->svgEditor->setLetterData(letter.inPoint, letter.outPoint, letter.limits);
+                break;
+            }
+
+        lastItem = item;
+    }    
 }
 
 void FontDialog::deleteLetter()
