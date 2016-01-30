@@ -41,6 +41,7 @@ void SvgView::limitScale(qreal factor)
 
 int SvgView::renderText(const QStringRef &text)
 {
+    //---Prepare scene: clear, draw margins if needed, initialize cursor
     scene->clear();
 
     QRectF currentMarginsRect;
@@ -59,9 +60,10 @@ int SvgView::renderText(const QStringRef &text)
     QPointF cursor(currentMarginsRect.x(), currentMarginsRect.y());
     int endOfSheet = 0;
 
+    //---Sequentially add the letters on the scene
     for (QChar symbol : text)
     {
-        qreal letterWidth = fontSize * dpmm / 4, letterHeight = fontSize * dpmm;
+        qreal letterWidth = fontSize * dpmm / 3, letterHeight = fontSize * dpmm;
 
         //don't try to go beyond the right margin
         if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
@@ -106,6 +108,7 @@ int SvgView::renderText(const QStringRef &text)
             continue;
         }
 
+        //---add letter
         Letter letterData = font.values(symbol).at(qrand() % font.values(symbol).size());
 
         QGraphicsSvgItem *letter = new QGraphicsSvgItem(letterData.fileName);
@@ -117,10 +120,13 @@ int SvgView::renderText(const QStringRef &text)
             letter->setGraphicsEffect(colorEffect);
         }
 
-        letter->setScale(letterHeight / letter->boundingRect().height());
-        letterWidth = letter->boundingRect().width() * letter->scale() + letterSpacing * dpmm;
-        letter->setPos(cursor);
-        cursor += QPointF(letterWidth, 0.0);
+        qreal realLetterWidth = letter->boundingRect().width() * letterData.limits.width();
+        qreal realLetterHeight = letter->boundingRect().height() * letterData.limits.height();
+        letter->setScale(letterHeight / realLetterHeight);
+        letterWidth = realLetterWidth * letter->scale();
+        cursor -= QPointF(letter->boundingRect().width() * letter->scale() * letterData.limits.topLeft().x(), 0.0);
+        letter->setPos(cursor - QPointF(0.0, letter->boundingRect().height() * letterData.limits.topLeft().y() *  letter->scale()));
+        cursor += QPointF(letterWidth + letterSpacing * dpmm, 0.0);
 
         scene->addItem(letter);
         endOfSheet++;
