@@ -127,15 +127,20 @@ void FontDialog::loadLetters()
     letterItem->text(0);
 
     for (QString fileName : files)
-        font.insert(letter, {QFileInfo(fileName).fileName()});
+    {
+        Letter temp = { QFileInfo(fileName).fileName(),
+                        QPointF(-1.0, -1.0),
+                        QPointF(-1.0, -1.0),
+                        QRectF(-1.0, -1.0, -1.0, -1.0) };
+        font.insert(letter, temp);
+    }
 
     for (QString value : files)
     {
         QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(QFileInfo(value).fileName()));
         letterItem->addChild(valueItem);
-
-
     }
+
     ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
 
     ui->choosenSymbolTextEdit->setText(QString());
