@@ -30,6 +30,9 @@ FontDialog::FontDialog(QWidget *parent) :
 
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->deleteSymbolButton->setEnabled(false);
+    ui->drawInPointButton->setEnabled(false);
+    ui->drawOutPointButton->setEnabled(false);
+    ui->drawLimitsButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
 
     ui->treeWidget->setColumnCount(1);
@@ -147,6 +150,9 @@ void FontDialog::saveFont()
     fontSettings.beginGroup("Font");
     fontSettings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
+    loadFromEditorToFont();
+    lastItem = nullptr;
+
     for (QChar &key : font.keys())
         if (key.isUpper())
         {
@@ -170,10 +176,16 @@ void FontDialog::rejectChanges()
 {
     font.clear();
     fontFileName.clear();
+    lastItem = nullptr;
+    ui->drawInPointButton->setEnabled(false);
+    ui->drawOutPointButton->setEnabled(false);
+    ui->drawLimitsButton->setEnabled(false);
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->choosenSymbolTextEdit->clear();
     ui->fontFileTextEdit->clear();
     ui->treeWidget->clear();
+    ui->svgEditor->disableDrawing(true);
+    ui->svgEditor->drawLetter = false;
 }
 
 void FontDialog::limitTextEdit()
@@ -184,6 +196,7 @@ void FontDialog::limitTextEdit()
     {
         ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
         ui->deleteSymbolButton->setEnabled(!text.isEmpty());
+        ui->svgEditor->disableDrawing(true);
     }
 
     if (text.length() > 1)
@@ -194,6 +207,38 @@ void FontDialog::limitTextEdit()
 }
 
 void FontDialog::setTextFromItem(QTreeWidgetItem *item)
+{
+    loadFromEditorToFont();
+
+    if (item->parent() == nullptr)
+    {
+        ui->choosenSymbolTextEdit->setText(item->text(0));
+        ui->svgEditor->drawInPoint = false;
+        ui->svgEditor->drawOutPoint = false;
+        ui->svgEditor->drawLimits = false;
+        lastItem = nullptr;
+    }
+    else
+    {
+        ui->drawInPointButton->setEnabled(true);
+        ui->drawOutPointButton->setEnabled(true);
+        ui->drawLimitsButton->setEnabled(true);
+        ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
+        ui->svgEditor->load(QFileInfo(fontFileName).path() + "//" + item->text(0));
+        QList<Letter> letterList = font.values(item->parent()->text(0).at(0));
+
+        for (const Letter &letter : letterList)
+            if (letter.fileName == item->text(0))
+            {
+                ui->svgEditor->setLetterData(letter.inPoint, letter.outPoint, letter.limits);
+                break;
+            }
+
+        lastItem = item;
+    }    
+}
+
+void FontDialog::loadFromEditorToFont()
 {
     if (lastItem != nullptr)
     {
@@ -217,30 +262,6 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         for (const Letter &letter : letterList)
             font.insert(key, letter);
     }
-
-    if (item->parent() == nullptr)
-    {
-        ui->choosenSymbolTextEdit->setText(item->text(0));
-        ui->svgEditor->drawInPoint = false;
-        ui->svgEditor->drawOutPoint = false;
-        ui->svgEditor->drawLimits = false;
-        lastItem = nullptr;
-    }
-    else
-    {
-        ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
-        ui->svgEditor->load(QFileInfo(fontFileName).path() + "//" + item->text(0));
-        QList<Letter> letterList = font.values(item->parent()->text(0).at(0));
-
-        for (const Letter &letter : letterList)
-            if (letter.fileName == item->text(0))
-            {
-                ui->svgEditor->setLetterData(letter.inPoint, letter.outPoint, letter.limits);
-                break;
-            }
-
-        lastItem = item;
-    }    
 }
 
 void FontDialog::deleteLetter()

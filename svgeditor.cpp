@@ -12,6 +12,7 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     drawInPoint = false;
     drawOutPoint = false;
     drawLimits = false;
+    drawLetter = false;
 }
 
 void SvgEditor::load(const QString & file)
@@ -19,6 +20,7 @@ void SvgEditor::load(const QString & file)
     QSvgWidget::load(file);
     QSize letterSize = renderer()->defaultSize();
     setFixedWidth(letterSize.width() * static_cast<qreal>(height()) / letterSize.height());
+    drawLetter = true;
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
@@ -28,60 +30,59 @@ void SvgEditor::load(const QString & file)
     showInPoint = false;
     showOutPoint = false;
     showLimits = false;
+    update();
 }
 
 void SvgEditor::mousePressEvent(QMouseEvent *event)
 {
-    if (drawInPoint && event->button() == Qt::LeftButton)
-    {
-        inPoint = event->pos();
-        showInPoint = true;
-        update();
-    }
+    if (event->button() != Qt::LeftButton)
+        return;
 
-    if (drawOutPoint && event->button() == Qt::LeftButton)
-    {
-        outPoint = event->pos();
-        showOutPoint = true;
-        update();
-    }
+    if (drawInPoint)
+        setInPoint(event->pos());
 
-    if (drawLimits && event->button() == Qt::LeftButton)
-        limitsTopLeft = event->pos();
+    if (drawOutPoint)
+        setOutPoint(event->pos());
+
+    if (drawLimits)
+        setLimitsTopLeft(event->pos());
 }
 
 void SvgEditor::mouseMoveEvent(QMouseEvent *event)
 {
     if (drawLimits)
-    {  
-        limitsBottomRight = event->pos();
+        setLimitsBottomRight(event->pos());
 
-        if (limitsBottomRight.x() > this->width())
-            limitsBottomRight.rx() = this->width() - 1;
+    if (drawInPoint)
+        setInPoint(event->pos());
 
-        if (limitsBottomRight.y() > this->height())
-            limitsBottomRight.ry() = this->height() - 1;
-
-        limits = QRectF(limitsTopLeft, limitsBottomRight);
-        showLimits = true;
-        update();
-    }
+    if (drawOutPoint)
+        setOutPoint(event->pos());
 }
 
 void SvgEditor::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (drawLimits && event->button() == Qt::LeftButton)
+    if (drawLimits)
     {
-        limitsBottomRight = event->pos();
-        limits = QRectF(limitsTopLeft, limitsBottomRight);
-        showLimits = true;
-        update();
+        setLimitsBottomRight(event->pos());
+
+        if (limits.topLeft().x() > limits.bottomRight().x() ||
+            limits.topLeft().y() > limits.bottomRight().y())
+            limits = QRectF(limits.topRight(), limits.bottomLeft());
     }
+
+    if (drawInPoint)
+        setInPoint(event->pos());
+
+    if (drawOutPoint)
+        setOutPoint(event->pos());
 }
 
 void SvgEditor::paintEvent(QPaintEvent *event)
 {
-    QSvgWidget::paintEvent(event);
+    if (drawLetter)
+        QSvgWidget::paintEvent(event);
+
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
@@ -90,7 +91,7 @@ void SvgEditor::paintEvent(QPaintEvent *event)
         painter.save();
         painter.setPen(Qt::darkCyan);
         painter.setBrush(Qt::darkCyan);
-        painter.drawRect(inPoint.x(), inPoint.y(), 5, 5);
+        painter.drawRect(inPoint.x() - pointWidth / 2, inPoint.y() - pointWidth / 2, 5, 5);
         painter.restore();
     }
 
@@ -99,7 +100,7 @@ void SvgEditor::paintEvent(QPaintEvent *event)
         painter.save();
         painter.setPen(Qt::darkMagenta);
         painter.setBrush(Qt::darkMagenta);
-        painter.drawRect(outPoint.x(), outPoint.y(), 5, 5);
+        painter.drawRect(outPoint.x() - pointWidth / 2, outPoint.y() - pointWidth / 2, 5, 5);
         painter.restore();
     }
 
@@ -108,7 +109,6 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     {
         painter.save();
         painter.setPen(Qt::darkYellow);
-
         painter.drawRect(limits);
         painter.restore();
     }
@@ -134,6 +134,7 @@ void SvgEditor::disableDrawing(bool disable)
         drawOutPoint = false;
         drawLimits = false;
     }
+    update();
 }
 
 void SvgEditor::enableInPointDrawing(bool draw)
@@ -152,4 +153,38 @@ void SvgEditor::enableLimitsDrawing(bool draw)
 {
     disableDrawing(true);
     drawLimits = draw;
+}
+
+void SvgEditor::setInPoint(const QPointF &point)
+{
+    inPoint = point;
+    showInPoint = true;
+    update();
+}
+
+void SvgEditor::setOutPoint(const QPointF &point)
+{
+    outPoint = point;
+    showOutPoint = true;
+    update();
+}
+
+void SvgEditor::setLimitsTopLeft(const QPointF &point)
+{
+    limitsTopLeft = point;
+}
+
+void SvgEditor::setLimitsBottomRight(const QPointF &point)
+{
+    limitsBottomRight = point;
+
+    if (limitsBottomRight.x() > this->width())
+        limitsBottomRight.rx() = this->width() - 1;
+
+    if (limitsBottomRight.y() > this->height())
+        limitsBottomRight.ry() = this->height() - 1;
+
+    limits = QRectF(limitsTopLeft, limitsBottomRight);
+    showLimits = true;
+    update();
 }

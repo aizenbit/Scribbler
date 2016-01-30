@@ -42,6 +42,7 @@ private slots:
 
     void limitTextEdit();
     void setTextFromItem(QTreeWidgetItem *item);
+    void loadFromEditorToFont();
 
 };
 

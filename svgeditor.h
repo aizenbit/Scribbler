@@ -12,7 +12,7 @@ class SvgEditor : public QSvgWidget
 public:
     explicit SvgEditor(QWidget *parent = 0);
 
-    bool drawInPoint, drawOutPoint, drawLimits;
+    bool drawInPoint, drawOutPoint, drawLimits, drawLetter;
 
 public slots:
     void load(const QString & file);
@@ -35,6 +35,13 @@ private:
     QPointF inPoint, outPoint, limitsTopLeft, limitsBottomRight;
     QRectF limits;
     bool showInPoint, showOutPoint, showLimits;
+    const qreal pointWidth = 5;
+
+    void setInPoint(const QPointF &point);
+    void setOutPoint(const QPointF &point);
+    void setLimitsTopLeft(const QPointF &point);
+    void setLimitsBottomRight(const QPointF &point);
+
 };
 
 #endif // SVGEDITOR_H
