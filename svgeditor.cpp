@@ -9,6 +9,8 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
+    limitsTopLeft = limits.topLeft();
+    limitsBottomRight = limits.bottomRight();
     drawInPoint = false;
     drawOutPoint = false;
     drawLimits = false;
@@ -24,6 +26,8 @@ void SvgEditor::load(const QString & file)
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
+    limitsTopLeft = limits.topLeft();
+    limitsBottomRight = limits.bottomRight();
     drawInPoint = false;
     drawOutPoint = false;
     drawLimits = false;
@@ -122,11 +126,12 @@ void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, c
     inPoint = _inPoint;
     outPoint = _outPoint;
     limits = _limits;
-    limits.topLeft() = limits.topLeft();
+    limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     showInPoint = true;
     showOutPoint = true;
     showLimits = true;
+    update();
 }
 
 void SvgEditor::disableDrawing(bool disable)
