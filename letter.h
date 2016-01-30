@@ -11,10 +11,9 @@ struct Letter {
 };
 
 Q_DECLARE_METATYPE(Letter);
-
-QDataStream& operator<<(QDataStream& out, const Letter& v);
-QDataStream& operator>>(QDataStream& in, Letter& v);
-
 Q_DECLARE_METATYPE(QList<Letter>);
+
+QDataStream & operator<<(QDataStream &out, const Letter &letter);
+QDataStream & operator>>(QDataStream &in, Letter &letter);
 
 #endif // LETTER_H

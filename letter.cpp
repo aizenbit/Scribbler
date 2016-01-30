@@ -1,16 +1,17 @@
 #include "letter.h"
 
-QDataStream& operator<<(QDataStream& out, const Letter& v)
+QDataStream & operator<<(QDataStream &out, const Letter &letter)
 {
-    out << v.fileName << v.inPoint << v.outPoint << v.limits;
+    out << letter.fileName << letter.inPoint
+        << letter.outPoint << letter.limits;
     return out;
 }
 
-QDataStream& operator>>(QDataStream& in, Letter& v)
+QDataStream & operator>>(QDataStream &in, Letter &letter)
 {
-    in >> v.fileName;
-    in >> v.inPoint;
-    in >> v.outPoint;
-    in >> v.limits;
+    in >> letter.fileName;
+    in >> letter.inPoint;
+    in >> letter.outPoint;
+    in >> letter.limits;
     return in;
 }

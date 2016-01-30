@@ -32,6 +32,7 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(deleteLetter()));
 
     ui->SymbolFilesPushButton->setEnabled(false);
+    ui->deleteSymbolButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
     ui->fontFileTextEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->fontFileTextEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -57,7 +58,6 @@ void FontDialog::loadFont()
         return;
 
     ui->fontFileTextEdit->setText(fontFileName);
-    ui->SymbolFilesPushButton->setEnabled(true);
 
     QSettings fontSettings(fontFileName, QSettings::IniFormat);
     fontSettings.beginGroup("Font");
@@ -183,6 +183,13 @@ void FontDialog::rejectChanges()
 void FontDialog::limitTextEdit()
 {
     QString text = ui->choosenSymbolTextEdit->toPlainText();
+
+    if(!fontFileName.isEmpty())
+    {
+        ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
+        ui->deleteSymbolButton->setEnabled(!text.isEmpty());
+    }
+
     if (text.length() > 1)
     {
         text = text.left(1);
@@ -190,7 +197,7 @@ void FontDialog::limitTextEdit()
     }
 }
 
-void FontDialog::setTextFromItem(QTreeWidgetItem * item)
+void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 {
     if (item->parent() == nullptr)
         ui->choosenSymbolTextEdit->setText(item->text(0));
@@ -206,7 +213,12 @@ void FontDialog::setTextFromItem(QTreeWidgetItem * item)
 void FontDialog::deleteLetter()
 {
     QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
-    QTreeWidgetItem *letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
+    QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive);
+
+    if (letterItemList.isEmpty())
+        return;
+
+    QTreeWidgetItem *letterItem = letterItemList.first();
     delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
     font.remove(letter);
 }
