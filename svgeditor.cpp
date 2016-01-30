@@ -86,30 +86,31 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
+    QPen pen = QPen(Qt::SolidPattern, pointWidth);
+
     if (showInPoint)
     {
         painter.save();
-        painter.setPen(Qt::darkCyan);
-        painter.setBrush(Qt::darkCyan);
-        painter.drawRect(inPoint.x() - pointWidth / 2, inPoint.y() - pointWidth / 2, 5, 5);
+        pen.setColor(Qt::darkCyan);
+        painter.setPen(pen);
+        painter.drawPoint(fromStored(inPoint));
         painter.restore();
     }
 
     if (showOutPoint)
     {
         painter.save();
-        painter.setPen(Qt::darkMagenta);
-        painter.setBrush(Qt::darkMagenta);
-        painter.drawRect(outPoint.x() - pointWidth / 2, outPoint.y() - pointWidth / 2, 5, 5);
+        pen.setColor(Qt::darkMagenta);
+        painter.setPen(pen);
+        painter.drawPoint(fromStored(outPoint));
         painter.restore();
     }
 
-
-    if(showLimits)
+    if (showLimits)
     {
         painter.save();
         painter.setPen(Qt::darkYellow);
-        painter.drawRect(limits);
+        painter.drawRect(QRectF(fromStored(limitsTopLeft), fromStored(limitsBottomRight)));
         painter.restore();
     }
 
@@ -121,6 +122,8 @@ void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, c
     inPoint = _inPoint;
     outPoint = _outPoint;
     limits = _limits;
+    limits.topLeft() = limits.topLeft();
+    limitsBottomRight = limits.bottomRight();
     showInPoint = true;
     showOutPoint = true;
     showLimits = true;
@@ -157,21 +160,21 @@ void SvgEditor::enableLimitsDrawing(bool draw)
 
 void SvgEditor::setInPoint(const QPointF &point)
 {
-    inPoint = point;
+    inPoint = toStored(point);
     showInPoint = true;
     update();
 }
 
 void SvgEditor::setOutPoint(const QPointF &point)
 {
-    outPoint = point;
+    outPoint = toStored(point);
     showOutPoint = true;
     update();
 }
 
 void SvgEditor::setLimitsTopLeft(const QPointF &point)
 {
-    limitsTopLeft = point;
+    limitsTopLeft = toStored(point);
 }
 
 void SvgEditor::setLimitsBottomRight(const QPointF &point)
@@ -184,7 +187,25 @@ void SvgEditor::setLimitsBottomRight(const QPointF &point)
     if (limitsBottomRight.y() > this->height())
         limitsBottomRight.ry() = this->height() - 1;
 
+    limitsBottomRight = toStored(limitsBottomRight);
+
     limits = QRectF(limitsTopLeft, limitsBottomRight);
     showLimits = true;
     update();
+}
+
+QPointF SvgEditor::toStored(const QPointF &point)
+{
+    QPointF result, poin;
+    result.rx() = point.x() / static_cast<qreal>(this->width() - 1);
+    result.ry() = point.y() / static_cast<qreal>(this->height() - 1);
+    return result;
+}
+
+QPointF SvgEditor::fromStored(const QPointF &point)
+{
+    QPointF result, poin;
+    result.rx() = point.x() * static_cast<qreal>(this->width() - 1);
+    result.ry() = point.y() * static_cast<qreal>(this->height() - 1);
+    return result;
 }

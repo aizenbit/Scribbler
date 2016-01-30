@@ -3,6 +3,7 @@
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
+#include <QtGui/QPen>
 #include <QtSvg/QSvgWidget>
 #include <QtSvg/QSvgRenderer>
 
@@ -41,7 +42,8 @@ private:
     void setOutPoint(const QPointF &point);
     void setLimitsTopLeft(const QPointF &point);
     void setLimitsBottomRight(const QPointF &point);
-
+    QPointF toStored(const QPointF &point);
+    QPointF fromStored(const QPointF &point);
 };
 
 #endif // SVGEDITOR_H

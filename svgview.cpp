@@ -109,6 +109,7 @@ int SvgView::renderText(const QStringRef &text)
         Letter letterData = font.values(symbol).at(qrand() % font.values(symbol).size());
 
         QGraphicsSvgItem *letter = new QGraphicsSvgItem(letterData.fileName);
+
         if (useCustomFontColor)
         {
             QGraphicsColorizeEffect *colorEffect = new QGraphicsColorizeEffect();

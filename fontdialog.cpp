@@ -46,6 +46,7 @@ FontDialog::~FontDialog()
 
 void FontDialog::loadFont()
 {
+    ui->svgEditor->setFixedHeight(ui->svgEditor->height());
     lastItem = nullptr;
     fontFileName.clear();
     fontFileName = QFileDialog::getSaveFileName(0, tr("Choose"), "",
@@ -142,7 +143,6 @@ void FontDialog::loadLetters()
     }
 
     ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
-
     ui->choosenSymbolTextEdit->setText(QString());
 }
 
