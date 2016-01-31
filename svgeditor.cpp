@@ -9,6 +9,9 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
+    scaleFactor = 1;
+    minScaleFactor = 0.5;
+    maxScaleFactor = 10;
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     drawInPoint = false;
@@ -20,8 +23,6 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
 void SvgEditor::load(const QString & file)
 {
     QSvgWidget::load(file);
-    letterSize = renderer()->defaultSize();
-    //setFixedWidth(letterSize.width() * static_cast<qreal>(height()) / letterSize.height());
     drawLetter = true;
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
@@ -36,7 +37,17 @@ void SvgEditor::load(const QString & file)
     showLimits = false;
     update();
 }
+void SvgEditor::wheelEvent(QWheelEvent *event)
+{
+    qreal factor = qPow(1.2, event->delta() / 240.0);
+    qreal newFactor = scaleFactor * factor;
 
+    if (newFactor < maxScaleFactor && newFactor > minScaleFactor)
+        scaleFactor = newFactor;
+
+    update();
+    event->accept();
+}
 void SvgEditor::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton)
@@ -84,16 +95,13 @@ void SvgEditor::mouseReleaseEvent(QMouseEvent *event)
 
 void SvgEditor::paintEvent(QPaintEvent *event)
 {
-    qreal scale = 3;
-    qreal wWidth = width()/scale, wHeight = height() / scale;
-    QRect viewBox(-wWidth/2+letterSize.width()/2, -wHeight/2+letterSize.height()/2, wWidth, wHeight);
-    renderer()->setViewBox(viewBox);
-    if (drawLetter)
-        QSvgWidget::paintEvent(event);
-
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
-    painter.setViewport(viewBox);
+
+    renderer()->render(&painter, QRectF(QPointF(width()/2 - renderer()->defaultSize().width()/2 * scaleFactor,
+                                                height()/2 - renderer()->defaultSize().height()/2*scaleFactor),
+                                        renderer()->defaultSize() *= scaleFactor));
+
     QPen pen = QPen(Qt::SolidPattern, pointWidth);
 
     if (showInPoint)
@@ -123,6 +131,8 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     }
 
     painter.end();
+
+    event->accept();
 }
 
 void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
@@ -205,7 +215,7 @@ void SvgEditor::setLimitsBottomRight(const QPointF &point)
 
 QPointF SvgEditor::toStored(const QPointF &point)
 {
-    QPointF result, poin;
+    QPointF result;
     result.rx() = point.x() / static_cast<qreal>(this->width() - 1);
     result.ry() = point.y() / static_cast<qreal>(this->height() - 1);
     return result;
@@ -213,7 +223,7 @@ QPointF SvgEditor::toStored(const QPointF &point)
 
 QPointF SvgEditor::fromStored(const QPointF &point)
 {
-    QPointF result, poin;
+    QPointF result;
     result.rx() = point.x() * static_cast<qreal>(this->width() - 1);
     result.ry() = point.y() * static_cast<qreal>(this->height() - 1);
     return result;

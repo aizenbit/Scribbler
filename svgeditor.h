@@ -1,6 +1,7 @@
 #ifndef SVGEDITOR_H
 #define SVGEDITOR_H
 
+#include <QtCore/QtMath>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPen>
@@ -27,6 +28,7 @@ public slots:
     QRectF getLimits() const {return limits;}
 
 protected:
+    void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
@@ -37,7 +39,7 @@ private:
     QRectF limits;
     bool showInPoint, showOutPoint, showLimits;
     const qreal pointWidth = 5;
-    QSize letterSize;
+    qreal scaleFactor, maxScaleFactor, minScaleFactor;
 
     void setInPoint(const QPointF &point);
     void setOutPoint(const QPointF &point);
