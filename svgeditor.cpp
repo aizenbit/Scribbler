@@ -98,8 +98,8 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
-    renderer()->render(&painter, QRectF(QPointF(width()/2 - renderer()->defaultSize().width()/2 * scaleFactor,
-                                                height()/2 - renderer()->defaultSize().height()/2*scaleFactor),
+    renderer()->render(&painter, QRectF(QPointF(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
+                                                height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor),
                                         renderer()->defaultSize() *= scaleFactor));
 
     QPen pen = QPen(Qt::SolidPattern, pointWidth);
@@ -216,15 +216,22 @@ void SvgEditor::setLimitsBottomRight(const QPointF &point)
 QPointF SvgEditor::toStored(const QPointF &point)
 {
     QPointF result;
-    result.rx() = point.x() / static_cast<qreal>(this->width() - 1);
-    result.ry() = point.y() / static_cast<qreal>(this->height() - 1);
+    QSize currentLetterSize = renderer()->defaultSize() *= scaleFactor;
+    QPointF letterBegin(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
+                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);
+    result.rx() = (point.x() - letterBegin.x()) / static_cast<qreal>(currentLetterSize.width() - 1);
+    result.ry() = (point.y() - letterBegin.y()) / static_cast<qreal>(currentLetterSize.height() - 1);
     return result;
 }
 
 QPointF SvgEditor::fromStored(const QPointF &point)
 {
     QPointF result;
-    result.rx() = point.x() * static_cast<qreal>(this->width() - 1);
-    result.ry() = point.y() * static_cast<qreal>(this->height() - 1);
+    QSize currentLetterSize = renderer()->defaultSize() *= scaleFactor;
+    QPointF letterBegin(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
+                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);
+    result.rx() = point.x() * static_cast<qreal>(currentLetterSize.width() - 1);
+    result.ry() = point.y() * static_cast<qreal>(currentLetterSize.height() - 1);
+    result += letterBegin;
     return result;
 }
