@@ -159,13 +159,6 @@
         <string>Font Settings</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>Line Spacing (mm):</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QDoubleSpinBox" name="fontSizeSpinBox">
           <property name="minimum">
@@ -183,6 +176,20 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Line Spacing (mm):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Letter Spacing (mm):</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="letterSpacingSpinBox">
           <property name="minimum">
@@ -196,19 +203,15 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Letter Spacing (mm):</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string>Font Size (mm):</string>
           </property>
          </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="spacesInTabSpinBox"/>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_11">
@@ -217,8 +220,12 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QSpinBox" name="spacesInTabSpinBox"/>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="fontColorCheckBox">
+          <property name="text">
+           <string>Use Font Color:</string>
+          </property>
+         </widget>
         </item>
         <item row="4" column="1">
          <widget class="QPushButton" name="colorButton">
@@ -227,10 +234,10 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QCheckBox" name="fontColorCheckBox">
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="connectLettersCheckBox">
           <property name="text">
-           <string>Use Font Color:</string>
+           <string>Connect Letters</string>
           </property>
          </widget>
         </item>

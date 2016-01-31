@@ -19,10 +19,10 @@ public:
 public slots:
     void load(const QString & file);
     void setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
-    void disableDrawing(bool disable = true);
-    void enableInPointDrawing(bool draw = true);
-    void enableOutPointDrawing(bool draw = true);
-    void enableLimitsDrawing(bool draw = true);
+    void disableDrawing(const bool disable = true);
+    void enableInPointDrawing(const bool draw = true);
+    void enableOutPointDrawing(const bool draw = true);
+    void enableLimitsDrawing(const bool draw = true);
     QPointF getInPoint() const {return inPoint;}
     QPointF getOutPoint() const {return outPoint;}
     QRectF getLimits() const {return limits;}
@@ -33,6 +33,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     QPointF inPoint, outPoint, limitsTopLeft, limitsBottomRight;
@@ -40,11 +41,15 @@ private:
     bool showInPoint, showOutPoint, showLimits;
     const qreal pointWidth = 5;
     qreal scaleFactor, maxScaleFactor, minScaleFactor;
+    QSize currentLetterSize;
+    QPointF letterBegin;
 
-    void setInPoint(const QPointF &point);
-    void setOutPoint(const QPointF &point);
-    void setLimitsTopLeft(const QPointF &point);
-    void setLimitsBottomRight(const QPointF &point);
+    void setInPoint(QPointF point);
+    void setOutPoint(QPointF point);
+    void setLimitsTopLeft(QPointF point);
+    void setLimitsBottomRight(QPointF point);
+    void calculateCoordinates();
+    void keepPointOnLetterCanvas(QPointF & point);
     QPointF toStored(const QPointF &point);
     QPointF fromStored(const QPointF &point);
 };

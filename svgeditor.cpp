@@ -35,6 +35,7 @@ void SvgEditor::load(const QString & file)
     showInPoint = false;
     showOutPoint = false;
     showLimits = false;
+    calculateCoordinates();
     update();
 }
 void SvgEditor::wheelEvent(QWheelEvent *event)
@@ -45,6 +46,7 @@ void SvgEditor::wheelEvent(QWheelEvent *event)
     if (newFactor < maxScaleFactor && newFactor > minScaleFactor)
         scaleFactor = newFactor;
 
+    calculateCoordinates();
     update();
     event->accept();
 }
@@ -135,6 +137,13 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     event->accept();
 }
 
+void SvgEditor::resizeEvent(QResizeEvent *event)
+{
+    QSvgWidget::resizeEvent(event);
+    calculateCoordinates();
+    update();
+}
+
 void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
     inPoint = _inPoint;
@@ -148,7 +157,7 @@ void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, c
     update();
 }
 
-void SvgEditor::disableDrawing(bool disable)
+void SvgEditor::disableDrawing(const bool disable)
 {
     if (disable)
     {
@@ -159,54 +168,51 @@ void SvgEditor::disableDrawing(bool disable)
     update();
 }
 
-void SvgEditor::enableInPointDrawing(bool draw)
+void SvgEditor::enableInPointDrawing(const bool draw)
 {
     disableDrawing(true);
     drawInPoint = draw;
 }
 
-void SvgEditor::enableOutPointDrawing(bool draw)
+void SvgEditor::enableOutPointDrawing(const bool draw)
 {
     disableDrawing(true);
     drawOutPoint = draw;
 }
 
-void SvgEditor::enableLimitsDrawing(bool draw)
+void SvgEditor::enableLimitsDrawing(const bool draw)
 {
     disableDrawing(true);
     drawLimits = draw;
 }
 
-void SvgEditor::setInPoint(const QPointF &point)
+void SvgEditor::setInPoint(QPointF point)
 {
+    keepPointOnLetterCanvas(point);
     inPoint = toStored(point);
     showInPoint = true;
     update();
 }
 
-void SvgEditor::setOutPoint(const QPointF &point)
+void SvgEditor::setOutPoint(QPointF point)
 {
+    keepPointOnLetterCanvas(point);
     outPoint = toStored(point);
     showOutPoint = true;
     update();
 }
 
-void SvgEditor::setLimitsTopLeft(const QPointF &point)
+void SvgEditor::setLimitsTopLeft(QPointF point)
 {
+    keepPointOnLetterCanvas(point);
     limitsTopLeft = toStored(point);
 }
 
-void SvgEditor::setLimitsBottomRight(const QPointF &point)
+void SvgEditor::setLimitsBottomRight(QPointF point)
 {
-    limitsBottomRight = point;
+    keepPointOnLetterCanvas(point);
 
-    if (limitsBottomRight.x() > this->width())
-        limitsBottomRight.rx() = this->width() - 1;
-
-    if (limitsBottomRight.y() > this->height())
-        limitsBottomRight.ry() = this->height() - 1;
-
-    limitsBottomRight = toStored(limitsBottomRight);
+    limitsBottomRight = toStored(point);
 
     limits = QRectF(limitsTopLeft, limitsBottomRight);
     showLimits = true;
@@ -216,9 +222,9 @@ void SvgEditor::setLimitsBottomRight(const QPointF &point)
 QPointF SvgEditor::toStored(const QPointF &point)
 {
     QPointF result;
-    QSize currentLetterSize = renderer()->defaultSize() *= scaleFactor;
-    QPointF letterBegin(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
-                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);
+    /*currentLetterSize = renderer()->defaultSize() *= scaleFactor;
+    letterBegin = QPointF(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
+                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);*/
     result.rx() = (point.x() - letterBegin.x()) / static_cast<qreal>(currentLetterSize.width() - 1);
     result.ry() = (point.y() - letterBegin.y()) / static_cast<qreal>(currentLetterSize.height() - 1);
     return result;
@@ -227,11 +233,30 @@ QPointF SvgEditor::toStored(const QPointF &point)
 QPointF SvgEditor::fromStored(const QPointF &point)
 {
     QPointF result;
-    QSize currentLetterSize = renderer()->defaultSize() *= scaleFactor;
+    /*currentLetterSize = renderer()->defaultSize() *= scaleFactor;
     QPointF letterBegin(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
-                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);
+                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);*/
     result.rx() = point.x() * static_cast<qreal>(currentLetterSize.width() - 1);
     result.ry() = point.y() * static_cast<qreal>(currentLetterSize.height() - 1);
     result += letterBegin;
     return result;
+}
+
+void SvgEditor::calculateCoordinates()
+{
+    letterBegin = QPointF(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
+                          height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);
+    currentLetterSize = renderer()->defaultSize() *= scaleFactor;
+}
+
+void SvgEditor::keepPointOnLetterCanvas(QPointF & point)
+{
+    if (point.x() < letterBegin.x())
+        point.rx() = letterBegin.x();
+    if (point.x() >= letterBegin.x() + currentLetterSize.width())
+        point.rx() =  letterBegin.x() + currentLetterSize.width() - 1;
+    if (point.y() < letterBegin.y())
+        point.ry() = letterBegin.y();
+    if (point.y() >= letterBegin.y() + currentLetterSize.height())
+        point.ry() =  letterBegin.y() + currentLetterSize.height() - 1;
 }

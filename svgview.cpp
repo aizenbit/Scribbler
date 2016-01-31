@@ -61,9 +61,17 @@ int SvgView::renderText(const QStringRef &text)
     int endOfSheet = 0;
 
     //---Sequentially add the letters on the scene
-    for (QChar symbol : text)
+    for (int currentLetterNumber = 0; currentLetterNumber < text.length(); currentLetterNumber++)
     {
-        qreal letterWidth = fontSize * dpmm / 3, letterHeight = fontSize * dpmm;
+        QChar symbol = text.at(currentLetterNumber);
+        qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
+
+        if (!font.contains(symbol))
+        {
+            cursor += QPointF(letterWidth, 0.0);
+            endOfSheet++;
+            continue;
+        }
 
         //don't try to go beyond the right margin
         if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
@@ -99,13 +107,6 @@ int SvgView::renderText(const QStringRef &text)
                 endOfSheet++;
                 continue;
             }
-        }
-
-        if (!font.contains(symbol))
-        {
-            cursor += QPointF(letterWidth, 0.0);
-            endOfSheet++;
-            continue;
         }
 
         //---add letter
@@ -222,6 +223,7 @@ void SvgView::loadSettingsFromFile()
 
     fontColor = QColor(settings.value("font-color").toString());
     useCustomFontColor = settings.value("use-custom-font-color").toBool();
+    connectLetters = settings.value("connect-letters").toBool();
 
     settings.endGroup();
 
