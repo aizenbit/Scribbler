@@ -37,6 +37,7 @@ private:
     QRectF limits;
     bool showInPoint, showOutPoint, showLimits;
     const qreal pointWidth = 5;
+    QSize letterSize;
 
     void setInPoint(const QPointF &point);
     void setOutPoint(const QPointF &point);

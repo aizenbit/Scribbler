@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     preferencesDialog = new PreferencesDialog();
     fontDialog = new FontDialog();
-    fontDialog->setFixedSize(fontDialog->width(), fontDialog->height());
+    //fontDialog->setFixedSize(fontDialog->width(), fontDialog->height());
 
     //----File----
     connect(ui->actionConvert_to_Handwritten, SIGNAL(triggered()),

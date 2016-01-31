@@ -6,5 +6,8 @@
         <file>render.png</file>
         <file>right.png</file>
         <file>save.png</file>
+        <file>border.png</file>
+        <file>dark_cyan_dot.png</file>
+        <file>dark_magnetta_dot.png</file>
     </qresource>
 </RCC>

@@ -34,7 +34,9 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawOutPointButton->setEnabled(false);
     ui->drawLimitsButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
-
+    ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
+    ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
+    ui->drawLimitsButton->setIcon(QIcon("://border.png"));
     ui->treeWidget->setColumnCount(1);
     lastItem = nullptr;
 }
@@ -46,7 +48,7 @@ FontDialog::~FontDialog()
 
 void FontDialog::loadFont()
 {
-    ui->svgEditor->setFixedHeight(ui->svgEditor->height());
+    //ui->svgEditor->setFixedHeight(ui->svgEditor->height());
     lastItem = nullptr;
     fontFileName.clear();
     fontFileName = QFileDialog::getSaveFileName(0, tr("Choose"), "",

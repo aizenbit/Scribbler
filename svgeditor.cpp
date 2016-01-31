@@ -20,8 +20,8 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
 void SvgEditor::load(const QString & file)
 {
     QSvgWidget::load(file);
-    QSize letterSize = renderer()->defaultSize();
-    setFixedWidth(letterSize.width() * static_cast<qreal>(height()) / letterSize.height());
+    letterSize = renderer()->defaultSize();
+    //setFixedWidth(letterSize.width() * static_cast<qreal>(height()) / letterSize.height());
     drawLetter = true;
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
@@ -84,12 +84,16 @@ void SvgEditor::mouseReleaseEvent(QMouseEvent *event)
 
 void SvgEditor::paintEvent(QPaintEvent *event)
 {
+    qreal scale = 3;
+    qreal wWidth = width()/scale, wHeight = height() / scale;
+    QRect viewBox(-wWidth/2+letterSize.width()/2, -wHeight/2+letterSize.height()/2, wWidth, wHeight);
+    renderer()->setViewBox(viewBox);
     if (drawLetter)
         QSvgWidget::paintEvent(event);
 
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
-
+    painter.setViewport(viewBox);
     QPen pen = QPen(Qt::SolidPattern, pointWidth);
 
     if (showInPoint)
