@@ -43,6 +43,7 @@ int SvgView::renderText(const QStringRef &text)
 {
     //---Prepare scene: clear, draw margins if needed, initialize cursor
     scene->clear();
+    previousLetterData.fileName = QString();
 
     QRectF currentMarginsRect;
 
@@ -66,13 +67,6 @@ int SvgView::renderText(const QStringRef &text)
         QChar symbol = text.at(currentLetterNumber);
         qreal letterWidth = fontSize * dpmm, letterHeight = fontSize * dpmm;
 
-        if (!font.contains(symbol))
-        {
-            cursor += QPointF(letterWidth, 0.0);
-            endOfSheet++;
-            continue;
-        }
-
         //don't try to go beyond the right margin
         if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
         {
@@ -81,6 +75,7 @@ int SvgView::renderText(const QStringRef &text)
                 endOfSheet++;
                 continue;
             }
+            previousLetterData.fileName = QString();
             cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
         }
 
@@ -88,7 +83,7 @@ int SvgView::renderText(const QStringRef &text)
         if (cursor.y() > currentMarginsRect.bottomRight().y() - letterHeight)
             return endOfSheet;
 
-        if (symbol.isSpace())
+        if (!font.contains(symbol))
         {
             switch (symbol.toLatin1())
             {
@@ -127,10 +122,34 @@ int SvgView::renderText(const QStringRef &text)
         letterWidth = realLetterWidth * letter->scale();
         cursor -= QPointF(letter->boundingRect().width() * letter->scale() * letterData.limits.topLeft().x(), 0.0);
         letter->setPos(cursor - QPointF(0.0, letter->boundingRect().height() * letterData.limits.topLeft().y() *  letter->scale()));
-        cursor += QPointF(letterWidth + letterSpacing * dpmm, 0.0);
+
+        if (connectLetters && currentLetterNumber > 0 && text.at(currentLetterNumber).isLetter()
+            && !previousLetterData.fileName.isEmpty())
+        {
+            QPointF inPoint, outPoint;
+            outPoint.rx() = previousLetterCursor.x() +
+                    previousLetterData.outPoint.x() * lastLetter->boundingRect().width() * lastLetter->scale();
+            outPoint.ry() = previousLetterCursor.y() +
+                    previousLetterData.outPoint.y() * lastLetter->boundingRect().height() * lastLetter->scale() -
+                    lastLetter->boundingRect().height() * previousLetterData.limits.topLeft().y() * lastLetter->scale();
+
+            inPoint.rx() = cursor.x() +
+                    letterData.inPoint.x() * letter->boundingRect().width() * letter->scale();
+            inPoint.ry() = cursor.y() +
+                    letterData.inPoint.y() * letter->boundingRect().height() * letter->scale() -
+                    letter->boundingRect().height() * letterData.limits.topLeft().y() *  letter->scale();
+
+            QPen pen(fontColor);
+            pen.setWidth(0.5 *dpmm);
+            scene->addLine(outPoint.x(), outPoint.y(), inPoint.x(), inPoint.y(), pen);
+        }
 
         scene->addItem(letter);
+        lastLetter = letter;
+        previousLetterCursor = cursor;
+        cursor += QPointF(letterWidth + letterSpacing * dpmm, 0.0);
         endOfSheet++;
+        previousLetterData = letterData;
     }
 
     return endOfSheet;

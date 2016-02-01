@@ -45,6 +45,9 @@ private:
     qreal fontSize, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
+    Letter previousLetterData;
+    QPointF previousLetterCursor;
+    QGraphicsSvgItem *lastLetter;
 
     void limitScale(qreal factor);  //limited view zoom
 };
