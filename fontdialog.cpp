@@ -38,6 +38,7 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
     ui->treeWidget->setColumnCount(1);
+    ui->splitter->setSizes(QList <int> () << 200 << 350);
     lastItem = nullptr;
 }
 

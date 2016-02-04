@@ -73,10 +73,10 @@ void PreferencesDialog::loadSettingsFromFile()
     QSettings settings("Settings.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
     ui->dpiSpinBox->setValue(           settings.value("dpi", 300).toInt());
-    ui->letterSpacingSpinBox->setValue( settings.value("letter-spacing", -1.5).toDouble());
+    ui->letterSpacingSpinBox->setValue( settings.value("letter-spacing", 1.0).toDouble());
     ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 0.0).toDouble());
     ui->spacesInTabSpinBox->setValue(   settings.value("spaces-in-tab", 4).toInt());
-    ui->fontSizeSpinBox->setValue(      settings.value("font-size", 6.0).toDouble());
+    ui->fontSizeSpinBox->setValue(      settings.value("font-size", 8.0).toDouble());
     ui->sheetWidthSpinBox->setValue(    settings.value("sheet-width", 148).toInt());
     ui->sheetHeightSpinBox->setValue(   settings.value("sheet-height", 210).toInt());
     ui->rightMarginsSpinBox->setValue(  settings.value("right-margin", 20).toInt());

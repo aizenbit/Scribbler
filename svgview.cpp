@@ -3,7 +3,7 @@
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
-    maxZoomFactor = 3.0;
+    maxZoomFactor = 1.5;
     minZoomFactor = 0.05;
     changeMargins = false;
 
@@ -140,7 +140,8 @@ int SvgView::renderText(const QStringRef &text)
                     letter->boundingRect().height() * letterData.limits.topLeft().y() *  letter->scale();
 
             QPen pen(fontColor);
-            pen.setWidth(0.5 *dpmm);
+            pen.setWidth(0.4 * dpmm);
+            pen.setCapStyle(Qt::RoundCap);
             scene->addLine(outPoint.x(), outPoint.y(), inPoint.x(), inPoint.y(), pen);
         }
 

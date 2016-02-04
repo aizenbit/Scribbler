@@ -11,7 +11,7 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
     scaleFactor = 1;
     minScaleFactor = 0.5;
-    maxScaleFactor = 10;
+    maxScaleFactor = 20;
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     drawInPoint = false;
