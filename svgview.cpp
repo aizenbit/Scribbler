@@ -52,26 +52,9 @@ int SvgView::renderText(const QStringRef &text)
 
         if (!font.contains(symbol))
         {
-            switch (symbol.toLatin1())
-            {
-            case '\t':
-                cursor += QPointF(fontSize * dpmm * spacesInTab, 0.0);
-                lastLetter = nullptr;
-                endOfSheet++;
-                continue;
-
-            case '\n':
-                cursor += QPointF(currentMarginsRect.x() - cursor.x(), (fontSize + lineSpacing) * dpmm);
-                endOfSheet++;
-                lastLetter = nullptr;
-                continue;
-
-            default:
-                cursor += QPointF(fontSize * dpmm, 0.0);
-                endOfSheet++;
-                lastLetter = nullptr;
-                continue;
-            }
+            processUnknownSymbol(symbol);
+            endOfSheet++;
+            continue;
         }
 
         letterData = font.values(symbol).at(qrand() % font.values(symbol).size());
@@ -86,7 +69,10 @@ int SvgView::renderText(const QStringRef &text)
         }
 
         qreal letterHeight = letterItem->boundingRect().height() * letterData.limits.height();
+        qreal letterWidth = letterItem->boundingRect().width() * letterData.limits.width();
         letterItem->setScale(fontSize * dpmm / letterHeight);
+        letterWidth *= letterItem->scale();
+        letterHeight *= letterItem->scale();
 
         letterBoundingRect.setWidth(letterItem->boundingRect().width() * letterItem->scale());
         letterBoundingRect.setHeight(letterItem->boundingRect().height() * letterItem->scale());
@@ -112,7 +98,7 @@ int SvgView::renderText(const QStringRef &text)
         lastLetter = letterItem;
         previousLetterCursor = cursor;
         previousLetterData = letterData;
-        cursor.rx() += (fontSize + letterSpacing) * dpmm;
+        cursor.rx() += letterWidth + letterSpacing * dpmm;
         endOfSheet++;
     }
 
@@ -175,6 +161,27 @@ void SvgView::connectLastLetterToCurrent()
     pen.setCapStyle(Qt::RoundCap);
 
     scene->addLine(outPoint.x(), outPoint.y(), inPoint.x(), inPoint.y(), pen);
+}
+
+void SvgView::processUnknownSymbol(const QChar &symbol)
+{
+    switch (symbol.toLatin1())
+    {
+    case '\t':
+        cursor += QPointF(fontSize * dpmm * spacesInTab, 0.0);
+        lastLetter = nullptr;
+        break;
+
+    case '\n':
+        cursor += QPointF(currentMarginsRect.x() - cursor.x(), (fontSize + lineSpacing) * dpmm);
+        lastLetter = nullptr;
+        break;
+
+    default:
+        cursor += QPointF(fontSize * dpmm, 0.0);
+        lastLetter = nullptr;
+        break;
+    }
 }
 
 QImage SvgView::saveRenderToImage()

@@ -56,7 +56,7 @@ private:
     void prepareSceneToRender();
     void preventGoingBeyondRightMargin();
     void connectLastLetterToCurrent();
-    void noSuchSymbol();
+    void processUnknownSymbol(const QChar &symbol);
 };
 
 #endif // SVGVIEW_H
