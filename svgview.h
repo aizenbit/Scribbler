@@ -41,15 +41,21 @@ private:
     int dpmm; //dots per millimeter
     int spacesInTab;
     bool useCustomFontColor, changeMargins, connectLetters;
-    qreal maxZoomFactor, minZoomFactor, currentScaleFactor;
+    qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     qreal fontSize, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
-    Letter previousLetterData;
-    QPointF previousLetterCursor;
+
+    Letter letterData, previousLetterData;
+    QRectF currentMarginsRect;
+    QSize letterBoundingRect;
+    QPointF cursor, previousLetterCursor;
     QGraphicsSvgItem *lastLetter;
 
     void limitScale(qreal factor);  //limited view zoom
+    void prepareSceneToRender();
+    void preventGoingBeyondRightMargin();
+    void connectLastLetterToCurrent();
 };
 
 #endif // SVGVIEW_H

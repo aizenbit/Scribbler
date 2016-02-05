@@ -36,7 +36,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
-    QPointF inPoint, outPoint, limitsTopLeft, limitsBottomRight;
+    QPointF inPoint, outPoint, limitsTopLeft, limitsBottomRight, leftCornerPos;
     QRectF limits;
     bool showInPoint, showOutPoint, showLimits;
     const qreal pointWidth = 5;

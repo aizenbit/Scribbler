@@ -9,6 +9,7 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
+    leftCornerPos = QPointF(0.0, 0.0);
     scaleFactor = 1;
     minScaleFactor = 0.5;
     maxScaleFactor = 20;
@@ -100,8 +101,9 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
-    renderer()->render(&painter, QRectF(QPointF(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
-                                                height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor),
+    qreal realLetterWidth = renderer()->defaultSize().width() * scaleFactor;
+    qreal realLetterHeight = renderer()->defaultSize().height() * scaleFactor;
+    renderer()->render(&painter, QRectF(QPointF(width() / 2 - realLetterWidth / 2, height() / 2 - realLetterHeight / 2),
                                         renderer()->defaultSize() *= scaleFactor));
 
     QPen pen = QPen(Qt::SolidPattern, pointWidth);
@@ -222,9 +224,6 @@ void SvgEditor::setLimitsBottomRight(QPointF point)
 QPointF SvgEditor::toStored(const QPointF &point)
 {
     QPointF result;
-    /*currentLetterSize = renderer()->defaultSize() *= scaleFactor;
-    letterBegin = QPointF(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
-                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);*/
     result.rx() = (point.x() - letterBegin.x()) / static_cast<qreal>(currentLetterSize.width() - 1);
     result.ry() = (point.y() - letterBegin.y()) / static_cast<qreal>(currentLetterSize.height() - 1);
     return result;
@@ -233,9 +232,6 @@ QPointF SvgEditor::toStored(const QPointF &point)
 QPointF SvgEditor::fromStored(const QPointF &point)
 {
     QPointF result;
-    /*currentLetterSize = renderer()->defaultSize() *= scaleFactor;
-    QPointF letterBegin(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
-                        height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);*/
     result.rx() = point.x() * static_cast<qreal>(currentLetterSize.width() - 1);
     result.ry() = point.y() * static_cast<qreal>(currentLetterSize.height() - 1);
     result += letterBegin;
@@ -244,8 +240,8 @@ QPointF SvgEditor::fromStored(const QPointF &point)
 
 void SvgEditor::calculateCoordinates()
 {
-    letterBegin = QPointF(width() / 2 - renderer()->defaultSize().width() / 2 * scaleFactor,
-                          height() / 2 - renderer()->defaultSize().height() / 2 * scaleFactor);
+    letterBegin = QPointF(width() / 2.0 - renderer()->defaultSize().width() / 2.0 * scaleFactor,
+                          height() / 2.0 - renderer()->defaultSize().height() / 2.0 * scaleFactor);
     currentLetterSize = renderer()->defaultSize() *= scaleFactor;
 }
 
