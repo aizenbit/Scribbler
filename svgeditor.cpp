@@ -15,10 +15,8 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     maxScaleFactor = 20;
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
-    drawInPoint = false;
-    drawOutPoint = false;
-    drawLimits = false;
-    drawLetter = false;
+    disableDrawing();
+    hideAll();
 }
 
 void SvgEditor::load(const QString & file)
@@ -30,12 +28,9 @@ void SvgEditor::load(const QString & file)
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
-    drawInPoint = false;
-    drawOutPoint = false;
-    drawLimits = false;
-    showInPoint = false;
-    showOutPoint = false;
-    showLimits = false;
+    disableDrawing();
+    hideAll();
+    showLetter = true;
     calculateCoordinates();
     update();
 }
@@ -101,10 +96,13 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
-    qreal realLetterWidth = renderer()->defaultSize().width() * scaleFactor;
-    qreal realLetterHeight = renderer()->defaultSize().height() * scaleFactor;
-    renderer()->render(&painter, QRectF(QPointF(width() / 2 - realLetterWidth / 2, height() / 2 - realLetterHeight / 2),
-                                        renderer()->defaultSize() *= scaleFactor));
+    if (showLetter)
+    {
+        qreal realLetterWidth = renderer()->defaultSize().width() * scaleFactor;
+        qreal realLetterHeight = renderer()->defaultSize().height() * scaleFactor;
+        renderer()->render(&painter, QRectF(QPointF(width() / 2 - realLetterWidth / 2, height() / 2 - realLetterHeight / 2),
+                                            renderer()->defaultSize() *= scaleFactor));
+    }
 
     QPen pen = QPen(Qt::SolidPattern, pointWidth);
 
@@ -166,6 +164,19 @@ void SvgEditor::disableDrawing(const bool disable)
         drawInPoint = false;
         drawOutPoint = false;
         drawLimits = false;
+        drawLetter = false;
+    }
+    update();
+}
+
+void SvgEditor::hideAll(const bool hide)
+{
+    if (hide)
+    {
+        showInPoint = false;
+        showOutPoint = false;
+        showLimits = false;
+        showLetter = false;
     }
     update();
 }

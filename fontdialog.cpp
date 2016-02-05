@@ -158,7 +158,6 @@ void FontDialog::saveFont()
     fontSettings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
     loadFromEditorToFont();
-    lastItem = nullptr;
 
     for (QChar &key : font.keys())
         if (key.isUpper())
@@ -191,8 +190,8 @@ void FontDialog::rejectChanges()
     ui->choosenSymbolTextEdit->clear();
     ui->fontFileTextEdit->clear();
     ui->treeWidget->clear();
-    ui->svgEditor->disableDrawing(true);
-    ui->svgEditor->drawLetter = false;
+    ui->svgEditor->disableDrawing();
+    ui->svgEditor->hideAll();
 }
 
 void FontDialog::limitTextEdit()
@@ -282,4 +281,6 @@ void FontDialog::deleteLetter()
     QTreeWidgetItem *letterItem = letterItemList.first();
     delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
     font.remove(letter);
+    ui->svgEditor->hideAll();
+    lastItem = nullptr;
 }

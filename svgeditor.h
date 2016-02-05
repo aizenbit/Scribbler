@@ -20,6 +20,7 @@ public slots:
     void load(const QString & file);
     void setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
     void disableDrawing(const bool disable = true);
+    void hideAll(const bool hide = true);
     void enableInPointDrawing(const bool draw = true);
     void enableOutPointDrawing(const bool draw = true);
     void enableLimitsDrawing(const bool draw = true);
@@ -38,7 +39,7 @@ protected:
 private:
     QPointF inPoint, outPoint, limitsTopLeft, limitsBottomRight, leftCornerPos;
     QRectF limits;
-    bool showInPoint, showOutPoint, showLimits;
+    bool showInPoint, showOutPoint, showLimits, showLetter;
     const qreal pointWidth = 5;
     qreal scaleFactor, maxScaleFactor, minScaleFactor;
     QSize currentLetterSize;

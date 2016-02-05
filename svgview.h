@@ -56,6 +56,7 @@ private:
     void prepareSceneToRender();
     void preventGoingBeyondRightMargin();
     void connectLastLetterToCurrent();
+    void noSuchSymbol();
 };
 
 #endif // SVGVIEW_H
