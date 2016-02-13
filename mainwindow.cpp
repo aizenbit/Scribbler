@@ -142,7 +142,7 @@ void MainWindow::showLicensesBox()
                                    "are licensed by <a href=http://creativecommons.org/licenses/by/3.0/ "
                                    "title=Creative Commons BY 3.0>CC BY 3.0</a>.<br><br>"
 
-                                   "Thanks to <a href=https://virink.com/domerk>Daniel Domerk</a> for a help."));
+                                   "Thanks to <a href=https://virink.com/domerk>Daniel Domerk</a> and grey eminence for a help."));
     aboutBox.exec();
 }
 

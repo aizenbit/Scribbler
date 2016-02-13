@@ -50,7 +50,7 @@ private:
     void setLimitsTopLeft(QPointF point);
     void setLimitsBottomRight(QPointF point);
     void calculateCoordinates();
-    void keepPointOnLetterCanvas(QPointF & point);
+    void keepPointOnLetterCanvas(QPointF &point);
     QPointF toStored(const QPointF &point);
     QPointF fromStored(const QPointF &point);
 };

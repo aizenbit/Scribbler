@@ -30,7 +30,6 @@ private:
     Ui::PreferencesDialog *ui;
     QSignalMapper *sheetSizeSignalMapper;  //is necessary to connect QRadioButtons
                                             //from the sheetSize group to setSheetSize()
-
     enum class SheetSize {
         A4,
         A5,

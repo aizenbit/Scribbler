@@ -31,7 +31,8 @@ void SvgView::wheelEvent(QWheelEvent *event)
 
 void SvgView::limitScale(qreal factor)
 {
-    qreal newFactor = currentScaleFactor *factor;
+    qreal newFactor = currentScaleFactor * factor;
+
     if (newFactor < maxScaleFactor && newFactor > minScaleFactor)
     {
         currentScaleFactor = newFactor;
@@ -74,10 +75,10 @@ int SvgView::renderText(const QStringRef &text)
         letterWidth *= letterItem->scale();
         letterHeight *= letterItem->scale();
 
-        letterBoundingRect.setWidth(letterItem->boundingRect().width() * letterItem->scale());
-        letterBoundingRect.setHeight(letterItem->boundingRect().height() * letterItem->scale());
+        letterBoundingSize.setWidth(letterItem->boundingRect().width() * letterItem->scale());
+        letterBoundingSize.setHeight(letterItem->boundingRect().height() * letterItem->scale());
 
-        cursor.rx() -= letterBoundingRect.width() * letterData.limits.topLeft().x();
+        cursor.rx() -= letterBoundingSize.width() * letterData.limits.topLeft().x();
         preventGoingBeyondRightMargin();
 
         //stop rendering by the end of sheet
@@ -88,7 +89,7 @@ int SvgView::renderText(const QStringRef &text)
         }
 
         QPointF letterItemPos = cursor;
-        letterItemPos.ry() -= letterBoundingRect.height() * letterData.limits.topLeft().y();
+        letterItemPos.ry() -= letterBoundingSize.height() * letterData.limits.topLeft().y();
         letterItem->setPos(letterItemPos);
         scene->addItem(letterItem);
 
@@ -133,7 +134,7 @@ void SvgView::preventGoingBeyondRightMargin()
     {
         lastLetter = nullptr;
         cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
-        cursor.rx() -= letterBoundingRect.width() * letterData.limits.topLeft().x();
+        cursor.rx() -= letterBoundingSize.width() * letterData.limits.topLeft().x();
     }
 }
 
@@ -151,10 +152,10 @@ void SvgView::connectLastLetterToCurrent()
             lastLetterBoundingRect.height() * previousLetterData.limits.topLeft().y();
 
     inPoint.rx() = cursor.x() +
-            letterData.inPoint.x() * letterBoundingRect.width();
+            letterData.inPoint.x() * letterBoundingSize.width();
     inPoint.ry() = cursor.y() +
-            letterData.inPoint.y() * letterBoundingRect.height() -
-            letterBoundingRect.height() * letterData.limits.topLeft().y();
+            letterData.inPoint.y() * letterBoundingSize.height() -
+            letterBoundingSize.height() * letterData.limits.topLeft().y();
 
     QPen pen(fontColor);
     pen.setWidth(0.4 * dpmm);
@@ -178,7 +179,7 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
         break;
 
     default:
-        cursor += QPointF(fontSize * dpmm, 0.0);
+        cursor += QPointF((fontSize + letterSpacing) * dpmm, 0.0);
         lastLetter = nullptr;
         break;
     }
@@ -217,10 +218,9 @@ void SvgView::loadFont(QString fontpath)
         return;
     }
 
-    QString fontDirectory = fontpath;
-    fontDirectory.remove(QRegularExpression("\\w+.\\w+$"));
-
+    QString fontDirectory = QFileInfo(fontpath).path() + '/';
     font.clear();
+
     for (const QString &key : fontSettings.childKeys())
         for (Letter value : fontSettings.value(key).value<QList<Letter>>())
         {
@@ -267,7 +267,7 @@ void SvgView::loadSettingsFromFile()
                          sheetRect.bottomRight() - QPointF(settings.value("right-margin").toInt() * dpmm,
                                                            settings.value("bottom-margin").toInt() * dpmm));
 
-    loadFont(settings.value("last-used-font", "\\Font\\DefaultFont.ini").toString());
+    loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
 
     fontColor = QColor(settings.value("font-color").toString());
     useCustomFontColor = settings.value("use-custom-font-color").toBool();

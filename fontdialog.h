@@ -3,6 +3,7 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QTextCodec>
+#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QTreeWidgetItem>
@@ -27,7 +28,7 @@ signals:
 
 private:
     Ui::FontDialog *ui;
-    QSvgRenderer *svgRenderer;
+    QButtonGroup *buttonGroup;
     QTreeWidgetItem *lastItem;
 
     QString fontFileName;

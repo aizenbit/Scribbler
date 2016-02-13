@@ -6,6 +6,10 @@ FontDialog::FontDialog(QWidget *parent) :
     ui(new Ui::FontDialog)
 {
     ui->setupUi(this);
+    buttonGroup = new QButtonGroup();
+    buttonGroup->addButton(ui->drawInPointButton);
+    buttonGroup->addButton(ui->drawOutPointButton);
+    buttonGroup->addButton(ui->drawLimitsButton);
 
     connect(ui->choosenSymbolTextEdit, SIGNAL(textChanged()),
             this, SLOT(limitTextEdit()));
@@ -21,12 +25,12 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(setTextFromItem(QTreeWidgetItem*)));
     connect(ui->deleteSymbolButton, SIGNAL(pressed()),
             this, SLOT(deleteLetter()));
-    connect(ui->drawInPointButton, SIGNAL(clicked()),
-            ui->svgEditor, SLOT(enableInPointDrawing()));
-    connect(ui->drawOutPointButton, SIGNAL(clicked()),
-            ui->svgEditor, SLOT(enableOutPointDrawing()));
-    connect(ui->drawLimitsButton, SIGNAL(clicked()),
-            ui->svgEditor, SLOT(enableLimitsDrawing()));
+    connect(ui->drawInPointButton, SIGNAL(toggled(bool)),
+            ui->svgEditor, SLOT(enableInPointDrawing(bool)));
+    connect(ui->drawOutPointButton, SIGNAL(toggled(bool)),
+            ui->svgEditor, SLOT(enableOutPointDrawing(bool)));
+    connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
+            ui->svgEditor, SLOT(enableLimitsDrawing(bool)));
 
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->deleteSymbolButton->setEnabled(false);
@@ -34,6 +38,9 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawOutPointButton->setEnabled(false);
     ui->drawLimitsButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
+    ui->drawInPointButton->setCheckable(true);
+    ui->drawOutPointButton->setCheckable(true);
+    ui->drawLimitsButton->setCheckable(true);
     ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
@@ -45,6 +52,7 @@ FontDialog::FontDialog(QWidget *parent) :
 FontDialog::~FontDialog()
 {
     delete ui;
+    delete buttonGroup;
 }
 
 void FontDialog::loadFont()

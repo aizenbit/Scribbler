@@ -48,7 +48,7 @@ private:
 
     Letter letterData, previousLetterData;
     QRectF currentMarginsRect;
-    QSize letterBoundingRect;
+    QSize letterBoundingSize;
     QPointF cursor, previousLetterCursor;
     QGraphicsSvgItem *lastLetter;
 
