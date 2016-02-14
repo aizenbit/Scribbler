@@ -22,13 +22,11 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
 void SvgEditor::load(const QString & file)
 {
     QSvgWidget::load(file);
-    drawLetter = true;
     inPoint = QPointF(-1.0, -1.0);
     outPoint = QPointF(-1.0, -1.0);
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
-    disableDrawing();
     hideAll();
     showLetter = true;
     calculateCoordinates();

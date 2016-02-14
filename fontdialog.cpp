@@ -106,6 +106,9 @@ void FontDialog::loadFont()
         }
         ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
     }
+
+    ui->svgEditor->load(QString());
+    enableDrawButtons(false);
 }
 
 void FontDialog::loadLetters()
@@ -191,9 +194,7 @@ void FontDialog::rejectChanges()
     font.clear();
     fontFileName.clear();
     lastItem = nullptr;
-    ui->drawInPointButton->setEnabled(false);
-    ui->drawOutPointButton->setEnabled(false);
-    ui->drawLimitsButton->setEnabled(false);
+    enableDrawButtons(false);
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->choosenSymbolTextEdit->clear();
     ui->fontFileTextEdit->clear();
@@ -210,7 +211,6 @@ void FontDialog::limitTextEdit()
     {
         ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
         ui->deleteSymbolButton->setEnabled(!text.isEmpty());
-        ui->svgEditor->disableDrawing(true);
     }
 
     if (text.length() > 1)
@@ -226,19 +226,16 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 
     if (item->parent() == nullptr)
     {
+        enableDrawButtons(false);
         ui->choosenSymbolTextEdit->setText(item->text(0));
-        ui->svgEditor->drawInPoint = false;
-        ui->svgEditor->drawOutPoint = false;
-        ui->svgEditor->drawLimits = false;
+        ui->svgEditor->disableDrawing();
         lastItem = nullptr;
     }
     else
     {
-        ui->drawInPointButton->setEnabled(true);
-        ui->drawOutPointButton->setEnabled(true);
-        ui->drawLimitsButton->setEnabled(true);
+        enableDrawButtons(true);
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
-        ui->svgEditor->load(QFileInfo(fontFileName).path() + "//" + item->text(0));
+        ui->svgEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
         QList<Letter> letterList = font.values(item->parent()->text(0).at(0));
 
         for (const Letter &letter : letterList)
@@ -291,4 +288,18 @@ void FontDialog::deleteLetter()
     font.remove(letter);
     ui->svgEditor->hideAll();
     lastItem = nullptr;
+}
+
+void FontDialog::enableDrawButtons(bool enable)
+{
+    if (!enable && buttonGroup->checkedButton() != nullptr)
+    {
+        buttonGroup->setExclusive(false);
+        buttonGroup->checkedButton()->setChecked(false);
+        buttonGroup->setExclusive(true);
+    }
+
+    ui->drawInPointButton->setEnabled(enable);
+    ui->drawOutPointButton->setEnabled(enable);
+    ui->drawLimitsButton->setEnabled(enable);
 }
