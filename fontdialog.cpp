@@ -279,14 +279,36 @@ void FontDialog::deleteLetter()
 {
     QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
     QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive);
+    QList<QTreeWidgetItem *> selectedItemsList = ui->treeWidget->selectedItems();
 
     if (letterItemList.isEmpty())
         return;
 
-    QTreeWidgetItem *letterItem = letterItemList.first();
-    delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
-    font.remove(letter);
+    QTreeWidgetItem *topLetterItem = letterItemList.first();
+
+    if (!selectedItemsList.isEmpty() &&
+        selectedItemsList.first()->parent() == topLetterItem &&
+        topLetterItem->childCount() > 1)
+    {
+        QTreeWidgetItem *selectedItem = selectedItemsList.first();
+        QList<Letter> letterList = font.values(letter);
+        for (const Letter &letterData : letterList)
+            if (letterData.fileName == selectedItem->text(0))
+            {
+                font.remove(letter, letterData);
+                delete selectedItem;
+                break;
+            }
+    }
+    else
+    {
+        delete topLetterItem;
+        font.remove(letter);
+    }
+
+    enableDrawButtons(false);
     ui->svgEditor->hideAll();
+    ui->svgEditor->disableDrawing();
     lastItem = nullptr;
 }
 

@@ -15,3 +15,14 @@ QDataStream & operator>>(QDataStream &in, Letter &letter)
     in >> letter.limits;
     return in;
 }
+
+bool operator==(const Letter &left, const Letter &right)
+{
+    if (left.fileName == right.fileName
+            && left.inPoint == right.inPoint
+            && left.outPoint == right.outPoint
+            && left.limits == right.limits)
+        return true;
+    else
+        return false;
+}

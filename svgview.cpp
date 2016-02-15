@@ -9,6 +9,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
+    setRenderHints(QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
     limitScale(0.3);
 
     scene = new QGraphicsScene();

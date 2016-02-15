@@ -15,5 +15,6 @@ Q_DECLARE_METATYPE(QList<Letter>);
 
 QDataStream & operator<<(QDataStream &out, const Letter &letter);
 QDataStream & operator>>(QDataStream &in, Letter &letter);
+bool operator==(const Letter &left, const Letter &right);
 
 #endif // LETTER_H
