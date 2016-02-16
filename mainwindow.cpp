@@ -74,12 +74,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     preferencesDialog->loadSettingsFromFile();
 
-    /* This is a hack to avoid a bug. When program starts, it needs some time
-     * (at least 1 ms on my configuration, but I set delay to 100 ms just to be sure
+    /* This is a hack to avoid a bug. When program starts, it takes some time
+     * (at least 1 ms on my configuration, but I set the delay to 100 ms just to make sure
      * that it will work on weaker machines) before it can write settings to file,
      * otherwise ui->colorButton->palette().background().color() will return
      * default buttons background color, which will be written to settings
-     * file at once program launches.
+     * file once program launches.
      */
 
     QTime dieTime = QTime::currentTime().addMSecs(100);
@@ -276,7 +276,7 @@ void MainWindow::saveAllSheetsToImages(const QString &fileName, const int indexO
     ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
 
     while (ui->toolBar->actions()[4]->isEnabled()) //while "Next Sheet" tool button is enabled,
-    {                                              //i.e. render all sheets
+    {                                              //i.e. while rendering all sheets
         renderNextSheet();
         currentFileName = fileName;
         currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
@@ -338,7 +338,7 @@ void MainWindow::printAllSheets(QPrinter *printer)
     ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
 
     while (ui->toolBar->actions()[4]->isEnabled())//while "Next Sheet" tool button is enabled,
-    {                                             //i.e. print all sheets
+    {                                             //i.e. while printing all sheets
         renderNextSheet();
         ui->svgView->hideBorders(true);
         QImage image = ui->svgView->saveRenderToImage();

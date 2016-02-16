@@ -91,12 +91,12 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->connectLettersCheckBox->setChecked(settings.value("connect-letters", true).toBool());
     settings.endGroup();
 
-    setSheetSize(static_cast<int>(SheetSize::Custom)); //needs to set radioButtons values correctly
+    setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly
 }
 
 void PreferencesDialog::setSheetSize(int size)
 {
-    if (changedByProgram) //dont use this function if spinBoxes values
+    if (changedByProgram) //dont use this function if values of spinBoxes
         return;           //are changed by program, not by user
 
     QSettings settings("Settings.ini", QSettings::IniFormat);

@@ -3,7 +3,7 @@
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
-    maxScaleFactor = 1.5; //if it will be bigger, view would have graphic artifacts
+    maxScaleFactor = 1.5; //if this is exceeded, graphic artifacts will occure
     minScaleFactor = 0.05;
     changeMargins = false;
 
@@ -47,7 +47,7 @@ int SvgView::renderText(const QStringRef &text)
 
     int endOfSheet = 0;
 
-    //---Sequentially add the letters on the scene
+    //---Sequentially add the letters to the scene
     for (int currentSymbolNumber = 0; currentSymbolNumber < text.length(); currentSymbolNumber++)
     {
         QChar symbol = text.at(currentSymbolNumber);
@@ -82,7 +82,7 @@ int SvgView::renderText(const QStringRef &text)
         cursor.rx() -= letterBoundingSize.width() * letterData.limits.topLeft().x();
         preventGoingBeyondRightMargin();
 
-        //stop rendering by the end of sheet
+        //rendering stops by the end of sheet
         if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
         {
             delete letterItem;
