@@ -104,7 +104,8 @@ void MainWindow::showAboutBox()
     aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe. <br><br>"
                         "<strong>Scribbler</strong> ") + version);
     aboutBox.setInformativeText("<p>" + tr("Distributed under The MIT License. See License and Credist page.") +
-                                "<br><br><a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");
+                                "<br><br>" + tr("Repository:") + "<br>"
+                                "<a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");
     aboutBox.exec();
 }
 
@@ -142,7 +143,11 @@ void MainWindow::showLicensesBox()
                                    "are licensed by <a href=http://creativecommons.org/licenses/by/3.0/ "
                                    "title=Creative Commons BY 3.0>CC BY 3.0</a>.<br><br>"
 
-                                   "Thanks to <a href=https://virink.com/domerk>Daniel Domerk</a> and grey eminence for a help."));
+                                   "Thanks to <a href=http://pro.guap.ru/privateoffice/main/462>Elizaveta Grebennikova</a>, "
+                                   "<a href=https://github.com/aksenoff>aksenoff</a>, "
+                                   "<a href=https://virink.com/domerk>Daniel Domerk</a>, "
+                                   "<a href=http://www.livelib.ru/reader/Azure_wave>Anastasiya Belozerskaya</a> "
+                                   "and grey eminence for a help. =)"));
     aboutBox.exec();
 }
 
