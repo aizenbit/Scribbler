@@ -127,6 +127,8 @@ void FontDialog::loadLetters()
 
     if (font.contains(letter))
     {
+        loadFromEditorToFont();
+
         for (const Letter & value : font.values(letter))
             files += value.fileName;
 
@@ -134,6 +136,7 @@ void FontDialog::loadLetters()
         font.remove(letter);
         letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
         delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
+        lastItem = nullptr;
     }
 
     letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));
@@ -246,7 +249,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
             }
 
         lastItem = item;
-    }    
+    }
 }
 
 void FontDialog::loadFromEditorToFont()
