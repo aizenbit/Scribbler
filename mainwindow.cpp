@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPreferences, SIGNAL(triggered()),
             preferencesDialog, SLOT(exec()));
     connect(preferencesDialog, SIGNAL(settingsChanged()),
-            ui->svgView, SLOT(loadSettingsFromFile()));
+            this, SLOT(loadSettings()));
 
     //----Help----
     connect(ui->actionAbout_Scribbler, SIGNAL(triggered()),
@@ -209,7 +209,7 @@ void MainWindow::renderPreviousSheet()
         ui->svgView->changeLeftRightMargins(false);
 
     QString text = ui->textEdit->toPlainText();
-    int lettersToTheEnd = sheetPointers.at(currentSheetNumber) - sheetPointers.at(currentSheetNumber + 1);
+    int lettersToTheEnd = sheetPointers.at(currentSheetNumber + 1) - sheetPointers.at(currentSheetNumber);
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
     ui->toolBar->actions()[4]->setEnabled(true); //enable "Next Sheet" tool button
@@ -383,6 +383,14 @@ void MainWindow::loadTextFromFile()
     in.setCodec(QTextCodec::codecForName("UTF-8")); //TODO: add ability to change codec
 
     ui->textEdit->setText(in.readAll());
+}
+
+void MainWindow::loadSettings()
+{
+    ui->svgView->loadSettingsFromFile();
+
+    if (currentSheetNumber == 0)
+        this->renderFirstSheet();
 }
 
 void MainWindow::preparePrinter(QPrinter *printer)

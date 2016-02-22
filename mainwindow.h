@@ -50,6 +50,7 @@ private slots:
     void printSheet();
     void printAllSheets(QPrinter *printer = new QPrinter(QPrinter::HighResolution));
     void loadTextFromFile();
+    void loadSettings();
 };
 
 #endif // MAINWINDOW_H
