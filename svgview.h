@@ -36,9 +36,16 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
+    struct SvgData
+    {
+        Letter letterData;
+        qreal scale;
+        QSvgRenderer *renderer;
+    };
+
     QGraphicsScene *scene;
     QMultiMap<QChar, Letter> font;
-    QMultiMap<QChar, QSvgRenderer *> fontRenderer;
+    QMultiMap<QChar, SvgData> svgData;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
