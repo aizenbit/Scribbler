@@ -10,6 +10,7 @@
 #include <QtWidgets/QApplication>
 #include <QtGui/QWheelEvent>
 #include <QtSvg/QGraphicsSvgItem>
+#include <QtSvg/QSvgRenderer>
 
 #include "letter.h"
 
@@ -37,6 +38,7 @@ protected:
 private:
     QGraphicsScene *scene;
     QMultiMap<QChar, Letter> font;
+    QMultiMap<QChar, QSvgRenderer *> fontRenderer;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
@@ -57,6 +59,7 @@ private:
     void preventGoingBeyondRightMargin();
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
+    void fillFontRenderer();
 };
 
 #endif // SVGVIEW_H

@@ -137,6 +137,9 @@ void FontDialog::loadLetters()
         letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
         delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
         lastItem = nullptr;
+        enableDrawButtons(false);
+        ui->svgEditor->disableDrawing();
+        ui->svgEditor->hideAll();
     }
 
     letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));

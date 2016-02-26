@@ -59,9 +59,11 @@ int SvgView::renderText(const QStringRef &text)
             continue;
         }
 
-        letterData = font.values(symbol).at(qrand() % font.values(symbol).size());
+        int letterNumber = qrand() % font.values(symbol).size();
+        letterData = font.values(symbol).at(letterNumber);
 
-        QGraphicsSvgItem *letterItem = new QGraphicsSvgItem(letterData.fileName);
+        QGraphicsSvgItem *letterItem = new QGraphicsSvgItem();
+        letterItem->setSharedRenderer(fontRenderer.values(symbol).at(letterNumber));
 
         if (useCustomFontColor)
         {
@@ -247,6 +249,8 @@ void SvgView::loadFont(QString fontpath)
     settings.beginGroup("Settings");
     settings.setValue("last-used-font", QVariant(fontpath));
     settings.endGroup();
+
+    fillFontRenderer();
 }
 
 void SvgView::loadSettingsFromFile()
@@ -289,4 +293,16 @@ void SvgView::hideBorders(bool hide)
 void SvgView::changeLeftRightMargins(bool change)
 {
     changeMargins = change;
+}
+
+void SvgView::fillFontRenderer()
+{
+    for (QSvgRenderer *svgRenderer : fontRenderer.values())
+        delete svgRenderer;
+
+    fontRenderer.clear();
+
+    for (QChar key : font.keys())
+        for (Letter &letterData : font.values(key))
+            fontRenderer.insert(key, new QSvgRenderer(letterData.fileName));
 }
