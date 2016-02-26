@@ -161,7 +161,7 @@ void SvgView::connectLastLetterToCurrent()
             letterBoundingSize.height() * letterData.limits.topLeft().y();
 
     QPen pen(fontColor);
-    pen.setWidth(0.4 * dpmm);
+    pen.setWidth(penWidth * dpmm);
     pen.setCapStyle(Qt::RoundCap);
 
     scene->addLine(outPoint.x(), outPoint.y(), inPoint.x(), inPoint.y(), pen);
@@ -263,6 +263,7 @@ void SvgView::loadSettingsFromFile()
     lineSpacing = settings.value("line-spacing").toDouble();
     spacesInTab = settings.value("spaces-in-tab").toInt();
     fontSize = settings.value("font-size").toDouble();
+    penWidth = settings.value("pen-width").toDouble();
     sheetRect = QRectF(0, 0,
                        settings.value("sheet-width").toInt() * dpmm,
                        settings.value("sheet-height").toInt() * dpmm);

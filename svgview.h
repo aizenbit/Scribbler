@@ -44,7 +44,7 @@ private:
     int spacesInTab;
     bool useCustomFontColor, changeMargins, connectLetters;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
-    qreal fontSize, letterSpacing, lineSpacing;
+    qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
 

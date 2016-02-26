@@ -52,6 +52,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("line-spacing", QVariant(ui->lineSpacingSpinBox->value()));
     settings.setValue("spaces-in-tab", QVariant(ui->spacesInTabSpinBox->value()));
     settings.setValue("font-size", QVariant(ui->fontSizeSpinBox->value()));
+    settings.setValue("pen-width", QVariant(ui->penWidthSpinBox->value()));
     settings.setValue("font-color", QVariant(ui->colorButton->palette().background().color().name()));
     settings.setValue("use-custom-font-color", QVariant(ui->fontColorCheckBox->isChecked()));
     settings.setValue("sheet-width", QVariant(ui->sheetWidthSpinBox->value()));
@@ -77,6 +78,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 0.0).toDouble());
     ui->spacesInTabSpinBox->setValue(   settings.value("spaces-in-tab", 4).toInt());
     ui->fontSizeSpinBox->setValue(      settings.value("font-size", 8.0).toDouble());
+    ui->penWidthSpinBox->setValue(      settings.value("pen-width", 0.5).toDouble());
     ui->sheetWidthSpinBox->setValue(    settings.value("sheet-width", 148).toInt());
     ui->sheetHeightSpinBox->setValue(   settings.value("sheet-height", 210).toInt());
     ui->rightMarginsSpinBox->setValue(  settings.value("right-margin", 20).toInt());

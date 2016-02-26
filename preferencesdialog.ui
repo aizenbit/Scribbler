@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>514</width>
-    <height>424</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -169,17 +169,17 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QDoubleSpinBox" name="lineSpacingSpinBox">
-          <property name="minimum">
-           <double>-99.000000000000000</double>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
            <string>Line Spacing (mm):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="lineSpacingSpinBox">
+          <property name="minimum">
+           <double>-99.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -203,6 +203,13 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Spaces in Tab:</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
@@ -213,21 +220,14 @@
         <item row="3" column="1">
          <widget class="QSpinBox" name="spacesInTabSpinBox"/>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_11">
+        <item row="6" column="0">
+         <widget class="QCheckBox" name="connectLettersCheckBox">
           <property name="text">
-           <string>Spaces in Tab:</string>
+           <string>Connect Letters</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QCheckBox" name="fontColorCheckBox">
-          <property name="text">
-           <string>Use Font Color:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QPushButton" name="colorButton">
           <property name="text">
            <string/>
@@ -235,9 +235,26 @@
          </widget>
         </item>
         <item row="5" column="0">
-         <widget class="QCheckBox" name="connectLettersCheckBox">
+         <widget class="QCheckBox" name="fontColorCheckBox">
           <property name="text">
-           <string>Connect Letters</string>
+           <string>Use Font Color:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Pen width (mm):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="penWidthSpinBox">
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
           </property>
          </widget>
         </item>
