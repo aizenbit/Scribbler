@@ -312,6 +312,7 @@ void SvgView::fillFontRenderer()
             QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
             qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
             qreal scale = fontSize * dpmm / letterHeight;
+            qreal newPenWidth = penWidth * dpmm * fontSize / renderer->defaultSize().height();
 
             QDomDocument doc("SVG");
             QFile file(letterData.fileName);
@@ -331,7 +332,7 @@ void SvgView::fillFontRenderer()
                 QDomElement element = styleList.item(0).toElement();
                 QString style = element.text();
 
-                if (!changeStrokeWidth(style))
+                if (!changeStrokeWidth(style, newPenWidth))
                     style += QString("%2stroke-width:%1").arg(penWidth * scale).arg(style.isEmpty() ? "" : ";");
 
                 QDomElement newElement = doc.createElement("style");
@@ -348,7 +349,7 @@ void SvgView::fillFontRenderer()
                     QDomElement element = elementsList.at(i).toElement();
                     QString style = element.attribute("style", "");
 
-                    if (!changeStrokeWidth(style))
+                    if (!changeStrokeWidth(style, newPenWidth))
                         style += QString("%2stroke-width:%1").arg(penWidth * scale).arg(style.isEmpty() ? "" : ";");
 
                     element.setAttribute("style", style);
@@ -360,7 +361,7 @@ void SvgView::fillFontRenderer()
         }
 }
 
-bool SvgView::changeStrokeWidth(QString &style)
+bool SvgView::changeStrokeWidth(QString &style, qreal newPenWidth)
 {
     if (style.contains(QRegularExpression("stroke-width:\\d+.?\\d*")))
     {
@@ -374,10 +375,8 @@ bool SvgView::changeStrokeWidth(QString &style)
             endSign += style.size();
         int digitBegin = style.indexOf(QRegularExpression("\\d"), index);
 
-
-
         style.remove(digitBegin, endSign - digitBegin);
-        style.insert(digitBegin, QString("%1").arg(penWidth));
+        style.insert(digitBegin, QString("%1").arg(newPenWidth));
         return true;
     }
     else
