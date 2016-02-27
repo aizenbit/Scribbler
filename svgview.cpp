@@ -59,13 +59,11 @@ int SvgView::renderText(const QStringRef &text)
             continue;
         }
 
-        int letterNumber = qrand() % font.values(symbol).size();
-        //letterData = font.values(symbol).at(letterNumber);
-        SvgData data = svgData.values(symbol).at(letterNumber);
+        QGraphicsSvgItem *letterItem = new QGraphicsSvgItem();
+        SvgData data = font.values(symbol).at(qrand() % font.values(symbol).size());
+        letterItem->setSharedRenderer(data.renderer);
         letterData = data.letterData;
 
-        QGraphicsSvgItem *letterItem = new QGraphicsSvgItem();
-        letterItem->setSharedRenderer(data.renderer);
 
         if (useCustomFontColor)
         {
@@ -74,12 +72,7 @@ int SvgView::renderText(const QStringRef &text)
             letterItem->setGraphicsEffect(colorEffect);
         }
 
-        qreal letterHeight = letterItem->boundingRect().height() * letterData.limits.height();
-        qreal letterWidth = letterItem->boundingRect().width() * letterData.limits.width();
-        letterItem->setScale(fontSize * dpmm / letterHeight);
-        letterWidth *= letterItem->scale();
-        letterHeight *= letterItem->scale();
-
+        letterItem->setScale(data.scale);
         letterBoundingSize.setWidth(letterItem->boundingRect().width() * letterItem->scale());
         letterBoundingSize.setHeight(letterItem->boundingRect().height() * letterItem->scale());
 
@@ -101,6 +94,7 @@ int SvgView::renderText(const QStringRef &text)
         if (connectLetters && lastLetter != nullptr)
             connectLastLetterToCurrent();
 
+        qreal letterWidth = letterItem->boundingRect().width() * letterData.limits.width() * data.scale;
         lastLetter = letterItem;
         previousLetterCursor = cursor;
         previousLetterData = letterData;
@@ -223,36 +217,108 @@ void SvgView::loadFont(QString fontpath)
         return;
     }
 
-    QString fontDirectory = QFileInfo(fontpath).path() + '/';
+    for (SvgData &data : font.values())
+    {
+        delete data.renderer;
+        data.renderer = nullptr;
+    }
     font.clear();
 
+    QString fontDirectory = QFileInfo(fontpath).path() + '/';
+
     for (const QString &key : fontSettings.childKeys())
-        for (Letter value : fontSettings.value(key).value<QList<Letter>>())
+        for (Letter letterData : fontSettings.value(key).value<QList<Letter>>())
         {
-            value.fileName = fontDirectory + value.fileName;
-            font.insert(key.at(0).toLower(), value);
+            letterData.fileName = fontDirectory + letterData.fileName;
+            insertLetter(key.at(0), letterData);
         }
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
     for (const QString &key : fontSettings.childKeys())
-        for (Letter value : fontSettings.value(key).value<QList<Letter>>())
+        for (Letter letterData : fontSettings.value(key).value<QList<Letter>>())
         {
-            value.fileName = fontDirectory + value.fileName;
-            font.insert(key.at(0).toUpper(), value);
+            letterData.fileName = fontDirectory + letterData.fileName;
+            insertLetter(key.at(0), letterData);
         }
 
     fontSettings.endGroup();
-
     fontSettings.endGroup();
 
     QSettings settings("Settings.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
     settings.setValue("last-used-font", QVariant(fontpath));
     settings.endGroup();
+}
 
-    fillFontRenderer();
+void SvgView::insertLetter(QChar key, Letter &letterData)
+{
+    QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
+    qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
+    qreal scale = fontSize * dpmm / letterHeight;
+    qreal newPenWidth = penWidth * dpmm * fontSize / renderer->defaultSize().height();
+
+    QDomDocument doc("SVG");
+    QFile file(letterData.fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    if (!doc.setContent(&file))
+    {
+        file.close();
+        return;
+    }
+
+    file.close();
+
+    QDomNodeList elementsList = doc.elementsByTagName("path");
+    QDomNodeList styleList = doc.elementsByTagName("style");
+
+    if (!styleList.isEmpty())
+    {
+        QDomElement element = styleList.item(0).toElement();
+        QString style = element.text();
+        changeStrokeWidth(style, newPenWidth);
+
+        QDomElement newElement = doc.createElement("style");
+        QDomText newText = doc.createTextNode(style);
+        newElement.appendChild(newText);
+        newElement.setAttribute("type", element.attribute("type", ""));
+        element.parentNode().replaceChild(newElement, element);
+    }
+    else
+    {
+        for (int i = 0; i < elementsList.count(); i++)
+        {
+            QDomElement element = elementsList.at(i).toElement();
+            QString style = element.attribute("style", "");
+            changeStrokeWidth(style, newPenWidth);
+            element.setAttribute("style", style);
+        }
+    }
+
+    renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
+    font.insert(key, {letterData, scale, renderer});
+
+}
+
+void SvgView::changeStrokeWidth(QString &style, qreal newPenWidth)
+{
+    QString parameter = "stroke-width:";
+
+    if (style.contains(QRegularExpression(parameter + "\\d+.?\\d*")))
+    {
+        int index = style.indexOf(parameter);
+        int endSign = style.indexOf(QRegularExpression(";|}"), index);
+        int digitBegin = index + parameter.size();
+
+        style.remove(digitBegin, endSign - digitBegin);
+        style.insert(digitBegin, QString("%1").arg(newPenWidth));
+    }
+    else
+        style += QString("%2stroke-width:%1").arg(newPenWidth).arg(style.isEmpty() ? "" : ";");
 }
 
 void SvgView::loadSettingsFromFile()
@@ -294,91 +360,4 @@ void SvgView::hideBorders(bool hide)
 void SvgView::changeLeftRightMargins(bool change)
 {
     changeMargins = change;
-}
-
-void SvgView::fillFontRenderer()
-{
-    for (SvgData &data : svgData.values())
-    {
-        delete data.renderer;
-        data.renderer = nullptr;
-    }
-
-    svgData.clear();
-
-    for (QChar key : font.uniqueKeys())
-        for (Letter &letterData : font.values(key))
-        {
-            QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
-            qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
-            qreal scale = fontSize * dpmm / letterHeight;
-            qreal newPenWidth = penWidth * dpmm * fontSize / renderer->defaultSize().height();
-
-            QDomDocument doc("SVG");
-            QFile file(letterData.fileName);
-            if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-                continue;
-            if (!doc.setContent(&file)) {
-                file.close();
-                continue;
-            }
-            file.close();
-
-            QDomNodeList elementsList = doc.elementsByTagName("path");
-            QDomNodeList styleList = doc.elementsByTagName("style");
-
-            if (!styleList.isEmpty())
-            {
-                QDomElement element = styleList.item(0).toElement();
-                QString style = element.text();
-
-                if (!changeStrokeWidth(style, newPenWidth))
-                    style += QString("%2stroke-width:%1").arg(penWidth * scale).arg(style.isEmpty() ? "" : ";");
-
-                QDomElement newElement = doc.createElement("style");
-
-                QDomText newText = doc.createTextNode(style);
-                newElement.appendChild(newText);
-                newElement.setAttribute("type", element.attribute("type", ""));
-                element.parentNode().replaceChild(newElement, element);
-            }
-            else
-            {
-                for (int i = 0; i < elementsList.count(); i++)
-                {
-                    QDomElement element = elementsList.at(i).toElement();
-                    QString style = element.attribute("style", "");
-
-                    if (!changeStrokeWidth(style, newPenWidth))
-                        style += QString("%2stroke-width:%1").arg(penWidth * scale).arg(style.isEmpty() ? "" : ";");
-
-                    element.setAttribute("style", style);
-                }
-            }
-
-            renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
-            svgData.insert(key, {letterData, scale, renderer});
-        }
-}
-
-bool SvgView::changeStrokeWidth(QString &style, qreal newPenWidth)
-{
-    if (style.contains(QRegularExpression("stroke-width:\\d+.?\\d*")))
-    {
-        int index = style.indexOf("stroke-width:");
-        int semicolon = style.indexOf(";", index);
-        int endSign = style.indexOf("}", index);
-        if (semicolon != -1 || (semicolon != -1 && semicolon < endSign))
-            endSign = semicolon;
-
-        if (endSign == -1)
-            endSign += style.size();
-        int digitBegin = style.indexOf(QRegularExpression("\\d"), index);
-
-        style.remove(digitBegin, endSign - digitBegin);
-        style.insert(digitBegin, QString("%1").arg(newPenWidth));
-        return true;
-    }
-    else
-        return false;
 }

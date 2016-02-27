@@ -45,8 +45,7 @@ private:
     };
 
     QGraphicsScene *scene;
-    QMultiMap<QChar, Letter> font;
-    QMultiMap<QChar, SvgData> svgData;
+    QMultiMap<QChar, SvgData> font;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
@@ -67,8 +66,8 @@ private:
     void preventGoingBeyondRightMargin();
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
-    void fillFontRenderer();
-    bool changeStrokeWidth(QString &style, qreal newPenWidth);
+    void insertLetter(QChar key, Letter &letterData);
+    void changeStrokeWidth(QString &style, qreal newPenWidth);
 };
 
 #endif // SVGVIEW_H
