@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>514</width>
-    <height>428</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -152,7 +152,7 @@
     </layout>
    </item>
    <item row="0" column="1">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QGroupBox" name="groupBox_4">
        <property name="title">
@@ -262,62 +262,72 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>Sheet Orientation</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QRadioButton" name="VRadioButton">
+          <property name="text">
+           <string>Vertical</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="HRadioButton">
+          <property name="text">
+           <string>Horizontal</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Sheet Orientation</string>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>dpi:</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QRadioButton" name="VRadioButton">
-            <property name="text">
-             <string>Vertical</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="HRadioButton">
-            <property name="text">
-             <string>Horizontal</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>dpi:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="dpiSpinBox">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimum">
-            <number>50</number>
-           </property>
-           <property name="maximum">
-            <number>600</number>
-           </property>
-           <property name="value">
-            <number>300</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QSpinBox" name="dpiSpinBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimum">
+          <number>50</number>
+         </property>
+         <property name="maximum">
+          <number>600</number>
+         </property>
+         <property name="value">
+          <number>300</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QCheckBox" name="useSeedCheckBox">
+         <property name="text">
+          <string>Use Seed:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="seedSpinBox"/>
        </item>
       </layout>
      </item>

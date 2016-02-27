@@ -122,6 +122,10 @@ void SvgView::prepareSceneToRender()
     scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
 
     cursor = QPointF(currentMarginsRect.x(), currentMarginsRect.y());
+    if (useSeed)
+        srand(seed);
+    else
+        srand(QTime::currentTime().msec());
 }
 
 void SvgView::preventGoingBeyondRightMargin()
@@ -344,6 +348,8 @@ void SvgView::loadSettingsFromFile()
     fontColor = QColor(settings.value("font-color").toString());
     useCustomFontColor = settings.value("use-custom-font-color").toBool();
     connectLetters = settings.value("connect-letters").toBool();
+    useSeed = settings.value("use-seed").toBool();
+    seed = settings.value("seed").toInt();
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 

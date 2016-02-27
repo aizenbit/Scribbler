@@ -35,6 +35,9 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
             this, SLOT(setSheetSize(int)));
 
     changedByProgram = false;
+
+    ui->seedSpinBox->setMaximum(std::numeric_limits<int>::max());
+    ui->seedSpinBox->setMinimum(std::numeric_limits<int>::min());
 }
 
 PreferencesDialog::~PreferencesDialog()
@@ -64,6 +67,8 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("is-sheet-orientation-vertical", QVariant(ui->VRadioButton->isChecked()));
     settings.setValue("alternate-margins-of-even-sheets", QVariant(ui->alternateMarginsCheckBox->isChecked()));
     settings.setValue("connect-letters", QVariant(ui->connectLettersCheckBox->isChecked()));
+    settings.setValue("use-seed", QVariant(ui->useSeedCheckBox->isChecked()));
+    settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -91,6 +96,8 @@ void PreferencesDialog::loadSettingsFromFile()
                                            .arg(settings.value("font-color", "#0097ff").toString()));
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(settings.value("connect-letters", true).toBool());
+    ui->useSeedCheckBox->setChecked(settings.value("use-seed", true).toBool());
+    ui->seedSpinBox->setValue(settings.value("seed", 12345678).toInt());
     settings.endGroup();
 
     setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly

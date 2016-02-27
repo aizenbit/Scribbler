@@ -49,7 +49,8 @@ private:
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
-    bool useCustomFontColor, changeMargins, connectLetters;
+    int seed;
+    bool useCustomFontColor, changeMargins, connectLetters, useSeed;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
