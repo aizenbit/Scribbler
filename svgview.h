@@ -11,6 +11,7 @@
 #include <QtGui/QWheelEvent>
 #include <QtSvg/QGraphicsSvgItem>
 #include <QtSvg/QSvgRenderer>
+#include <QtXml/QDomDocument>
 
 #include "letter.h"
 
@@ -67,6 +68,7 @@ private:
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
     void fillFontRenderer();
+    bool changeStrokeWidth(QString &style);
 };
 
 #endif // SVGVIEW_H

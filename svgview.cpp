@@ -275,12 +275,10 @@ void SvgView::loadSettingsFromFile()
                          sheetRect.bottomRight() - QPointF(settings.value("right-margin").toInt() * dpmm,
                                                            settings.value("bottom-margin").toInt() * dpmm));
 
-    loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
-
     fontColor = QColor(settings.value("font-color").toString());
     useCustomFontColor = settings.value("use-custom-font-color").toBool();
     connectLetters = settings.value("connect-letters").toBool();
-
+    loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 
     scene->setSceneRect(sheetRect);
@@ -310,5 +308,78 @@ void SvgView::fillFontRenderer()
 
     for (QChar key : font.uniqueKeys())
         for (Letter &letterData : font.values(key))
-            svgData.insert(key, {letterData, 0.0, new QSvgRenderer(letterData.fileName)});
+        {
+            QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
+            qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
+            qreal scale = fontSize * dpmm / letterHeight;
+
+            QDomDocument doc("SVG");
+            QFile file(letterData.fileName);
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                continue;
+            if (!doc.setContent(&file)) {
+                file.close();
+                continue;
+            }
+            file.close();
+
+            QDomNodeList elementsList = doc.elementsByTagName("path");
+            QDomNodeList styleList = doc.elementsByTagName("style");
+
+            if (!styleList.isEmpty())
+            {
+                QDomElement element = styleList.item(0).toElement();
+                QString style = element.text();
+
+                if (!changeStrokeWidth(style))
+                    style += QString("%2stroke-width:%1").arg(penWidth * scale).arg(style.isEmpty() ? "" : ";");
+
+                QDomElement newElement = doc.createElement("style");
+
+                QDomText newText = doc.createTextNode(style);
+                newElement.appendChild(newText);
+                newElement.setAttribute("type", element.attribute("type", ""));
+                element.parentNode().replaceChild(newElement, element);
+            }
+            else
+            {
+                for (int i = 0; i < elementsList.count(); i++)
+                {
+                    QDomElement element = elementsList.at(i).toElement();
+                    QString style = element.attribute("style", "");
+
+                    if (!changeStrokeWidth(style))
+                        style += QString("%2stroke-width:%1").arg(penWidth * scale).arg(style.isEmpty() ? "" : ";");
+
+                    element.setAttribute("style", style);
+                }
+            }
+
+            renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
+            svgData.insert(key, {letterData, scale, renderer});
+        }
+}
+
+bool SvgView::changeStrokeWidth(QString &style)
+{
+    if (style.contains(QRegularExpression("stroke-width:\\d+.?\\d*")))
+    {
+        int index = style.indexOf("stroke-width:");
+        int semicolon = style.indexOf(";", index);
+        int endSign = style.indexOf("}", index);
+        if (semicolon != -1 || (semicolon != -1 && semicolon < endSign))
+            endSign = semicolon;
+
+        if (endSign == -1)
+            endSign += style.size();
+        int digitBegin = style.indexOf(QRegularExpression("\\d"), index);
+
+
+
+        style.remove(digitBegin, endSign - digitBegin);
+        style.insert(digitBegin, QString("%1").arg(penWidth));
+        return true;
+    }
+    else
+        return false;
 }
