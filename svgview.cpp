@@ -261,7 +261,7 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
     QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
     qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
     qreal scale = fontSize * dpmm / letterHeight;
-    qreal newPenWidth = penWidth * dpmm * fontSize / renderer->defaultSize().height();
+
 
     QDomDocument doc("SVG");
     QFile file(letterData.fileName);
@@ -277,6 +277,10 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
 
     file.close();
 
+    QStringList viewBox = doc.elementsByTagName("svg").item(0).toElement().attribute("viewBox").split(" ");
+    qreal dotsPerUnits = renderer->defaultSize().height() / (viewBox.at(3).toDouble() - viewBox.at(1).toDouble());
+    qreal newPenWidth = penWidth * dpmm / scale / dotsPerUnits;
+
     QDomNodeList elementsList = doc.elementsByTagName("path");
     QDomNodeList styleList = doc.elementsByTagName("style");
 
@@ -287,7 +291,7 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
         changeStrokeWidth(style, newPenWidth);
 
         QDomElement newElement = doc.createElement("style");
-        QDomText newText = doc.createTextNode(style);
+        QDomCDATASection newText = doc.createCDATASection(style);
         newElement.appendChild(newText);
         newElement.setAttribute("type", element.attribute("type", ""));
         element.parentNode().replaceChild(newElement, element);

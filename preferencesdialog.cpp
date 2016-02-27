@@ -80,7 +80,7 @@ void PreferencesDialog::loadSettingsFromFile()
     settings.beginGroup("Settings");
     ui->dpiSpinBox->setValue(           settings.value("dpi", 300).toInt());
     ui->letterSpacingSpinBox->setValue( settings.value("letter-spacing", 1.0).toDouble());
-    ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 0.0).toDouble());
+    ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 8.0).toDouble());
     ui->spacesInTabSpinBox->setValue(   settings.value("spaces-in-tab", 4).toInt());
     ui->fontSizeSpinBox->setValue(      settings.value("font-size", 8.0).toDouble());
     ui->penWidthSpinBox->setValue(      settings.value("pen-width", 0.5).toDouble());
