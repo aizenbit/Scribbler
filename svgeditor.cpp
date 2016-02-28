@@ -11,7 +11,7 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
     limits = QRectF(-1.0,-1.0,-1.0,-1.0);
     leftCornerPos = QPointF(0.0, 0.0);
     scaleFactor = 1;
-    minScaleFactor = 0.5;
+    minScaleFactor = 0.1;
     maxScaleFactor = 20;
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
@@ -22,14 +22,20 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
 void SvgEditor::load(const QString & file)
 {
     QSvgWidget::load(file);
-    inPoint = QPointF(-1.0, -1.0);
-    outPoint = QPointF(-1.0, -1.0);
-    limits = QRectF(-1.0,-1.0,-1.0,-1.0);
+    calculateCoordinates();
+    QPointF letterEnd(width() / 2.0 + renderer()->defaultSize().width() / 2.0 * scaleFactor,
+                      height() / 2.0 + renderer()->defaultSize().height() / 2.0 * scaleFactor);
+    inPoint = toStored(QPointF(letterBegin.x(), letterEnd.y()));
+    inPoint.ry() /= 2;
+    outPoint = toStored(QPointF(letterEnd.x(), letterEnd.y()));
+    outPoint.ry() /= 2;
+    limits = QRectF(toStored(letterBegin),
+                    toStored(letterEnd));
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     hideAll();
     showLetter = true;
-    calculateCoordinates();
+
     update();
 }
 void SvgEditor::wheelEvent(QWheelEvent *event)
@@ -144,9 +150,16 @@ void SvgEditor::resizeEvent(QResizeEvent *event)
 
 void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
-    inPoint = _inPoint;
-    outPoint = _outPoint;
-    limits = _limits;
+    if (_inPoint.x() >= 0 && _inPoint.y() >= 0)
+        inPoint = _inPoint;
+
+    if (_outPoint.x() >= 0 && _outPoint.y() >= 0)
+        outPoint = _outPoint;
+
+    if (_limits.left() >= 0 && _limits.top() >= 0 &&
+        _limits.width() >= 0 && _limits.height() >= 0)
+        limits = _limits;
+
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     showInPoint = true;
