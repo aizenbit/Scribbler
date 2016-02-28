@@ -65,7 +65,7 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionHelp"/>
+    <addaction name="actionHowTo"/>
     <addaction name="actionLicenses_and_Credits"/>
     <addaction name="actionAbout_Scribbler"/>
    </widget>
@@ -114,12 +114,12 @@
     <string>Preferences</string>
    </property>
   </action>
-  <action name="actionHelp">
+  <action name="actionHowTo">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>How To Use</string>
+    <string>How To</string>
    </property>
   </action>
   <action name="actionAbout_Scribbler">

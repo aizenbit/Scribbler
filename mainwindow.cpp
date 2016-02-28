@@ -45,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(showAboutBox()));
     connect(ui->actionLicenses_and_Credits, SIGNAL(triggered()),
             this, SLOT(showLicensesBox()));
+    connect(ui->actionHowTo, SIGNAL(triggered()),
+            this, SLOT(showHowToBox()));
 
     //----ToolBar----
     //add actions to tool bar and connect them to slots
@@ -149,6 +151,31 @@ void MainWindow::showLicensesBox()
                                    "<a href=http://www.livelib.ru/reader/Azure_wave>Anastasiya Belozerskaya</a> "
                                    "and grey eminence for a help. =)"));
     aboutBox.exec();
+}
+
+void MainWindow::showHowToBox()
+{
+    QMessageBox howToBox;
+    howToBox.setWindowTitle(tr("How To"));
+    howToBox.setText(tr("<strong>Scribbler</strong> ") + version);
+    howToBox.setInformativeText("<p>" + tr("Scribbler allows you to make handwritten text from a typed in text by simulating "
+                                           "your own handwriting. It takes the symbols that you have prepared beforehand in "
+                                           "a graphical editor, and places them on a sheet, which you can then save and print. "
+                                           "If you’re too lazy to create own font, you can use the default one.<br><br>"
+                                           "<strong>How to</strong>:"
+                                           "<ol>"
+                                           "<li>Draw the characters in any vector editor using the color #000000 with the "
+                                           "freehand tool and save them in SVG format.</li>"
+                                           "<li>Use the font editor to create a new font file in the same folder, where the "
+                                           "SVG-files locates.</li>"
+                                           "<li>Upload files via font editor, set the points of connection with nearby letters, "
+                                           "line height and symbol width</li>"
+                                           "<li>Convert text to handwritten using your font.</li>"
+                                           "</ol>"
+                                           "You can found the full manual here:<br>"
+                                           "<a href=https://github.com/aizenbit/Scribbler/wiki/User-manual>"
+                                           "https://github.com/aizenbit/Scribbler/wiki/User-manual</a>")+"</p>");
+    howToBox.exec();
 }
 
 void MainWindow::renderFirstSheet()

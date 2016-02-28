@@ -228,6 +228,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
     {
         enableDrawButtons(false);
         ui->choosenSymbolTextEdit->setText(item->text(0));
+        ui->svgEditor->hideAll();
         ui->svgEditor->disableDrawing();
         lastItem = nullptr;
     }

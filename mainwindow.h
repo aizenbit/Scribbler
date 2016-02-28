@@ -41,6 +41,7 @@ private:
 private slots:
     void showAboutBox();
     void showLicensesBox();
+    void showHowToBox();
     void renderFirstSheet();
     void renderNextSheet();
     void renderPreviousSheet();
