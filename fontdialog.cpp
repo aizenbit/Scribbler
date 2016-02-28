@@ -123,46 +123,40 @@ void FontDialog::loadLetters()
 
     QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
 
-    QTreeWidgetItem * letterItem;
+    QTreeWidgetItem *topLevelItem;
 
     if (font.contains(letter))
     {
-        loadFromEditorToFont();
+        for (int i = 0; i < files.count(); i++)
+            for (int j = 0; j < font.values(letter).count(); j++)
+                if (QFileInfo(files.at(i)).fileName() == font.values(letter).at(j).fileName)
+                {
+                    files.removeAt(i);
+                    i--;
+                    break;
+                }
 
-        for (const Letter & value : font.values(letter))
-            files += value.fileName;
-
-        files.removeDuplicates();
-        font.remove(letter);
-        letterItem = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive).first();
-        delete ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
-        lastItem = nullptr;
-        enableDrawButtons(false);
-        ui->svgEditor->disableDrawing();
-        ui->svgEditor->hideAll();
+        QTreeWidgetItem *letterItem = ui->treeWidget->findItems(letter, Qt::MatchFixedString).first();
+        topLevelItem = ui->treeWidget->topLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
     }
-
-    letterItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));
-
-    letterItem->text(0);
+    else
+    {
+        topLevelItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(letter)));
+        ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), topLevelItem);
+    }
 
     for (QString fileName : files)
     {
-        Letter temp = { QFileInfo(fileName).fileName(),
+        Letter newLetterData = { QFileInfo(fileName).fileName(),
                         QPointF(-1.0, -1.0),
                         QPointF(-1.0, -1.0),
                         QRectF(-1.0, -1.0, -1.0, -1.0) };
-        font.insert(letter, temp);
+        font.insert(letter, newLetterData);
+        QTreeWidgetItem *newLetterItem = new QTreeWidgetItem(topLevelItem, QStringList(newLetterData.fileName));
+        topLevelItem->addChild(newLetterItem);
+        ui->treeWidget->setCurrentItem(newLetterItem);
+        setTextFromItem(newLetterItem);
     }
-
-    for (QString value : files)
-    {
-        QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(QFileInfo(value).fileName()));
-        letterItem->addChild(valueItem);
-    }
-
-    ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), letterItem);
-    ui->choosenSymbolTextEdit->setText(QString());
 }
 
 void FontDialog::saveFont()
