@@ -64,14 +64,6 @@ int SvgView::renderText(const QStringRef &text)
         letterItem->setSharedRenderer(data.renderer);
         letterData = data.letterData;
 
-
-        if (useCustomFontColor)
-        {
-            QGraphicsColorizeEffect *colorEffect = new QGraphicsColorizeEffect();
-            colorEffect->setColor(fontColor);
-            letterItem->setGraphicsEffect(colorEffect);
-        }
-
         letterItem->setScale(data.scale);
         letterBoundingSize.setWidth(letterItem->boundingRect().width() * letterItem->scale());
         letterBoundingSize.setHeight(letterItem->boundingRect().height() * letterItem->scale());
@@ -288,7 +280,9 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
     {
         QDomElement element = styleList.item(0).toElement();
         QString style = element.text();
-        changeStrokeWidth(style, newPenWidth);
+        changeAttribute(style, "stroke-width", QString("%1").arg(newPenWidth));
+        if (useCustomFontColor)
+            changeAttribute(style, "stroke", fontColor.name(QColor::HexRgb));
 
         QDomElement newElement = doc.createElement("style");
         QDomCDATASection newText = doc.createCDATASection(style);
@@ -302,7 +296,9 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
         {
             QDomElement element = elementsList.at(i).toElement();
             QString style = element.attribute("style", "");
-            changeStrokeWidth(style, newPenWidth);
+            changeAttribute(style, "stroke-width", QString("%1").arg(newPenWidth));
+            if (useCustomFontColor)
+                changeAttribute(style, "stroke", fontColor.name(QColor::HexRgb));
             element.setAttribute("style", style);
         }
     }
@@ -312,21 +308,23 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
 
 }
 
-void SvgView::changeStrokeWidth(QString &style, qreal newPenWidth)
+void SvgView::changeAttribute(QString &attribute, QString parameter, QString newValue)
 {
-    QString parameter = "stroke-width:";
-
-    if (style.contains(QRegularExpression(parameter + "\\d+.?\\d*")))
+    if (attribute.contains(QRegularExpression(parameter + ":")))
     {
-        int index = style.indexOf(parameter);
-        int endSign = style.indexOf(QRegularExpression(";|}"), index);
-        int digitBegin = index + parameter.size();
+        int index = attribute.indexOf(parameter + ":");
+        int endSign = attribute.indexOf(QRegularExpression(";|}"), index);
+        int valueBegin = index + parameter.size() + 1;
 
-        style.remove(digitBegin, endSign - digitBegin);
-        style.insert(digitBegin, QString("%1").arg(newPenWidth));
+        attribute.remove(valueBegin, endSign - valueBegin);
+        attribute.insert(valueBegin, newValue);
     }
     else
-        style += QString("%2stroke-width:%1").arg(newPenWidth).arg(style.isEmpty() ? "" : ";");
+    {
+        int semicolon = attribute.lastIndexOf(QRegularExpression(";"));
+        int endSign = attribute.lastIndexOf(QRegularExpression(";|}"));
+        attribute.insert(semicolon > endSign ? semicolon : endSign, (attribute.isEmpty() ? "" : ";") + parameter + ":" + newValue);
+    }
 }
 
 void SvgView::loadSettingsFromFile()

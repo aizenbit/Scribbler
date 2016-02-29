@@ -68,7 +68,7 @@ private:
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
     void insertLetter(QChar key, Letter &letterData);
-    void changeStrokeWidth(QString &style, qreal newPenWidth);
+    void changeAttribute(QString &attribute, QString parameter, QString newValue);
 };
 
 #endif // SVGVIEW_H
