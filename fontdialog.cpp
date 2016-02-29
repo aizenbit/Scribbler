@@ -55,16 +55,17 @@ FontDialog::~FontDialog()
 
 void FontDialog::loadFont()
 {
-    lastItem = nullptr;
-    fontFileName.clear();
-    fontFileName = QFileDialog::getSaveFileName(0, tr("Choose"), "",
-                                                   tr("INI") +
-                                                      "(*.ini);;" +
-                                                   tr("All Files") +
-                                                      "(*.*)");
-    if (fontFileName.isEmpty())
+    QString newFileName = QFileDialog::getSaveFileName(0, tr("Choose"), "",
+                                                          tr("INI") +
+                                                          "(*.ini);;" +
+                                                          tr("All Files") +
+                                                          "(*.*)");
+    if (newFileName.isEmpty())
         return;
+    else
+        fontFileName = newFileName;
 
+    lastItem = nullptr;
     ui->fontFileTextEdit->setText(fontFileName);
 
     QSettings fontSettings(fontFileName, QSettings::IniFormat);
@@ -159,6 +160,9 @@ void FontDialog::loadLetters()
 
 void FontDialog::saveFont()
 {
+    if (fontFileName.isEmpty())
+        return;
+
     QFile file (fontFileName);
     file.remove();
 

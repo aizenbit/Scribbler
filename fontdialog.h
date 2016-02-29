@@ -33,6 +33,7 @@ private:
 
     QString fontFileName;
     QMultiMap<QChar, Letter> font;
+    bool changes;
 
 private slots:
     void loadFont();

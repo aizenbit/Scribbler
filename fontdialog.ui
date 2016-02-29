@@ -53,6 +53,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="fontFilePushButton">
+       <property name="toolTip">
+        <string>Choose Font File</string>
+       </property>
        <property name="text">
         <string>Browse</string>
        </property>
@@ -186,8 +189,18 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="toolTip">
+        <string>Delete information about selected symbol</string>
+       </property>
        <property name="text">
         <string>Delete</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Copy Selected</string>
        </property>
       </widget>
      </item>
@@ -207,6 +220,9 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="toolTip">
+        <string>Choose Symbol Files</string>
+       </property>
        <property name="text">
         <string>Browse</string>
        </property>
@@ -220,7 +236,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>
