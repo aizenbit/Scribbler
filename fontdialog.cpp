@@ -32,11 +32,6 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
             ui->svgEditor, SLOT(enableLimitsDrawing(bool)));
 
-    ui->SymbolFilesPushButton->setEnabled(false);
-    ui->deleteSymbolButton->setEnabled(false);
-    ui->drawInPointButton->setEnabled(false);
-    ui->drawOutPointButton->setEnabled(false);
-    ui->drawLimitsButton->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
     ui->drawInPointButton->setCheckable(true);
     ui->drawOutPointButton->setCheckable(true);
@@ -44,6 +39,9 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
+    ui->drawInPointButton->setToolTip(tr("In Point"));
+    ui->drawOutPointButton->setToolTip(tr("Out Point"));
+    ui->drawLimitsButton->setToolTip(tr("Limits"));
     ui->treeWidget->setColumnCount(1);
     ui->splitter->setSizes(QList <int> () << 200 << 350);
     lastItem = nullptr;

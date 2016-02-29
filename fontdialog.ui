@@ -99,6 +99,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QToolButton" name="drawInPointButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>...</string>
            </property>
@@ -106,6 +109,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="drawOutPointButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>...</string>
            </property>
@@ -113,6 +119,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="drawLimitsButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>...</string>
            </property>
@@ -174,6 +183,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="deleteSymbolButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Delete</string>
        </property>
@@ -192,6 +204,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="SymbolFilesPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Browse</string>
        </property>
