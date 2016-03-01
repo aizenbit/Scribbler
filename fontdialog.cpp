@@ -44,8 +44,6 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawInPointButton->setCheckable(true);
     ui->drawOutPointButton->setCheckable(true);
     ui->drawLimitsButton->setCheckable(true);
-    contextMenu->actions().at(0)->setEnabled(false);
-    contextMenu->actions().at(1)->setEnabled(false);
     ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
@@ -53,6 +51,7 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawOutPointButton->setToolTip(tr("Out Point"));
     ui->drawLimitsButton->setToolTip(tr("Limits"));
     ui->treeWidget->setColumnCount(1);
+   // ui->treeWidget->se
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->splitter->setSizes(QList <int> () << 200 << 350);
     lastItem = nullptr;
@@ -224,8 +223,6 @@ void FontDialog::limitTextEdit()
     if(!fontFileName.isEmpty())
     {
         ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
-        contextMenu->actions().at(0)->setEnabled(!text.isEmpty());
-        contextMenu->actions().at(1)->setEnabled(!text.isEmpty());
     }
 
     if (text.length() > 1)
@@ -293,36 +290,31 @@ void FontDialog::loadFromEditorToFont()
 
 void FontDialog::deleteLetter()
 {
-    if (ui->choosenSymbolTextEdit->toPlainText().isEmpty())
-        return;
+    QTreeWidgetItem *selectedItem = ui->treeWidget->itemAt(ui->treeWidget->mapFromGlobal(contextMenu->pos()));
+    bool hasParent = true;
 
-    QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
-    QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(letter, Qt::MatchCaseSensitive);
-    QList<QTreeWidgetItem *> selectedItemsList = ui->treeWidget->selectedItems();
+    if (selectedItem->parent() == nullptr)
+        hasParent = false;
 
-    if (letterItemList.isEmpty())
-        return;
+    QChar key = hasParent ? selectedItem->parent()->text(0).at(0) : selectedItem->text(0).at(0);
+    QTreeWidgetItem *topLevelItem = hasParent ? selectedItem->parent() : selectedItem;
 
-    QTreeWidgetItem *topLevelItem = letterItemList.first();
-
-    if (!selectedItemsList.isEmpty() &&
-        selectedItemsList.first()->parent() == topLevelItem &&
-        topLevelItem->childCount() > 1)
+    if (!hasParent || topLevelItem->childCount() <= 1)
     {
-        QTreeWidgetItem *selectedItem = selectedItemsList.first();
-        QList<Letter> letterList = font.values(letter);
-        for (const Letter &letterData : letterList)
-            if (letterData.fileName == selectedItem->text(0))
-            {
-                font.remove(letter, letterData);
-                delete selectedItem;
-                break;
-            }
+        delete topLevelItem;
+        font.remove(key);
     }
     else
     {
-        delete topLevelItem;
-        font.remove(letter);
+        QList<Letter> letterList = font.values(key);
+
+        for (const Letter &letterData : letterList)
+            if (letterData.fileName == selectedItem->text(0))
+            {
+                font.remove(key, letterData);
+                delete selectedItem;
+                break;
+            }
     }
 
     enableDrawButtons(false);
