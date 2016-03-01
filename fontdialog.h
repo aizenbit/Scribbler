@@ -7,6 +7,8 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 
 #include "letter.h"
 #include "svgeditor.h"
@@ -30,6 +32,7 @@ private:
     Ui::FontDialog *ui;
     QButtonGroup *buttonGroup;
     QTreeWidgetItem *lastItem;
+    QMenu *contextMenu;
 
     QString fontFileName;
     QMultiMap<QChar, Letter> font;
@@ -41,11 +44,13 @@ private slots:
     void saveFont();
     void rejectChanges();
     void deleteLetter();
+    void copyToChoosenSymbol();
 
     void limitTextEdit();
     void setTextFromItem(QTreeWidgetItem *item);
     void loadFromEditorToFont();
     void enableDrawButtons(bool enable = true);
+    void showTreeWidgetContextMenu(QPoint pos);
 
 };
 
