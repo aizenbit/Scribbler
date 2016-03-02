@@ -44,6 +44,7 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawInPointButton->setCheckable(true);
     ui->drawOutPointButton->setCheckable(true);
     ui->drawLimitsButton->setCheckable(true);
+    contextMenu->actions().at(1)->setEnabled(false);
     ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
@@ -51,7 +52,6 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawOutPointButton->setToolTip(tr("Out Point"));
     ui->drawLimitsButton->setToolTip(tr("Limits"));
     ui->treeWidget->setColumnCount(1);
-   // ui->treeWidget->se
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->splitter->setSizes(QList <int> () << 200 << 350);
     lastItem = nullptr;
@@ -223,6 +223,7 @@ void FontDialog::limitTextEdit()
     if(!fontFileName.isEmpty())
     {
         ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
+        contextMenu->actions().at(1)->setEnabled(!text.isEmpty());
     }
 
     if (text.length() > 1)
