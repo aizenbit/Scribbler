@@ -141,6 +141,9 @@
         </item>
         <item row="4" column="0" colspan="2">
          <widget class="QCheckBox" name="alternateMarginsCheckBox">
+          <property name="toolTip">
+           <string>Change left and right margins of even sheets</string>
+          </property>
           <property name="text">
            <string>Alternate Margins of even Sheets</string>
           </property>
