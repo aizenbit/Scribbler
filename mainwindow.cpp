@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     preferencesDialog = new PreferencesDialog();
     fontDialog = new FontDialog();
+    errorMessage = new QErrorMessage();
+    errorMessage->setMinimumSize(200, 150);
 
     //----File----
     connect(ui->actionConvert_to_Handwritten, SIGNAL(triggered()),
@@ -96,6 +98,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete preferencesDialog;
     delete fontDialog;
+    delete errorMessage;
 }
 
 void MainWindow::showAboutBox()
@@ -195,6 +198,8 @@ void MainWindow::renderFirstSheet()
     bool isThereMoreThanOneSheet = (text.length() - 1) >= endOfSheet;
     ui->toolBar->actions()[4]->setEnabled(isThereMoreThanOneSheet); //enable "Next Sheet" tool button
     ui->toolBar->actions()[5]->setDisabled(true);                   //disable "Previous Sheet" tool button
+
+    countMissedCharacters();
 }
 
 void MainWindow::renderNextSheet()
@@ -444,4 +449,50 @@ QString MainWindow::simplifyEnd(const QString& str)
             return str.left(n + 1);
 
     return "";
+}
+
+void MainWindow::countMissedCharacters()
+{
+    QString text = ui->textEdit->toPlainText().simplified();
+    QList<QChar> fontKeys = ui->svgView->getFontKeys();
+    QSet <QChar> missedCharacters;
+
+    for (const QChar &symbol : text)
+        if (!fontKeys.contains(symbol) && !symbol.isSpace())
+            missedCharacters << symbol;
+
+    if (missedCharacters.isEmpty())
+        return;
+
+    QString errorText, missedCharactersString;
+    int counter = 0;
+
+    for (const QChar &symbol : missedCharacters)
+    {
+        missedCharactersString += QString("%1, ").arg(symbol);
+        counter++;
+
+        if (counter > 10)
+            counter = 0;
+    }
+    missedCharactersString.remove(-2, 2);
+
+    if (missedCharacters.count() == 1)
+        errorText = tr("Character %1 is missing in the font! "
+                       "Instead, there is space on the sheet.").arg(missedCharactersString);
+
+    if (errorText.isEmpty() && missedCharacters.count() <= 10)
+    {
+        missedCharactersString.remove(-3, 1);
+        missedCharactersString.insert(missedCharactersString.size() - 1, tr("and "));
+        errorText = tr("Characters %1 are missing in the font! "
+                       "Instead, there are spaces on the sheet.").arg(missedCharactersString);
+    }
+
+    if (errorText.isEmpty() && missedCharacters.count() > 10)
+        errorText = tr("Some characters are missing in the font! "
+                       "Instead, there are spaces on the sheet.<br><br>"
+                       "List of missed characters:<br>") + missedCharactersString;
+
+    errorMessage->showMessage(errorText, "Some symbols missed");
 }

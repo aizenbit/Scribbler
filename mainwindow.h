@@ -7,6 +7,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollBar>
+#include <QtWidgets/QErrorMessage>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
 #include <QtGui/QWheelEvent>
@@ -30,6 +31,7 @@ private:
     Ui::MainWindow *ui;
     PreferencesDialog *preferencesDialog;
     FontDialog *fontDialog;
+    QErrorMessage *errorMessage;
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
     const QString version = "0.6 alpha";
@@ -52,6 +54,7 @@ private slots:
     void printAllSheets(QPrinter *printer = new QPrinter(QPrinter::HighResolution));
     void loadTextFromFile();
     void loadSettings();
+    void countMissedCharacters();
 };
 
 #endif // MAINWINDOW_H

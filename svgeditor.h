@@ -14,8 +14,6 @@ class SvgEditor : public QSvgWidget
 public:
     explicit SvgEditor(QWidget *parent = 0);
 
-
-
 public slots:
     void load(const QString & file);
     void setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);

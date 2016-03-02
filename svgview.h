@@ -32,6 +32,7 @@ public slots:
     void loadSettingsFromFile();
     void hideBorders(bool hide);
     void changeLeftRightMargins(bool change);
+    QList<QChar> getFontKeys() {return font.uniqueKeys();}
 
 protected:
     void wheelEvent(QWheelEvent *event);
