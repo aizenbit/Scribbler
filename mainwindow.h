@@ -28,6 +28,14 @@ public:
     ~MainWindow();
 
 private:
+    enum ToolButton : int {
+        Render = 1,
+        Print,
+        Save,
+        Previous,
+        Next
+    };
+
     Ui::MainWindow *ui;
     PreferencesDialog *preferencesDialog;
     FontDialog *fontDialog;

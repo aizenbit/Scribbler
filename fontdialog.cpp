@@ -29,9 +29,9 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(setTextFromItem(QTreeWidgetItem*)));
     connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(showTreeWidgetContextMenu(QPoint)));
-    connect(contextMenu->actions().at(0), SIGNAL(triggered(bool)),
+    connect(contextMenu->actions()[ContextAction::Delete], SIGNAL(triggered(bool)),
             this, SLOT(deleteLetter()));
-    connect(contextMenu->actions().at(1), SIGNAL(triggered(bool)),
+    connect(contextMenu->actions()[ContextAction::Copy], SIGNAL(triggered(bool)),
             this, SLOT(copyToChoosenSymbol()));
     connect(ui->drawInPointButton, SIGNAL(toggled(bool)),
             ui->svgEditor, SLOT(enableInPointDrawing(bool)));
@@ -44,7 +44,7 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawInPointButton->setCheckable(true);
     ui->drawOutPointButton->setCheckable(true);
     ui->drawLimitsButton->setCheckable(true);
-    contextMenu->actions().at(1)->setEnabled(false);
+    contextMenu->actions()[ContextAction::Copy]->setEnabled(false);
     ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
@@ -53,6 +53,8 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawLimitsButton->setToolTip(tr("Limits"));
     ui->treeWidget->setColumnCount(1);
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->treeWidget->setSortingEnabled(true);
+    ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
     ui->splitter->setSizes(QList <int> () << 200 << 350);
     lastItem = nullptr;
 
@@ -73,7 +75,8 @@ void FontDialog::loadFont()
                                                           tr("INI") +
                                                           "(*.ini);;" +
                                                           tr("All Files") +
-                                                          "(*.*)");
+                                                          "(*.*)",
+                                                       0, QFileDialog::DontConfirmOverwrite);
     if (newFileName.isEmpty())
         return;
     else
@@ -226,7 +229,7 @@ void FontDialog::limitTextEdit()
     if(!fontFileName.isEmpty())
     {
         ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
-        contextMenu->actions().at(1)->setEnabled(!text.isEmpty());
+        contextMenu->actions()[ContextAction::Copy]->setEnabled(!text.isEmpty());
     }
 
     if (text.length() > 1)

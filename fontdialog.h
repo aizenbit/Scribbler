@@ -29,6 +29,11 @@ signals:
     void fontReady();
 
 private:
+    enum ContextAction : int {
+        Delete,
+        Copy
+    };
+
     Ui::FontDialog *ui;
     QButtonGroup *buttonGroup;
     QTreeWidgetItem *lastItem;
@@ -36,7 +41,6 @@ private:
 
     QString fontFileName;
     QMultiMap<QChar, Letter> font;
-    bool changes;
 
 private slots:
     void loadFont();
