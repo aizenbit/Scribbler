@@ -89,7 +89,7 @@ int SvgView::renderText(const QStringRef &text)
         letterItem->setPos(letterItemPos);
         scene->addItem(letterItem);
 
-        if (connectLetters && lastLetter != nullptr)
+        if (connectLetters && lastLetter != nullptr && symbol.isLetter())
             connectLastLetterToCurrent();
 
         qreal letterWidth = letterItem->boundingRect().width() * letterData.limits.width() * data.scale;
