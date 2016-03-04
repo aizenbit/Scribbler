@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fontDialog = new FontDialog();
     errorMessage = new QErrorMessage();
     sheetNumberLabel = new QLabel("<h2>1</h2>");
+    sheetNumberLabel->setToolTip(tr("Number of Current Sheet"));
     sheetNumberLabel->setFrameShape(QFrame::Panel);
     sheetNumberLabel->setFrameShadow(QFrame::Sunken);
     sheetNumberLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);

@@ -108,23 +108,25 @@ void SvgEditor::paintEvent(QPaintEvent *event)
                                             renderer()->defaultSize() *= scaleFactor));
     }
 
-    QPen pen = QPen(Qt::SolidPattern, pointWidth);
+    QRect rect(QPoint(), QSize(pointWidth, pointWidth));
 
     if (showInPoint)
     {
         painter.save();
-        pen.setColor(Qt::darkCyan);
-        painter.setPen(pen);
-        painter.drawPoint(fromStored(inPoint));
+        rect.moveCenter(fromStored(inPoint).toPoint());
+        painter.setPen(Qt::cyan);
+        painter.setBrush(Qt::darkCyan);
+        painter.drawRect(rect);
         painter.restore();
     }
 
     if (showOutPoint)
     {
         painter.save();
-        pen.setColor(Qt::darkMagenta);
-        painter.setPen(pen);
-        painter.drawPoint(fromStored(outPoint));
+        rect.moveCenter(fromStored(outPoint).toPoint());
+        painter.setPen(Qt::magenta);
+        painter.setBrush(Qt::darkMagenta);
+        painter.drawRect(rect);
         painter.restore();
     }
 
