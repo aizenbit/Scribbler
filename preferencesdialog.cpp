@@ -69,6 +69,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("connect-letters", QVariant(ui->connectLettersCheckBox->isChecked()));
     settings.setValue("use-seed", QVariant(ui->useSeedCheckBox->isChecked()));
     settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
+    settings.setValue("round-lines", QVariant(ui->roundCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -98,6 +99,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->connectLettersCheckBox->setChecked(settings.value("connect-letters", true).toBool());
     ui->useSeedCheckBox->setChecked(settings.value("use-seed", true).toBool());
     ui->seedSpinBox->setValue(settings.value("seed", 12345678).toInt());
+    ui->roundCheckBox->setChecked(settings.value("round-lines", true).toBool());
     settings.endGroup();
 
     setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly

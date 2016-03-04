@@ -175,13 +175,6 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>Line Spacing (mm):</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="1">
          <widget class="QDoubleSpinBox" name="lineSpacingSpinBox">
           <property name="minimum">
@@ -192,10 +185,24 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Spaces in Tab:</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Letter Spacing (mm):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Line Spacing (mm):</string>
           </property>
          </widget>
         </item>
@@ -212,10 +219,10 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_11">
+        <item row="5" column="1">
+         <widget class="QPushButton" name="colorButton">
           <property name="text">
-           <string>Spaces in Tab:</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -226,13 +233,6 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QSpinBox" name="spacesInTabSpinBox">
-          <property name="value">
-           <number>4</number>
-          </property>
-         </widget>
-        </item>
         <item row="6" column="0">
          <widget class="QCheckBox" name="connectLettersCheckBox">
           <property name="text">
@@ -240,10 +240,10 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
-         <widget class="QPushButton" name="colorButton">
-          <property name="text">
-           <string/>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="spacesInTabSpinBox">
+          <property name="value">
+           <number>4</number>
           </property>
          </widget>
         </item>
@@ -268,6 +268,16 @@
           </property>
           <property name="value">
            <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QCheckBox" name="roundCheckBox">
+          <property name="text">
+           <string>Round Lines</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
           </property>
          </widget>
         </item>

@@ -260,6 +260,8 @@ void SvgView::loadFont(QString fontpath)
 
 void SvgView::insertLetter(QChar key, Letter &letterData)
 {
+    if (key == '2')
+        int i = 1;
     QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
     qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
     qreal scale = fontSize * dpmm / letterHeight;
@@ -293,6 +295,11 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
         changeAttribute(style, "stroke-width", QString("%1").arg(newPenWidth));
         if (useCustomFontColor)
             changeAttribute(style, "stroke", fontColor.name(QColor::HexRgb));
+        if (roundLines)
+        {
+            changeAttribute(style, "stroke-linecap", "round");
+            changeAttribute(style, "stroke-linejoin", "round");
+        }
 
         QDomElement newElement = doc.createElement("style");
         QDomCDATASection newText = doc.createCDATASection(style);
@@ -309,6 +316,11 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
             changeAttribute(style, "stroke-width", QString("%1").arg(newPenWidth));
             if (useCustomFontColor)
                 changeAttribute(style, "stroke", fontColor.name(QColor::HexRgb));
+            if (roundLines)
+            {
+                changeAttribute(style, "stroke-linecap", "round");
+                changeAttribute(style, "stroke-linejoin", "round");
+            }
             element.setAttribute("style", style);
         }
     }
@@ -362,6 +374,7 @@ void SvgView::loadSettingsFromFile()
     connectLetters = settings.value("connect-letters").toBool();
     useSeed = settings.value("use-seed").toBool();
     seed = settings.value("seed").toInt();
+    roundLines = settings.value("round-lines").toBool();
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 
