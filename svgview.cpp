@@ -56,6 +56,12 @@ int SvgView::renderText(const QStringRef &text)
         {
             processUnknownSymbol(symbol);
             endOfSheet++;
+
+            if (cursor.x() > currentMarginsRect.bottomRight().x() - (fontSize + letterSpacing) * dpmm)
+                cursor += QPointF(currentMarginsRect.x() - cursor.x(), (fontSize + lineSpacing) * dpmm);
+            if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
+                return endOfSheet;
+
             continue;
         }
 
