@@ -92,6 +92,9 @@ int SvgView::renderText(const QStringRef &text)
         previousLetterData = letterData;
         cursor.rx() += letterWidth + letterSpacing * dpmm;
         endOfSheet++;
+
+        if (!symbol.isLetter())
+            lastLetter = nullptr;
     }
 
     return endOfSheet;
@@ -114,6 +117,7 @@ void SvgView::prepareSceneToRender()
     scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
 
     cursor = QPointF(currentMarginsRect.x(), currentMarginsRect.y());
+
     if (useSeed)
         srand(seed);
     else

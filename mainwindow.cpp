@@ -9,6 +9,11 @@ MainWindow::MainWindow(QWidget *parent) :
     preferencesDialog = new PreferencesDialog();
     fontDialog = new FontDialog();
     errorMessage = new QErrorMessage();
+    sheetNumberLabel = new QLabel("<h2>1</h2>");
+    sheetNumberLabel->setFrameShape(QFrame::Panel);
+    sheetNumberLabel->setFrameShadow(QFrame::Sunken);
+    sheetNumberLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    sheetNumberLabel->setMinimumWidth(ui->toolBar->height());
     errorMessage->setMinimumSize(200, 150);
 
     //----File----
@@ -63,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->toolBar->addAction(QPixmap("://left.png"), tr("Previous Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(renderPreviousSheet()));
+    ui->toolBar->addWidget(sheetNumberLabel);
     connect(ui->toolBar->addAction(QPixmap("://right.png"), tr("Next Sheet")), SIGNAL(triggered(bool)),
             this, SLOT(renderNextSheet()));
 
@@ -99,6 +105,7 @@ MainWindow::~MainWindow()
     delete preferencesDialog;
     delete fontDialog;
     delete errorMessage;
+    delete sheetNumberLabel;
 }
 
 void MainWindow::showAboutBox()
@@ -200,6 +207,7 @@ void MainWindow::renderFirstSheet()
     ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 
     countMissedCharacters();
+    showSheetNumber(currentSheetNumber);
 }
 
 void MainWindow::renderNextSheet()
@@ -219,6 +227,7 @@ void MainWindow::renderNextSheet()
     endOfSheet += sheetPointers.at(currentSheetNumber);
 
     ui->toolBar->actions()[ToolButton::Previous]->setEnabled(true);
+    showSheetNumber(currentSheetNumber);
 
     if (endOfSheet >= text.length())    //this sheet is the last
     {
@@ -248,6 +257,8 @@ void MainWindow::renderPreviousSheet()
 
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
+
+    showSheetNumber(currentSheetNumber);
 }
 
 void MainWindow::loadFont()
@@ -495,4 +506,10 @@ void MainWindow::countMissedCharacters()
                        "List of missed characters:<br>") + missedCharactersString;
 
     errorMessage->showMessage(errorText, "Some symbols missed");
+}
+
+void MainWindow::showSheetNumber(int number)
+{
+    sheetNumberLabel->clear();
+    sheetNumberLabel->setText(QString("<h2>%1</h2>").arg(number + 1));
 }

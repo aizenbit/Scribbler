@@ -55,6 +55,7 @@ private slots:
     void loadFromEditorToFont();
     void enableDrawButtons(bool enable = true);
     void showTreeWidgetContextMenu(QPoint pos);
+    QTreeWidgetItem * getTopLevelItem(const QChar key);
 
 };
 

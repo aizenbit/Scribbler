@@ -8,6 +8,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QErrorMessage>
+#include <QtWidgets/QLabel>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
 #include <QtGui/QWheelEvent>
@@ -33,6 +34,7 @@ private:
         Print,
         Save,
         Previous,
+        SheetNumber,
         Next
     };
 
@@ -40,6 +42,7 @@ private:
     PreferencesDialog *preferencesDialog;
     FontDialog *fontDialog;
     QErrorMessage *errorMessage;
+    QLabel *sheetNumberLabel;
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
     const QString version = "0.6 alpha";
@@ -63,6 +66,7 @@ private slots:
     void loadTextFromFile();
     void loadSettings();
     void countMissedCharacters();
+    void showSheetNumber(int number);
 };
 
 #endif // MAINWINDOW_H

@@ -405,3 +405,12 @@ void FontDialog::copyToChoosenSymbol()
         }
     }
 }
+
+//TODO: to do
+QTreeWidgetItem * FontDialog::getTopLevelItem(const QChar key)
+{
+    if (font.uniqueKeys().contains(key))
+    {
+
+    }
+}
