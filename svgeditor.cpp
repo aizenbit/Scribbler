@@ -22,6 +22,7 @@ SvgEditor::SvgEditor(QWidget *parent) : QSvgWidget(parent)
 void SvgEditor::load(const QString & file)
 {
     QSvgWidget::load(file);
+    scaleSVGCanvas(file);
     calculateCoordinates();
     QPointF letterEnd(width() / 2.0 + renderer()->defaultSize().width() / 2.0 * scaleFactor,
                       height() / 2.0 + renderer()->defaultSize().height() / 2.0 * scaleFactor);
@@ -38,6 +39,28 @@ void SvgEditor::load(const QString & file)
 
     update();
 }
+
+void SvgEditor::scaleSVGCanvas(QString fileName)
+{
+    QDomDocument doc("SVG");
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    if (!doc.setContent(&file))
+    {
+        file.close();
+        return;
+    }
+
+    file.close();
+
+    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
+    SvgView::scaleViewBox(svgElement);
+    QSvgWidget::load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
+}
+
 void SvgEditor::wheelEvent(QWheelEvent *event)
 {
     qreal factor = qPow(1.2, event->delta() / 240.0);
@@ -50,6 +73,7 @@ void SvgEditor::wheelEvent(QWheelEvent *event)
     update();
     event->accept();
 }
+
 void SvgEditor::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton)

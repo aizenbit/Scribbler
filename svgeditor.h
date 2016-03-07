@@ -8,6 +8,8 @@
 #include <QtSvg/QSvgWidget>
 #include <QtSvg/QSvgRenderer>
 
+#include "svgview.h"
+
 class SvgEditor : public QSvgWidget
 {
     Q_OBJECT
@@ -52,6 +54,7 @@ private:
     void keepPointOnLetterCanvas(QPointF &point);
     QPointF toStored(const QPointF &point);
     QPointF fromStored(const QPointF &point);
+    void scaleSVGCanvas(QString fileName);
 };
 
 #endif // SVGEDITOR_H

@@ -22,6 +22,8 @@ class SvgView : public QGraphicsView
 public:
     explicit SvgView(QWidget *parent = 0);
     ~SvgView();
+    static qreal letterScale;
+    static void scaleViewBox(QDomElement &svgElement);
 
 public slots:
     QGraphicsScene * getScene() {return scene;}
@@ -42,6 +44,7 @@ private:
     {
         Letter letterData;
         qreal scale;
+        qreal width;
         QSvgRenderer *renderer;
     };
 
@@ -54,7 +57,7 @@ private:
     bool useCustomFontColor, changeMargins, connectLetters,
          useSeed, roundLines;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
-    qreal fontSize, penWidth, letterSpacing, lineSpacing, letterScale;
+    qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
 
@@ -72,7 +75,6 @@ private:
     void insertLetter(QChar key, Letter &letterData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
     //void scaleFunctionParameters(QString &attribute, QString functionName, qreal scalex, qreal scaley);
-    void scaleViewBox(QDomElement &svgElement);
 };
 
 #endif // SVGVIEW_H
