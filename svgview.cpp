@@ -5,7 +5,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     currentScaleFactor = 1.0;
     maxScaleFactor = 1.5; //if this is exceeded, graphic artifacts will occure
     minScaleFactor = 0.05;
-    changeMargins = false;
+    letterScale = 0.1;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
@@ -260,8 +260,6 @@ void SvgView::loadFont(QString fontpath)
 
 void SvgView::insertLetter(QChar key, Letter &letterData)
 {
-    if (key == '2')
-        int i = 1;
     QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
     qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
     qreal scale = fontSize * dpmm / letterHeight;
@@ -281,12 +279,16 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
 
     file.close();
 
-    QStringList viewBox = doc.elementsByTagName("svg").item(0).toElement().attribute("viewBox").split(" ");
+
+    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
+    QStringList viewBox = svgElement.attribute("viewBox").split(" ");
     qreal dotsPerUnits = renderer->defaultSize().height() / (viewBox.at(3).toDouble() - viewBox.at(1).toDouble());
     qreal newPenWidth = penWidth * dpmm / scale / dotsPerUnits;
+    scaleViewBox(svgElement);
 
-    QDomNodeList elementsList = doc.elementsByTagName("path");
+    QDomNodeList pathList = doc.elementsByTagName("path");
     QDomNodeList styleList = doc.elementsByTagName("style");
+    QDomNodeList gList = doc.elementsByTagName("g");
 
     if (!styleList.isEmpty())
     {
@@ -300,7 +302,6 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
             changeAttribute(style, "stroke-linecap", "round");
             changeAttribute(style, "stroke-linejoin", "round");
         }
-
         QDomElement newElement = doc.createElement("style");
         QDomCDATASection newText = doc.createCDATASection(style);
         newElement.appendChild(newText);
@@ -308,10 +309,9 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
         element.parentNode().replaceChild(newElement, element);
     }
     else
-    {
-        for (int i = 0; i < elementsList.count(); i++)
+        for (int i = 0; i < pathList.count(); i++)
         {
-            QDomElement element = elementsList.at(i).toElement();
+            QDomElement element = pathList.at(i).toElement();
             QString style = element.attribute("style", "");
             changeAttribute(style, "stroke-width", QString("%1").arg(newPenWidth));
             if (useCustomFontColor)
@@ -323,11 +323,28 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
             }
             element.setAttribute("style", style);
         }
-    }
 
+    /*if (!gList.isEmpty() && false)
+    {
+        QDomElement element = gList.item(0).toElement();
+        QString transform = element.attribute("transform", "");
+        if (!transform.isEmpty())
+            scaleFunctionParameters(transform, "translate", 0.55, 0.55);
+        else
+            scaleFunctionParameters(transform, "translate",
+                                    viewBox[2].toDouble() * 0.55,
+                                    viewBox[3].toDouble() * 0.55);
+
+
+        scaleFunctionParameters(transform, "scale", 0.55, 0.55);
+        element.setAttribute("transform", transform);
+    }*/
+    /*QFile log("log.txt");
+    log.open(QFile::WriteOnly | QFile::Append);
+    QTextStream out(&log);
+    out << doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8() << "\n\n";*/
     renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
     font.insert(key, {letterData, scale, renderer});
-
 }
 
 void SvgView::changeAttribute(QString &attribute, QString parameter, QString newValue)
@@ -347,6 +364,47 @@ void SvgView::changeAttribute(QString &attribute, QString parameter, QString new
         int endSign = attribute.lastIndexOf(QRegularExpression(";|}"));
         attribute.insert(semicolon > endSign ? semicolon : endSign, (attribute.isEmpty() ? "" : ";") + parameter + ":" + newValue);
     }
+}
+
+/*void SvgView::scaleFunctionParameters(QString &attribute, QString functionName, qreal scalex, qreal scaley)
+{
+    if (attribute.contains(functionName))
+    {
+        int index = attribute.indexOf(functionName + "(");
+        int endSign = attribute.indexOf(")", index);
+        int valueBegin = index + functionName.size();
+
+        QString oldValue = attribute.mid(valueBegin, endSign - valueBegin);
+        qreal x = oldValue.section(',', 0).toDouble();
+        qreal y = oldValue.section(',', 1).toDouble();
+        x *= scalex;
+        y *= scaley;
+        attribute.remove(valueBegin, endSign - valueBegin);
+        attribute.insert(valueBegin, QString("(%1,%2)").arg(x).arg(y));
+    }
+    else
+    {
+        attribute += (attribute.isEmpty() ? "" : ",") + functionName + QString("(%1,%2)").arg(scalex).arg(scaley);
+    }
+}*/
+
+void SvgView::scaleViewBox(QDomElement &svgElement)
+{
+    QStringList viewBoxValues = svgElement.attribute("viewBox").split(" ");
+
+    if (viewBoxValues.isEmpty())
+        return;
+
+    int width = viewBoxValues.at(2).toInt() - viewBoxValues.at(0).toInt();
+    int height = viewBoxValues.at(3).toInt() - viewBoxValues.at(1).toInt();
+
+    QString viewBox = QString("%1 %2 %3 %4")
+            .arg(static_cast<qreal>(viewBoxValues.at(0).toDouble() - width * letterScale / 2))
+            .arg(static_cast<qreal>(viewBoxValues.at(1).toDouble() - height * letterScale / 2))
+            .arg(static_cast<qreal>(viewBoxValues.at(2).toDouble() + width * letterScale))
+            .arg(static_cast<qreal>(viewBoxValues.at(3).toDouble() + height * letterScale));
+
+    svgElement.setAttribute("viewBox", viewBox);
 }
 
 void SvgView::loadSettingsFromFile()

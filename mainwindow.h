@@ -30,9 +30,10 @@ public:
 
 private:
     enum ToolButton : int {
-        Render = 1,
+        Render,
         Print,
         Save,
+        Separator,
         Previous,
         SheetNumber,
         Next

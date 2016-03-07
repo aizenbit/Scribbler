@@ -54,7 +54,7 @@ private:
     bool useCustomFontColor, changeMargins, connectLetters,
          useSeed, roundLines;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
-    qreal fontSize, penWidth, letterSpacing, lineSpacing;
+    qreal fontSize, penWidth, letterSpacing, lineSpacing, letterScale;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
 
@@ -71,6 +71,8 @@ private:
     void processUnknownSymbol(const QChar &symbol);
     void insertLetter(QChar key, Letter &letterData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
+    //void scaleFunctionParameters(QString &attribute, QString functionName, qreal scalex, qreal scaley);
+    void scaleViewBox(QDomElement &svgElement);
 };
 
 #endif // SVGVIEW_H
