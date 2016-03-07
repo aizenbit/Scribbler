@@ -70,6 +70,8 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("use-seed", QVariant(ui->useSeedCheckBox->isChecked()));
     settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
     settings.setValue("round-lines", QVariant(ui->roundCheckBox->isChecked()));
+    settings.setValue("scale-canvas", QVariant(ui->scaleCanvsaCheckBox->isChecked()));
+    settings.setValue("scale-canvas-value", QVariant(ui->scaleCanvasSpinBox->value()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -100,6 +102,8 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->useSeedCheckBox->setChecked(settings.value("use-seed", true).toBool());
     ui->seedSpinBox->setValue(settings.value("seed", 12345678).toInt());
     ui->roundCheckBox->setChecked(settings.value("round-lines", true).toBool());
+    ui->scaleCanvsaCheckBox->setChecked(settings.value("scale-canvas", true).toBool());
+    ui->scaleCanvasSpinBox->setValue(settings.value("scale-canvas-value", 0.5).toDouble());
     settings.endGroup();
 
     setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly

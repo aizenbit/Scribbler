@@ -22,7 +22,8 @@ class SvgView : public QGraphicsView
 public:
     explicit SvgView(QWidget *parent = 0);
     ~SvgView();
-    static qreal letterScale;
+    static qreal scaleCanvasValue;
+    static bool scaleCanvas;
     static void scaleViewBox(QDomElement &svgElement);
 
 public slots:
