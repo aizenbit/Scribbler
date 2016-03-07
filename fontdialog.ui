@@ -204,6 +204,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="autoLoadPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Autoload Symbols</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

@@ -21,6 +21,8 @@ FontDialog::FontDialog(QWidget *parent) :
             this, SLOT(loadFont()));
     connect(ui->SymbolFilesPushButton, SIGNAL(clicked()),
             this, SLOT(loadLetters()));
+    connect(ui->autoLoadPushButton, SIGNAL(clicked()),
+            this, SLOT(autoLoadSymbols()));
     connect(ui->buttonBox, SIGNAL(accepted()),
             this, SLOT(saveFont()));
     connect(ui->buttonBox, SIGNAL(rejected()),
@@ -124,6 +126,7 @@ void FontDialog::loadFont()
     }
 
     ui->svgEditor->load(QString());
+    ui->autoLoadPushButton->setEnabled(true);
     enableDrawButtons(false);
 }
 
@@ -215,6 +218,7 @@ void FontDialog::rejectChanges()
     lastItem = nullptr;
     enableDrawButtons(false);
     ui->SymbolFilesPushButton->setEnabled(false);
+    ui->autoLoadPushButton->setEnabled(false);
     ui->choosenSymbolTextEdit->clear();
     ui->fontFileTextEdit->clear();
     ui->treeWidget->clear();
@@ -366,7 +370,7 @@ void FontDialog::copyToChoosenSymbol()
 
     QChar key = hasParent ? selectedItem->parent()->text(0).at(0) : selectedItem->text(0).at(0);
     QChar newKey = ui->choosenSymbolTextEdit->toPlainText().at(0);
-    QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(newKey, Qt::MatchCaseSensitive);
+    QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(newKey, Qt::MatchExactly);
 
     QTreeWidgetItem *topLevelItem;
 
@@ -403,5 +407,70 @@ void FontDialog::copyToChoosenSymbol()
             QTreeWidgetItem *newLetterItem = new QTreeWidgetItem(topLevelItem, QStringList(letterData.fileName));
             topLevelItem->addChild(newLetterItem);
         }
+    }
+}
+
+void FontDialog::autoLoadSymbols()
+{
+    QStringList files = QFileDialog::getOpenFileNames(0, tr("Choose"), "",
+                                                         tr("SVG") +
+                                                            "(*.svg);;" +
+                                                         tr("All Files") +
+                                                            "(*.*)");
+    if (files.isEmpty())
+        return;
+
+    QRegularExpression lowLetters("^\\w_?(\\d)*.svg");
+    lowLetters.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    QRegularExpression upLetters("^UP_\\w_?(\\d)*.svg");
+    upLetters.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+
+    for (QString fileName : files)
+    {
+        fileName = QFileInfo(fileName).fileName();
+        QChar symbol;
+
+        if (lowLetters.match(fileName).hasMatch())
+            symbol = fileName.at(0).toLower();
+
+        if (upLetters.match(fileName).hasMatch())
+            symbol = fileName.at(3).toUpper();
+
+        QTreeWidgetItem *topLevelItem;
+
+        if (symbol.isNull())
+            continue;
+
+        if (font.contains(symbol))
+        {
+            bool fileExists = false;
+            for (int j = 0; j < font.values(symbol).count(); j++)
+                if (QFileInfo(fileName).fileName() == font.values(symbol).at(j).fileName)
+                {
+                    fileExists = true;
+                    break;
+                }
+
+            if (fileExists)
+                continue;
+
+            QTreeWidgetItem *letterItem = ui->treeWidget->findItems(symbol, Qt::MatchExactly).first();
+            topLevelItem = ui->treeWidget->topLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
+        }
+        else
+        {
+            topLevelItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(symbol)));
+            ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), topLevelItem);
+        }
+
+        Letter newLetterData = { fileName,
+                                 QPointF(-1.0, -1.0),
+                                 QPointF(-1.0, -1.0),
+                                 QRectF(-1.0, -1.0, -1.0, -1.0) };
+        font.insert(symbol, newLetterData);
+        QTreeWidgetItem *newLetterItem = new QTreeWidgetItem(topLevelItem, QStringList(newLetterData.fileName));
+        topLevelItem->addChild(newLetterItem);
+        ui->treeWidget->setCurrentItem(newLetterItem);
+        setTextFromItem(newLetterItem);
     }
 }

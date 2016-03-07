@@ -49,6 +49,7 @@ private slots:
     void rejectChanges();
     void deleteLetter();
     void copyToChoosenSymbol();
+    void autoLoadSymbols();
 
     void limitTextEdit();
     void setTextFromItem(QTreeWidgetItem *item);
