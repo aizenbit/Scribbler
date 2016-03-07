@@ -86,6 +86,7 @@ void FontDialog::loadFont()
 
     lastItem = nullptr;
     ui->fontFileTextEdit->setText(fontFileName);
+    ui->autoLoadPushButton->setEnabled(true);
 
     QSettings fontSettings(fontFileName, QSettings::IniFormat);
     fontSettings.beginGroup("Font");
@@ -126,7 +127,6 @@ void FontDialog::loadFont()
     }
 
     ui->svgEditor->load(QString());
-    ui->autoLoadPushButton->setEnabled(true);
     enableDrawButtons(false);
 }
 
@@ -420,21 +420,22 @@ void FontDialog::autoLoadSymbols()
     if (files.isEmpty())
         return;
 
-    QRegularExpression lowLetters("^\\w_?(\\d)*.svg");
-    lowLetters.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
-    QRegularExpression upLetters("^UP_\\w_?(\\d)*.svg");
+    QRegularExpression upLetters("^UP_._?[0-9]*\\.svg");
     upLetters.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    QRegularExpression marks("^._?[0-9]*\\.svg");
+    marks.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
     for (QString fileName : files)
     {
         fileName = QFileInfo(fileName).fileName();
         QChar symbol;
 
-        if (lowLetters.match(fileName).hasMatch())
+        if (marks.match(fileName).hasMatch())
             symbol = fileName.at(0).toLower();
 
         if (upLetters.match(fileName).hasMatch())
-            symbol = fileName.at(3).toUpper();
+            if (fileName.at(3).isLetter())
+                symbol = fileName.at(3).toUpper();
 
         QTreeWidgetItem *topLevelItem;
 
