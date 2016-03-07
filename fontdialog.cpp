@@ -420,6 +420,17 @@ void FontDialog::autoLoadSymbols()
     if (files.isEmpty())
         return;
 
+    QMap <QString, QChar> markNames;
+    markNames.insert("colon.svg", ':');
+    markNames.insert("slash.svg", '/');
+    markNames.insert("backslash.svg", '\\');
+    markNames.insert("question.svg", '?');
+    markNames.insert("vertical.svg", '|');
+    markNames.insert("asterisk.svg", '*');
+    markNames.insert("less.svg", '<');
+    markNames.insert("greater.svg", '>');
+    markNames.insert("caret.svg", '^');
+
     QRegularExpression upLetters("^UP_._?[0-9]*\\.svg");
     upLetters.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
     QRegularExpression marks("^._?[0-9]*\\.svg");
@@ -436,6 +447,9 @@ void FontDialog::autoLoadSymbols()
         if (upLetters.match(fileName).hasMatch())
             if (fileName.at(3).isLetter())
                 symbol = fileName.at(3).toUpper();
+
+        if (markNames.contains(fileName.toLower()))
+            symbol = markNames[fileName.toLower()];
 
         QTreeWidgetItem *topLevelItem;
 
