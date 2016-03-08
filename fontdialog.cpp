@@ -155,7 +155,7 @@ void FontDialog::loadLetters()
                     break;
                 }
 
-        QTreeWidgetItem *letterItem = ui->treeWidget->findItems(letter, Qt::MatchFixedString).first();
+        QTreeWidgetItem *letterItem = ui->treeWidget->findItems(letter, Qt::MatchExactly).first();
         topLevelItem = ui->treeWidget->topLevelItem(ui->treeWidget->indexOfTopLevelItem(letterItem));
     }
     else

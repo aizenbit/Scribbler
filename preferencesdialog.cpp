@@ -108,7 +108,9 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->seedSpinBox->setValue(settings.value("seed", 12345678).toInt());
     ui->roundCheckBox->setChecked(settings.value("round-lines", true).toBool());
     ui->scaleCanvsaCheckBox->setChecked(settings.value("scale-canvas", true).toBool());
+    changedByProgram = true;
     ui->scaleCanvasSpinBox->setValue(settings.value("scale-canvas-value", 0.5).toDouble());
+    changedByProgram = false;
     settings.endGroup();
 
     oldScaleCanvasValue = ui->scaleCanvasSpinBox->value();
@@ -206,7 +208,7 @@ bool PreferencesDialog::alternateMargins()
 void PreferencesDialog::showWarning()
 {
     static bool wasShown = false;
-    if (wasShown)
+    if (wasShown || changedByProgram)
         return;
 
     wasShown = true;
