@@ -25,6 +25,7 @@ public:
 
     static void scaleViewBox(QDomElement &svgElement);
     static const qreal &scaleCanvasValueRef;
+
 public slots:
     QGraphicsScene * getScene() {return scene;}
 
@@ -77,7 +78,6 @@ private:
     void processUnknownSymbol(const QChar &symbol);
     void insertLetter(QChar key, Letter &letterData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
-    //void scaleFunctionParameters(QString &attribute, QString functionName, qreal scalex, qreal scaley);
 };
 
 #endif // SVGVIEW_H

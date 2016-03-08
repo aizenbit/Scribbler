@@ -14,6 +14,8 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
             this, SLOT(changeSheetOrientation()));
     connect(ui->colorButton, SIGNAL(clicked()),
             this, SLOT(setColor()));
+    connect(ui->scaleCanvasSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(showWarning()));
 
     sheetSizeSignalMapper = new QSignalMapper(this);
 
@@ -109,6 +111,8 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->scaleCanvasSpinBox->setValue(settings.value("scale-canvas-value", 0.5).toDouble());
     settings.endGroup();
 
+    oldScaleCanvasValue = ui->scaleCanvasSpinBox->value();
+
     setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly
 }
 
@@ -197,4 +201,21 @@ void PreferencesDialog::setColor()
 bool PreferencesDialog::alternateMargins()
 {
     return ui->alternateMarginsCheckBox->isChecked();
+}
+
+void PreferencesDialog::showWarning()
+{
+    static bool wasShown = false;
+    if (wasShown)
+        return;
+
+    wasShown = true;
+    ui->scaleCanvasSpinBox->setValue(oldScaleCanvasValue);
+
+    QMessageBox warningBox;
+    warningBox.setIcon(QMessageBox::Warning);
+    warningBox.setWindowTitle(tr("Warning!"));
+    warningBox.setText(tr("Changing this value may harm your font! "
+                          "Don't change it, if you don't know exactly what you're doing!"));
+    warningBox.exec();
 }

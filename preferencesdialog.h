@@ -5,6 +5,7 @@
 #include <QtCore/QSignalMapper>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QColorDialog>
+#include <QtWidgets/QMessageBox>
 
 namespace Ui {
 class PreferencesDialog;
@@ -37,11 +38,13 @@ private:
     };
 
     bool changedByProgram;
+    qreal oldScaleCanvasValue;
 
 private slots:
     void setSheetSize(int size);
     void setColor();
     void changeSheetOrientation();
+    void showWarning();
 };
 
 #endif // PREFERENCESDIALOG_H
