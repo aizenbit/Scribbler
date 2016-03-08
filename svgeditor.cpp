@@ -32,6 +32,12 @@ void SvgEditor::load(const QString & file)
     outPoint.ry() /= 2;
     limits = QRectF(toStored(letterBegin),
                     toStored(letterEnd));
+    qreal width = limits.width();
+    qreal height = limits.height();
+    limits.setWidth(width / (1.0 + SvgView::scaleCanvasValueRef));
+    limits.setHeight(height / (1.0 + SvgView::scaleCanvasValueRef));
+    limits.moveLeft(toStored(letterBegin).x() + limits.width() * SvgView::scaleCanvasValueRef / 2);
+    limits.moveTop(toStored(letterBegin).y() + limits.height() * SvgView::scaleCanvasValueRef / 2);
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     hideAll();

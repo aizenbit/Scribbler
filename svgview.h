@@ -22,10 +22,9 @@ class SvgView : public QGraphicsView
 public:
     explicit SvgView(QWidget *parent = 0);
     ~SvgView();
-    static qreal scaleCanvasValue;
-    static bool scaleCanvas;
-    static void scaleViewBox(QDomElement &svgElement);
 
+    static void scaleViewBox(QDomElement &svgElement);
+    static const qreal &scaleCanvasValueRef;
 public slots:
     QGraphicsScene * getScene() {return scene;}
 
@@ -61,6 +60,9 @@ private:
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
+
+    static qreal scaleCanvasValue;
+    static bool scaleCanvas;
 
     Letter letterData, previousLetterData;
     QRectF currentMarginsRect;

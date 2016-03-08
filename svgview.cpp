@@ -1,5 +1,6 @@
 ﻿#include "svgview.h"
 
+const qreal &SvgView::scaleCanvasValueRef = SvgView::scaleCanvasValue;
 qreal SvgView::scaleCanvasValue;
 bool SvgView::scaleCanvas;
 
