@@ -56,9 +56,10 @@ private slots:
     void loadFromEditorToFont();
     void enableDrawButtons(bool enable = true);
     void showTreeWidgetContextMenu(QPoint pos);
-    QTreeWidgetItem * getTopLevelItem(QChar key);
+    QTreeWidgetItem * getSymbolItem(QChar key);
     QTreeWidgetItem * getCategoryItem(QChar key);
-    bool isTopLevelItem(QTreeWidgetItem *item);
+    bool isFileItem(QTreeWidgetItem *item);
+    bool isSymbolItem(QTreeWidgetItem *item);
     bool isCategoryItem(QTreeWidgetItem *item);
 };
 

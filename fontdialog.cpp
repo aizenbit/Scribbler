@@ -117,7 +117,7 @@ void FontDialog::loadFont()
 
     for (QChar key : font.uniqueKeys())
     {
-        QTreeWidgetItem *letterItem = getTopLevelItem(key);
+        QTreeWidgetItem *letterItem = getSymbolItem(key);
         for (const Letter & value : font.values(key))
         {
             QTreeWidgetItem *valueItem = new QTreeWidgetItem(letterItem, QStringList(value.fileName));
@@ -139,19 +139,19 @@ void FontDialog::loadLetters()
     if (files.isEmpty())
         return;
 
-    QChar letter = ui->choosenSymbolTextEdit->toPlainText().at(0);
+    QChar key = ui->choosenSymbolTextEdit->toPlainText().at(0);
 
-    if (font.contains(letter))
+    if (font.contains(key))
         for (int i = 0; i < files.count(); i++)
-            for (int j = 0; j < font.values(letter).count(); j++)
-                if (QFileInfo(files.at(i)).fileName() == font.values(letter).at(j).fileName)
+            for (int j = 0; j < font.values(key).count(); j++)
+                if (QFileInfo(files.at(i)).fileName() == font.values(key).at(j).fileName)
                 {
                     files.removeAt(i);
                     i--;
                     break;
                 }
 
-    QTreeWidgetItem *topLevelItem = getTopLevelItem(letter);
+    QTreeWidgetItem *symbolItem = getSymbolItem(key);
 
     for (QString fileName : files)
     {
@@ -159,9 +159,9 @@ void FontDialog::loadLetters()
                         QPointF(-1.0, -1.0),
                         QPointF(-1.0, -1.0),
                         QRectF(-1.0, -1.0, -1.0, -1.0) };
-        font.insert(letter, newLetterData);
-        QTreeWidgetItem *newLetterItem = new QTreeWidgetItem(topLevelItem, QStringList(newLetterData.fileName));
-        topLevelItem->addChild(newLetterItem);
+        font.insert(key, newLetterData);
+        QTreeWidgetItem *newLetterItem = new QTreeWidgetItem(symbolItem, QStringList(newLetterData.fileName));
+        symbolItem->addChild(newLetterItem);
         ui->treeWidget->setCurrentItem(newLetterItem);
         setTextFromItem(newLetterItem);
     }
@@ -236,9 +236,9 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 {
     loadFromEditorToFont();
 
-    if (isTopLevelItem(item) || isCategoryItem(item))
+    if (isSymbolItem(item) || isCategoryItem(item))
     {
-        if (isTopLevelItem(item))
+        if (isSymbolItem(item))
             ui->choosenSymbolTextEdit->setText(item->text(0));
 
         enableDrawButtons(false);
@@ -294,19 +294,11 @@ void FontDialog::deleteLetter()
 {
     QTreeWidgetItem *selectedItem = ui->treeWidget->itemAt(ui->treeWidget->mapFromGlobal(contextMenu->pos()));
 
-    QChar key = isTopLevelItem(selectedItem) ? selectedItem->text(0).at(0) : selectedItem->parent()->text(0).at(0) ;
-    QTreeWidgetItem *topLevelItem = getTopLevelItem(key);
+    QChar key = isSymbolItem(selectedItem) ? selectedItem->text(0).at(0) : selectedItem->parent()->text(0).at(0) ;
+    QTreeWidgetItem *symbolItem = getSymbolItem(key);
+    QTreeWidgetItem *categoryItem = symbolItem->parent();
 
-    if (isTopLevelItem(selectedItem) || topLevelItem->childCount() <= 1)
-    {
-        QTreeWidgetItem *categoryItem = topLevelItem->parent();
-        delete topLevelItem;
-        font.remove(key);
-
-        if (categoryItem->childCount() == 0)
-            delete categoryItem;
-    }
-    else
+    if (isFileItem(selectedItem))
     {
         QList<Letter> letterList = font.values(key);
 
@@ -317,7 +309,21 @@ void FontDialog::deleteLetter()
                 delete selectedItem;
                 break;
             }
+
+        if(symbolItem->childCount() == 0)
+            delete symbolItem;
     }
+    else
+    {
+        for (QTreeWidgetItem *item : selectedItem->takeChildren())
+            delete item;
+
+        delete selectedItem;
+        font.remove(key);
+    }
+
+    if (categoryItem->childCount() == 0)
+        delete categoryItem;
 
     enableDrawButtons(false);
     ui->svgEditor->hideAll();
@@ -365,13 +371,13 @@ void FontDialog::copyToChoosenSymbol()
 
     QTreeWidgetItem *selectedItem = ui->treeWidget->selectedItems().at(0);
 
-    QChar key = isTopLevelItem(selectedItem) ? selectedItem->text(0).at(0) : selectedItem->parent()->text(0).at(0);
+    QChar key = isSymbolItem(selectedItem) ? selectedItem->text(0).at(0) : selectedItem->parent()->text(0).at(0);
     QChar newKey = ui->choosenSymbolTextEdit->toPlainText().at(0);
     QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(newKey, Qt::MatchExactly);
 
-    QTreeWidgetItem *topLevelItem = getTopLevelItem(newKey);
+    QTreeWidgetItem *topLevelItem = getSymbolItem(newKey);
 
-    if (!isTopLevelItem(selectedItem))
+    if (!isSymbolItem(selectedItem))
     {
         for (Letter &letterData : font.values(key))
             if (letterData.fileName == selectedItem->text(0))
@@ -457,7 +463,7 @@ void FontDialog::autoLoadSymbols()
                 continue;
         }
 
-        QTreeWidgetItem *topLevelItem = getTopLevelItem(symbol);
+        QTreeWidgetItem *topLevelItem = getSymbolItem(symbol);
 
         Letter newLetterData = { fileName,
                                  QPointF(-1.0, -1.0),
@@ -471,7 +477,7 @@ void FontDialog::autoLoadSymbols()
     }
 }
 
-QTreeWidgetItem * FontDialog::getTopLevelItem(QChar key)
+QTreeWidgetItem * FontDialog::getSymbolItem(QChar key)
 {
     QTreeWidgetItem *topLevelItem = nullptr;
 
@@ -529,7 +535,7 @@ QTreeWidgetItem * FontDialog::getCategoryItem(QChar key)
     return categoryItem;
 }
 
-bool FontDialog::isTopLevelItem(QTreeWidgetItem *item)
+bool FontDialog::isSymbolItem(QTreeWidgetItem *item)
 {
     if (isCategoryItem(item))
         return false;
@@ -539,5 +545,17 @@ bool FontDialog::isTopLevelItem(QTreeWidgetItem *item)
 
 bool FontDialog::isCategoryItem(QTreeWidgetItem *item)
 {
-    return item->parent() == nullptr;
+    if (item != nullptr)
+        return item->parent() == nullptr;
+    else
+        return false;
+}
+
+bool FontDialog::isFileItem(QTreeWidgetItem *item)
+{
+    if (item != nullptr)
+        return !(isCategoryItem(item) || isSymbolItem(item));
+    else
+        return false;
+
 }
