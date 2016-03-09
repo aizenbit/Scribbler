@@ -100,14 +100,14 @@ void FontDialog::loadFont()
 
     font.clear();
     for (const QString &key : fontSettings.childKeys())
-        for (const Letter &value : fontSettings.value(key).value<QList<Letter>>())
+        for (const SymbolData &value : fontSettings.value(key).value<QList<SymbolData>>())
             font.insert(key.at(0).toLower(), value);
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on a freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
     for (const QString &key : fontSettings.childKeys())
-        for (const Letter &value : fontSettings.value(key).value<QList<Letter>>())
+        for (const SymbolData &value : fontSettings.value(key).value<QList<SymbolData>>())
             font.insert(key.at(0).toUpper(), value);
     fontSettings.endGroup();
 
@@ -118,7 +118,7 @@ void FontDialog::loadFont()
     for (QChar key : font.uniqueKeys())
     {
         QTreeWidgetItem *symbolItem = getSymbolItem(key);
-        for (const Letter &data : font.values(key))
+        for (const SymbolData &data : font.values(key))
         {
             QTreeWidgetItem *fileItem = new QTreeWidgetItem(symbolItem, QStringList(data.fileName));
             symbolItem->addChild(fileItem);
@@ -155,7 +155,7 @@ void FontDialog::loadSymbols()
 
     for (QString fileName : files)
     {
-        Letter symbolData = { QFileInfo(fileName).fileName(),
+        SymbolData symbolData = { QFileInfo(fileName).fileName(),
                         QPointF(-1.0, -1.0),
                         QPointF(-1.0, -1.0),
                         QRectF(-1.0, -1.0, -1.0, -1.0) };
@@ -251,9 +251,9 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         enableDrawButtons(true);
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
         ui->svgEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
-        QList<Letter> dataList = font.values(item->parent()->text(0).at(0));
+        QList<SymbolData> dataList = font.values(item->parent()->text(0).at(0));
 
-        for (const Letter &data : dataList)
+        for (const SymbolData &data : dataList)
             if (data.fileName == item->text(0))
             {
                 ui->svgEditor->setSymbolData(data.inPoint, data.outPoint, data.limits);
@@ -268,15 +268,15 @@ void FontDialog::loadFromEditorToFont()
 {
     if (lastItem != nullptr)
     {
-        Letter newData;
+        SymbolData newData;
         newData.fileName = lastItem->text(0);
         newData.inPoint = ui->svgEditor->getInPoint();
         newData.outPoint = ui->svgEditor->getOutPoint();
         newData.limits = ui->svgEditor->getLimits();
         QChar key = lastItem->parent()->text(0).at(0);
-        QList<Letter> dataList = font.values(key);
+        QList<SymbolData> dataList = font.values(key);
 
-        for (Letter &data : dataList)
+        for (SymbolData &data : dataList)
             if (data.fileName == lastItem->text(0))
             {
                 data = newData;
@@ -285,7 +285,7 @@ void FontDialog::loadFromEditorToFont()
 
         font.remove(key);
 
-        for (const Letter &data : dataList)
+        for (const SymbolData &data : dataList)
             font.insert(key, data);
     }
 }
@@ -300,9 +300,9 @@ void FontDialog::deleteItem()
 
     if (isFileItem(selectedItem))
     {
-        QList<Letter> dataList = font.values(key);
+        QList<SymbolData> dataList = font.values(key);
 
-        for (const Letter &symbolData : dataList)
+        for (const SymbolData &symbolData : dataList)
             if (symbolData.fileName == selectedItem->text(0))
             {
                 font.remove(key, symbolData);
@@ -377,7 +377,7 @@ void FontDialog::copyToChoosenSymbol()
 
     if (!isSymbolItem(selectedItem))
     {
-        for (Letter &symbolData : font.values(key))
+        for (SymbolData &symbolData : font.values(key))
             if (symbolData.fileName == selectedItem->text(0))
             {
                 if (font.contains(newKey, symbolData))
@@ -391,7 +391,7 @@ void FontDialog::copyToChoosenSymbol()
     }
     else
     {
-        for (Letter &symbolData : font.values(key))
+        for (SymbolData &symbolData : font.values(key))
         {
             if (font.contains(newKey, symbolData))
                 continue;
@@ -463,7 +463,7 @@ void FontDialog::autoLoadSymbols()
 
         QTreeWidgetItem *symbolItem = getSymbolItem(symbol);
 
-        Letter symbolData = { fileName,
+        SymbolData symbolData = { fileName,
                                  QPointF(-1.0, -1.0),
                                  QPointF(-1.0, -1.0),
                                  QRectF(-1.0, -1.0, -1.0, -1.0) };

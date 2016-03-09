@@ -5,8 +5,8 @@
 int main(int argc, char *argv[])
 {
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-    qRegisterMetaTypeStreamOperators<Letter>("Letter");
-    qRegisterMetaTypeStreamOperators<QList<Letter>>("QList<Letter>");
+    qRegisterMetaTypeStreamOperators<SymbolData>("SymbolData");
+    qRegisterMetaTypeStreamOperators<QList<SymbolData>>("QList<SymbolData>");
     QApplication a(argc, argv);
 
     QTranslator myTranslator;

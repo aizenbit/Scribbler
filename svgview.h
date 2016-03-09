@@ -13,7 +13,7 @@
 #include <QtSvg/QSvgRenderer>
 #include <QtXml/QDomDocument>
 
-#include "letter.h"
+#include "symboldata.h"
 
 class SvgView : public QGraphicsView
 {
@@ -43,7 +43,7 @@ protected:
 private:
     struct SvgData
     {
-        Letter symbolData;
+        SymbolData symbolData;
         qreal scale;
         qreal width;
         QSvgRenderer *renderer;
@@ -65,9 +65,9 @@ private:
     static qreal scaleCanvasValue;
     static bool scaleCanvas;
 
-    Letter letterData, previousLetterData;
+    SymbolData symbolData, previousLetterData;
     QRectF currentMarginsRect;
-    QSize letterBoundingSize;
+    QSize symbolBoundingSize;
     QPointF cursor, previousLetterCursor;
     QGraphicsSvgItem *lastLetter;
 
@@ -76,7 +76,7 @@ private:
     void preventGoingBeyondRightMargin();
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
-    void insertSymbol(QChar key, Letter &symbolData);
+    void insertSymbol(QChar key, SymbolData &symbolData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
 };
 

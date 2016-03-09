@@ -10,7 +10,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
 
-#include "letter.h"
+#include "symboldata.h"
 #include "svgeditor.h"
 
 namespace Ui {
@@ -40,7 +40,7 @@ private:
     QMenu *contextMenu;
 
     QString fontFileName;
-    QMultiMap<QChar, Letter> font;
+    QMultiMap<QChar, SymbolData> font;
 
 private slots:
     void loadFont();

@@ -17,15 +17,15 @@ SOURCES += main.cpp\
     svgview.cpp \
     preferencesdialog.cpp \
     fontdialog.cpp \
-    letter.cpp \
-    svgeditor.cpp
+    svgeditor.cpp \
+    symboldata.cpp
 
 HEADERS  += mainwindow.h \
     svgview.h \
     preferencesdialog.h \
     fontdialog.h \
-    letter.h \
-    svgeditor.h
+    svgeditor.h \
+    symboldata.h
 
 FORMS    += mainwindow.ui \
     preferencesdialog.ui \
