@@ -26,22 +26,22 @@ void SvgEditor::load(const QString & file)
     calculateCoordinates();
     QPointF letterEnd(width() / 2.0 + renderer()->defaultSize().width() / 2.0 * scaleFactor,
                       height() / 2.0 + renderer()->defaultSize().height() / 2.0 * scaleFactor);
-    inPoint = toStored(QPointF(letterBegin.x(), letterEnd.y()));
+    inPoint = toStored(QPointF(symbolBegin.x(), letterEnd.y()));
     inPoint.ry() /= 2;
     outPoint = toStored(QPointF(letterEnd.x(), letterEnd.y()));
     outPoint.ry() /= 2;
-    limits = QRectF(toStored(letterBegin),
+    limits = QRectF(toStored(symbolBegin),
                     toStored(letterEnd));
     qreal width = limits.width();
     qreal height = limits.height();
     limits.setWidth(width / (1.0 + SvgView::scaleCanvasValueRef));
     limits.setHeight(height / (1.0 + SvgView::scaleCanvasValueRef));
-    limits.moveLeft(toStored(letterBegin).x() + limits.width() * SvgView::scaleCanvasValueRef / 2);
-    limits.moveTop(toStored(letterBegin).y() + limits.height() * SvgView::scaleCanvasValueRef / 2);
+    limits.moveLeft(toStored(symbolBegin).x() + limits.width() * SvgView::scaleCanvasValueRef / 2);
+    limits.moveTop(toStored(symbolBegin).y() + limits.height() * SvgView::scaleCanvasValueRef / 2);
     limitsTopLeft = limits.topLeft();
     limitsBottomRight = limits.bottomRight();
     hideAll();
-    showLetter = true;
+    showSymbol = true;
 
     update();
 }
@@ -130,7 +130,7 @@ void SvgEditor::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
-    if (showLetter)
+    if (showSymbol)
     {
         qreal realLetterWidth = renderer()->defaultSize().width() * scaleFactor;
         qreal realLetterHeight = renderer()->defaultSize().height() * scaleFactor;
@@ -180,7 +180,7 @@ void SvgEditor::resizeEvent(QResizeEvent *event)
     update();
 }
 
-void SvgEditor::setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
+void SvgEditor::setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
     if (_inPoint.x() >= 0 && _inPoint.y() >= 0)
         inPoint = _inPoint;
@@ -207,7 +207,7 @@ void SvgEditor::disableDrawing(const bool disable)
         drawInPoint = false;
         drawOutPoint = false;
         drawLimits = false;
-        drawLetter = false;
+        drawSymbol = false;
     }
     update();
 }
@@ -219,7 +219,7 @@ void SvgEditor::hideAll(const bool hide)
         showInPoint = false;
         showOutPoint = false;
         showLimits = false;
-        showLetter = false;
+        showSymbol = false;
     }
     update();
 }
@@ -244,7 +244,7 @@ void SvgEditor::enableLimitsDrawing(const bool draw)
 
 void SvgEditor::setInPoint(QPointF point)
 {
-    keepPointOnLetterCanvas(point);
+    keepPointOnSymbolCanvas(point);
     inPoint = toStored(point);
     showInPoint = true;
     update();
@@ -252,7 +252,7 @@ void SvgEditor::setInPoint(QPointF point)
 
 void SvgEditor::setOutPoint(QPointF point)
 {
-    keepPointOnLetterCanvas(point);
+    keepPointOnSymbolCanvas(point);
     outPoint = toStored(point);
     showOutPoint = true;
     update();
@@ -260,13 +260,13 @@ void SvgEditor::setOutPoint(QPointF point)
 
 void SvgEditor::setLimitsTopLeft(QPointF point)
 {
-    keepPointOnLetterCanvas(point);
+    keepPointOnSymbolCanvas(point);
     limitsTopLeft = toStored(point);
 }
 
 void SvgEditor::setLimitsBottomRight(QPointF point)
 {
-    keepPointOnLetterCanvas(point);
+    keepPointOnSymbolCanvas(point);
 
     limitsBottomRight = toStored(point);
 
@@ -278,35 +278,35 @@ void SvgEditor::setLimitsBottomRight(QPointF point)
 QPointF SvgEditor::toStored(const QPointF &point)
 {
     QPointF result;
-    result.rx() = (point.x() - letterBegin.x()) / static_cast<qreal>(currentLetterSize.width() - 1);
-    result.ry() = (point.y() - letterBegin.y()) / static_cast<qreal>(currentLetterSize.height() - 1);
+    result.rx() = (point.x() - symbolBegin.x()) / static_cast<qreal>(currentSymbolSize.width() - 1);
+    result.ry() = (point.y() - symbolBegin.y()) / static_cast<qreal>(currentSymbolSize.height() - 1);
     return result;
 }
 
 QPointF SvgEditor::fromStored(const QPointF &point)
 {
     QPointF result;
-    result.rx() = point.x() * static_cast<qreal>(currentLetterSize.width() - 1);
-    result.ry() = point.y() * static_cast<qreal>(currentLetterSize.height() - 1);
-    result += letterBegin;
+    result.rx() = point.x() * static_cast<qreal>(currentSymbolSize.width() - 1);
+    result.ry() = point.y() * static_cast<qreal>(currentSymbolSize.height() - 1);
+    result += symbolBegin;
     return result;
 }
 
 void SvgEditor::calculateCoordinates()
 {
-    letterBegin = QPointF(width() / 2.0 - renderer()->defaultSize().width() / 2.0 * scaleFactor,
+    symbolBegin = QPointF(width() / 2.0 - renderer()->defaultSize().width() / 2.0 * scaleFactor,
                           height() / 2.0 - renderer()->defaultSize().height() / 2.0 * scaleFactor);
-    currentLetterSize = renderer()->defaultSize() *= scaleFactor;
+    currentSymbolSize = renderer()->defaultSize() *= scaleFactor;
 }
 
-void SvgEditor::keepPointOnLetterCanvas(QPointF & point)
+void SvgEditor::keepPointOnSymbolCanvas(QPointF & point)
 {
-    if (point.x() < letterBegin.x())
-        point.rx() = letterBegin.x();
-    if (point.x() >= letterBegin.x() + currentLetterSize.width())
-        point.rx() =  letterBegin.x() + currentLetterSize.width() - 1;
-    if (point.y() < letterBegin.y())
-        point.ry() = letterBegin.y();
-    if (point.y() >= letterBegin.y() + currentLetterSize.height())
-        point.ry() =  letterBegin.y() + currentLetterSize.height() - 1;
+    if (point.x() < symbolBegin.x())
+        point.rx() = symbolBegin.x();
+    if (point.x() >= symbolBegin.x() + currentSymbolSize.width())
+        point.rx() =  symbolBegin.x() + currentSymbolSize.width() - 1;
+    if (point.y() < symbolBegin.y())
+        point.ry() = symbolBegin.y();
+    if (point.y() >= symbolBegin.y() + currentSymbolSize.height())
+        point.ry() =  symbolBegin.y() + currentSymbolSize.height() - 1;
 }

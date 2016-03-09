@@ -100,17 +100,19 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->bottomMarginsSpinBox->setValue( settings.value("bottom-margin", 5).toInt());
     ui->VRadioButton->setChecked(       settings.value("is-sheet-orientation-vertical", true).toBool());
     ui->fontColorCheckBox->setChecked(  settings.value("use-custom-font-color", true).toBool());
-    ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
-                                           .arg(settings.value("font-color", "#0097ff").toString()));
-    ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
-    ui->connectLettersCheckBox->setChecked(settings.value("connect-letters", true).toBool());
-    ui->useSeedCheckBox->setChecked(settings.value("use-seed", true).toBool());
-    ui->seedSpinBox->setValue(settings.value("seed", 12345678).toInt());
-    ui->roundCheckBox->setChecked(settings.value("round-lines", true).toBool());
+    ui->useSeedCheckBox->setChecked(    settings.value("use-seed", true).toBool());
+    ui->seedSpinBox->setValue(          settings.value("seed", 12345678).toInt());
+    ui->roundCheckBox->setChecked(      settings.value("round-lines", true).toBool());
     ui->scaleCanvsaCheckBox->setChecked(settings.value("scale-canvas", true).toBool());
     changedByProgram = true;
-    ui->scaleCanvasSpinBox->setValue(settings.value("scale-canvas-value", 0.5).toDouble());
+    ui->scaleCanvasSpinBox->setValue(   settings.value("scale-canvas-value", 0.5).toDouble());
     changedByProgram = false;
+    ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
+    ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
+
+    ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
+                                           .arg(settings.value("font-color", "#0097ff").toString()));
+
     settings.endGroup();
 
     oldScaleCanvasValue = ui->scaleCanvasSpinBox->value();

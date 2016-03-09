@@ -50,7 +50,7 @@ int SvgView::renderText(const QStringRef &text)
 
     int endOfSheet = 0;
 
-    //---Sequentially add the letters to the scene
+    //---Sequentially add the symbols to the scene
     for (int currentSymbolNumber = 0; currentSymbolNumber < text.length(); currentSymbolNumber++)
     {
         QChar symbol = text.at(currentSymbolNumber);
@@ -71,7 +71,7 @@ int SvgView::renderText(const QStringRef &text)
         QGraphicsSvgItem *letterItem = new QGraphicsSvgItem();
         SvgData data = font.values(symbol).at(qrand() % font.values(symbol).size());
         letterItem->setSharedRenderer(data.renderer);
-        letterData = data.letterData;
+        letterData = data.symbolData;
 
         letterItem->setScale(data.scale);
         letterBoundingSize.setWidth(letterItem->boundingRect().width() * letterItem->scale());
@@ -95,7 +95,7 @@ int SvgView::renderText(const QStringRef &text)
         if (connectLetters && lastLetter != nullptr && symbol.isLetter())
             connectLastLetterToCurrent();
 
-        qreal letterWidth = data.width * data.letterData.limits.width() * data.scale;
+        qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;
         lastLetter = letterItem;
         previousLetterCursor = cursor;
         previousLetterData = letterData;
@@ -239,17 +239,17 @@ void SvgView::loadFont(QString fontpath)
         for (Letter letterData : fontSettings.value(key).value<QList<Letter>>())
         {
             letterData.fileName = fontDirectory + letterData.fileName;
-            insertLetter(key.at(0), letterData);
+            insertSymbol(key.at(0), letterData);
         }
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
-    //letters on freaking case-insensetive Windows
+    //letters on a freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
     for (const QString &key : fontSettings.childKeys())
         for (Letter letterData : fontSettings.value(key).value<QList<Letter>>())
         {
             letterData.fileName = fontDirectory + letterData.fileName;
-            insertLetter(key.at(0), letterData);
+            insertSymbol(key.at(0), letterData);
         }
 
     fontSettings.endGroup();
@@ -261,14 +261,14 @@ void SvgView::loadFont(QString fontpath)
     settings.endGroup();
 }
 
-void SvgView::insertLetter(QChar key, Letter &letterData)
+void SvgView::insertSymbol(QChar key, Letter &symbolData)
 {
-    QSvgRenderer *renderer = new QSvgRenderer(letterData.fileName);
-    qreal letterHeight = renderer->defaultSize().height() * letterData.limits.height();
+    QSvgRenderer *renderer = new QSvgRenderer(symbolData.fileName);
+    qreal letterHeight = renderer->defaultSize().height() * symbolData.limits.height();
     qreal scale = fontSize * dpmm / letterHeight;
 
     QDomDocument doc("SVG");
-    QFile file(letterData.fileName);
+    QFile file(symbolData.fileName);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
@@ -327,7 +327,7 @@ void SvgView::insertLetter(QChar key, Letter &letterData)
 
     renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
     qreal width = renderer->defaultSize().width() + renderer->defaultSize().width() * scaleCanvasValue / 2;
-    font.insert(key, {letterData, scale, width, renderer});
+    font.insert(key, {symbolData, scale, width, renderer});
 }
 
 void SvgView::changeAttribute(QString &attribute, QString parameter, QString newValue)
@@ -378,10 +378,18 @@ void SvgView::loadSettingsFromFile()
     dpi = settings.value("dpi").toInt();
     dpmm = dpi / 25.4;
     letterSpacing = settings.value("letter-spacing").toDouble();
-    lineSpacing = settings.value("line-spacing").toDouble();
-    spacesInTab = settings.value("spaces-in-tab").toInt();
-    fontSize = settings.value("font-size").toDouble();
-    penWidth = settings.value("pen-width").toDouble();
+    lineSpacing =   settings.value("line-spacing").toDouble();
+    spacesInTab =   settings.value("spaces-in-tab").toInt();
+    fontSize =      settings.value("font-size").toDouble();
+    penWidth =      settings.value("pen-width").toDouble();
+    roundLines =    settings.value("round-lines").toBool();
+    scaleCanvas =   settings.value("scale-canvas").toBool();
+    useSeed =       settings.value("use-seed").toBool();
+    seed =          settings.value("seed").toInt();
+    scaleCanvasValue =   settings.value("scale-canvas-value").toDouble();
+    useCustomFontColor = settings.value("use-custom-font-color").toBool();
+    connectLetters =     settings.value("connect-letters").toBool();
+
     sheetRect = QRectF(0, 0,
                        settings.value("sheet-width").toInt() * dpmm,
                        settings.value("sheet-height").toInt() * dpmm);
@@ -392,13 +400,7 @@ void SvgView::loadSettingsFromFile()
                                                            settings.value("bottom-margin").toInt() * dpmm));
 
     fontColor = QColor(settings.value("font-color").toString());
-    useCustomFontColor = settings.value("use-custom-font-color").toBool();
-    connectLetters = settings.value("connect-letters").toBool();
-    useSeed = settings.value("use-seed").toBool();
-    seed = settings.value("seed").toInt();
-    roundLines = settings.value("round-lines").toBool();
-    scaleCanvas = settings.value("scale-canvas").toBool();
-    scaleCanvasValue = settings.value("scale-canvas-value").toDouble();
+
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 

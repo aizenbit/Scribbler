@@ -43,7 +43,7 @@ protected:
 private:
     struct SvgData
     {
-        Letter letterData;
+        Letter symbolData;
         qreal scale;
         qreal width;
         QSvgRenderer *renderer;
@@ -76,7 +76,7 @@ private:
     void preventGoingBeyondRightMargin();
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
-    void insertLetter(QChar key, Letter &letterData);
+    void insertSymbol(QChar key, Letter &symbolData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
 };
 

@@ -13,12 +13,13 @@
 class SvgEditor : public QSvgWidget
 {
     Q_OBJECT
+
 public:
     explicit SvgEditor(QWidget *parent = 0);
 
 public slots:
     void load(const QString & file);
-    void setLetterData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
+    void setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
     void disableDrawing(const bool disable = true);
     void hideAll(const bool hide = true);
     void enableInPointDrawing(const bool draw = true);
@@ -39,19 +40,19 @@ protected:
 private:
     QPointF inPoint, outPoint, limitsTopLeft, limitsBottomRight, leftCornerPos;
     QRectF limits;
-    bool showInPoint, showOutPoint, showLimits, showLetter;
-    bool drawInPoint, drawOutPoint, drawLimits, drawLetter;
+    bool showInPoint, showOutPoint, showLimits, showSymbol;
+    bool drawInPoint, drawOutPoint, drawLimits, drawSymbol;
     const qreal pointWidth = 5;
     qreal scaleFactor, maxScaleFactor, minScaleFactor;
-    QSize currentLetterSize;
-    QPointF letterBegin;
+    QSize currentSymbolSize;
+    QPointF symbolBegin;
 
     void setInPoint(QPointF point);
     void setOutPoint(QPointF point);
     void setLimitsTopLeft(QPointF point);
     void setLimitsBottomRight(QPointF point);
     void calculateCoordinates();
-    void keepPointOnLetterCanvas(QPointF &point);
+    void keepPointOnSymbolCanvas(QPointF &point);
     QPointF toStored(const QPointF &point);
     QPointF fromStored(const QPointF &point);
     void scaleSVGCanvas(QString fileName);

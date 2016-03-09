@@ -44,10 +44,10 @@ private:
 
 private slots:
     void loadFont();
-    void loadLetters();
+    void loadSymbols();
     void saveFont();
     void rejectChanges();
-    void deleteLetter();
+    void deleteItem();
     void copyToChoosenSymbol();
     void autoLoadSymbols();
 
