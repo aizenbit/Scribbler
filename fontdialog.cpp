@@ -236,10 +236,12 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 {
     loadFromEditorToFont();
 
-    if (item->parent() == nullptr)
+    if (isTopLevelItem(item) || isCategoryItem(item))
     {
+        if (isTopLevelItem(item))
+            ui->choosenSymbolTextEdit->setText(item->text(0));
+
         enableDrawButtons(false);
-        ui->choosenSymbolTextEdit->setText(item->text(0));
         ui->svgEditor->hideAll();
         ui->svgEditor->disableDrawing();
         lastItem = nullptr;
@@ -291,18 +293,18 @@ void FontDialog::loadFromEditorToFont()
 void FontDialog::deleteLetter()
 {
     QTreeWidgetItem *selectedItem = ui->treeWidget->itemAt(ui->treeWidget->mapFromGlobal(contextMenu->pos()));
-    bool hasParent = true;
 
-    if (selectedItem->parent() == nullptr)
-        hasParent = false;
-
-    QChar key = hasParent ? selectedItem->parent()->text(0).at(0) : selectedItem->text(0).at(0);
+    QChar key = isTopLevelItem(selectedItem) ? selectedItem->text(0).at(0) : selectedItem->parent()->text(0).at(0) ;
     QTreeWidgetItem *topLevelItem = getTopLevelItem(key);
 
-    if (!hasParent || topLevelItem->childCount() <= 1)
+    if (isTopLevelItem(selectedItem) || topLevelItem->childCount() <= 1)
     {
+        QTreeWidgetItem *categoryItem = topLevelItem->parent();
         delete topLevelItem;
         font.remove(key);
+
+        if (categoryItem->childCount() == 0)
+            delete categoryItem;
     }
     else
     {
@@ -342,6 +344,17 @@ void FontDialog::showTreeWidgetContextMenu(QPoint pos)
     if (ui->treeWidget->itemAt(pos) == nullptr)
         return;
 
+    if (ui->treeWidget->itemAt(pos)->parent() == nullptr)
+    {
+        contextMenu->actions()[ContextAction::Copy]->setEnabled(false);
+        contextMenu->actions()[ContextAction::Delete]->setEnabled(false);
+    }
+    else
+    {
+        contextMenu->actions()[ContextAction::Copy]->setEnabled(!ui->choosenSymbolTextEdit->toPlainText().isEmpty());
+        contextMenu->actions()[ContextAction::Delete]->setEnabled(true);
+    }
+
     contextMenu->exec(QCursor::pos());
 }
 
@@ -351,18 +364,14 @@ void FontDialog::copyToChoosenSymbol()
         return;
 
     QTreeWidgetItem *selectedItem = ui->treeWidget->selectedItems().at(0);
-    bool hasParent = true;
 
-    if (selectedItem->parent() == nullptr)
-        hasParent = false;
-
-    QChar key = hasParent ? selectedItem->parent()->text(0).at(0) : selectedItem->text(0).at(0);
+    QChar key = isTopLevelItem(selectedItem) ? selectedItem->text(0).at(0) : selectedItem->parent()->text(0).at(0);
     QChar newKey = ui->choosenSymbolTextEdit->toPlainText().at(0);
     QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(newKey, Qt::MatchExactly);
 
     QTreeWidgetItem *topLevelItem = getTopLevelItem(newKey);
 
-    if (hasParent)
+    if (!isTopLevelItem(selectedItem))
     {
         for (Letter &letterData : font.values(key))
             if (letterData.fileName == selectedItem->text(0))
@@ -464,16 +473,71 @@ void FontDialog::autoLoadSymbols()
 
 QTreeWidgetItem * FontDialog::getTopLevelItem(QChar key)
 {
-    QTreeWidgetItem *topLevelItem;
-    QList<QTreeWidgetItem *> letterItemList = ui->treeWidget->findItems(key, Qt::MatchExactly);
+    QTreeWidgetItem *topLevelItem = nullptr;
 
-    if (letterItemList.isEmpty())
+    QTreeWidgetItem *categoryItem = getCategoryItem(key);
+
+    for (int i = 0; i < categoryItem->childCount(); i++)
+        if (categoryItem->child(i)->text(0).at(0) == key)
+        {
+            topLevelItem = categoryItem->child(i);
+            break;
+        }
+
+    if (topLevelItem == nullptr)
     {
-        topLevelItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString(key)));
-        ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), topLevelItem);
+        topLevelItem = new QTreeWidgetItem(categoryItem, QStringList(QString(key)));
+        categoryItem->addChild(topLevelItem);
     }
-    else
-        topLevelItem = letterItemList.first();
 
     return topLevelItem;
+}
+
+QTreeWidgetItem * FontDialog::getCategoryItem(QChar key)
+{
+    QTreeWidgetItem *categoryItem;
+    QString category;
+
+    category = tr("Other symbols");
+
+    if (key.isNumber())
+        category = tr("Numbers");
+
+    if (key.isLetter())
+        category = tr("Non-latin letters");
+
+    if ((key >= 'a' && key <= 'z') ||
+        (key >= 'A' && key <= 'Z'))
+        category = tr("Latin letters");
+
+    if (key.isMark())
+        category = tr("Other marks");
+
+    if (key.isPunct())
+        category = tr("Punctuation marks");
+
+    QList<QTreeWidgetItem *> itemList = ui->treeWidget->findItems(category, Qt::MatchExactly);
+
+    if (itemList.isEmpty())
+    {
+        categoryItem = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(category));
+        ui->treeWidget->insertTopLevelItem(ui->treeWidget->topLevelItemCount(), categoryItem);
+    }
+    else
+        categoryItem = itemList.first();
+
+    return categoryItem;
+}
+
+bool FontDialog::isTopLevelItem(QTreeWidgetItem *item)
+{
+    if (isCategoryItem(item))
+        return false;
+
+   return item->childCount() > 0;
+}
+
+bool FontDialog::isCategoryItem(QTreeWidgetItem *item)
+{
+    return item->parent() == nullptr;
 }
