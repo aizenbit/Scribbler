@@ -239,7 +239,12 @@ void SvgView::loadFont(QString fontpath)
         for (SymbolData letterData : fontSettings.value(key).value<QList<SymbolData>>())
         {
             letterData.fileName = fontDirectory + letterData.fileName;
-            insertSymbol(key.at(0), letterData);
+            if (key == "slash")
+                insertSymbol('/', letterData);
+            else if (key == "backslash")
+                insertSymbol('\\', letterData);
+            else
+                insertSymbol(key.at(0), letterData);
         }
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase

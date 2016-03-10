@@ -104,7 +104,14 @@ void FontDialog::loadFont()
     font.clear();
     for (const QString &key : fontSettings.childKeys())
         for (const SymbolData &value : fontSettings.value(key).value<QList<SymbolData>>())
-            font.insert(key.at(0).toLower(), value);
+        {
+            if (key == "slash")
+                font.insert('/', value);
+            else if (key == "backslash")
+                font.insert('\\', value);
+            else
+                font.insert(key.at(0).toLower(), value);
+        }
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on a freaking case-insensetive Windows
@@ -184,7 +191,7 @@ void FontDialog::saveFont()
 
     loadFromEditorToFont();
 
-    for (QChar &key : font.keys())
+    for (QChar &key : font.uniqueKeys())
         if (key.isUpper())
         {
             fontSettings.beginGroup("UpperCase");
@@ -194,6 +201,18 @@ void FontDialog::saveFont()
         }
         else
         {
+            if (key == '/')
+            {
+                fontSettings.remove("slash");
+                fontSettings.setValue("slash", QVariant::fromValue(font.values(key)));
+                continue;
+            }
+            if (key == '\\')
+            {
+                fontSettings.remove("backslash");
+                fontSettings.setValue("backslash", QVariant::fromValue(font.values(key)));
+                continue;
+            }
             fontSettings.remove(key);
             fontSettings.setValue(key, QVariant::fromValue(font.values(key)));
         }
