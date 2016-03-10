@@ -51,6 +51,7 @@ private:
 
     QGraphicsScene *scene;
     QMultiMap<QChar, SvgData> font;
+    QSet<QChar> specialSymbols;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
