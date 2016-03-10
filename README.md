@@ -8,3 +8,9 @@ Scribbler allows you to make handwritten text from a typed in text by simulating
 #### [User Manual](https://github.com/aizenbit/Scribbler/wiki/User-manual) | [Руководство пользователя](https://github.com/aizenbit/Scribbler/wiki/Руководство-пользователя)
 
 #### [Download Lastest Version](https://github.com/aizenbit/Scribbler/releases)
+
+----
+
+#### Screenshot:
+
+![screenshot](https://cloud.githubusercontent.com/assets/5664923/13682545/452ed660-e713-11e5-9f32-57b19f3fcbbc.PNG)
