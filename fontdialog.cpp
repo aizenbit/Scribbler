@@ -42,6 +42,9 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
             ui->svgEditor, SLOT(enableLimitsDrawing(bool)));
 
+    ui->drawInPointButton->setShortcut(Qt::AltModifier + Qt::Key_1);
+    ui->drawOutPointButton->setShortcut(Qt::AltModifier + Qt::Key_2);
+    ui->drawLimitsButton->setShortcut(Qt::AltModifier + Qt::Key_3);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
     ui->drawInPointButton->setCheckable(true);
     ui->drawOutPointButton->setCheckable(true);

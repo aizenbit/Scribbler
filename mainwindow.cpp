@@ -76,6 +76,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(fontDialog, SIGNAL(fontReady()),
             ui->svgView, SLOT(loadFont()));
 
+    ui->toolBar->actions()[ToolButton::Render]->setShortcut(Qt::ControlModifier + Qt::Key_R);
+    ui->toolBar->actions()[ToolButton::Print]->setShortcut(Qt::ControlModifier + Qt::Key_P);
+    ui->toolBar->actions()[ToolButton::Save]->setShortcut(Qt::ControlModifier + Qt::Key_S);
+    ui->toolBar->actions()[ToolButton::Next]->setShortcut(Qt::ControlModifier + Qt::Key_Right);
+    ui->toolBar->actions()[ToolButton::Previous]->setShortcut(Qt::ControlModifier + Qt::Key_Left);
     ui->toolBar->actions()[ToolButton::Next]->setDisabled(true);
     ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 
