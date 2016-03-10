@@ -80,8 +80,7 @@ int SvgView::renderText(const QStringRef &text)
             data.scale /= 5;
 
         symbolItem->setScale(data.scale);
-        symbolBoundingSize.setWidth(symbolItem->boundingRect().width() * symbolItem->scale());
-        symbolBoundingSize.setHeight(symbolItem->boundingRect().height() * symbolItem->scale());
+        symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
 
         cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
         qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;

@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(fontDialog, SIGNAL(fontReady()),
             ui->svgView, SLOT(loadFont()));
+    errorMessage->setModal(true);
 
     ui->toolBar->actions()[ToolButton::Render]->setShortcut(Qt::ControlModifier + Qt::Key_R);
     ui->toolBar->actions()[ToolButton::Print]->setShortcut(Qt::ControlModifier + Qt::Key_P);

@@ -68,7 +68,7 @@ private:
 
     SymbolData symbolData, previousLetterData;
     QRectF currentMarginsRect;
-    QSize symbolBoundingSize;
+    QSizeF symbolBoundingSize;
     QPointF cursor, previousLetterCursor;
     QGraphicsSvgItem *lastLetter;
 

@@ -105,7 +105,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->roundCheckBox->setChecked(      settings.value("round-lines", true).toBool());
     ui->scaleCanvsaCheckBox->setChecked(settings.value("scale-canvas", true).toBool());
     changedByProgram = true;
-    ui->scaleCanvasSpinBox->setValue(   settings.value("scale-canvas-value", 0.5).toDouble());
+    ui->scaleCanvasSpinBox->setValue(   settings.value("scale-canvas-value", 1.0).toDouble());
     changedByProgram = false;
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
