@@ -299,8 +299,9 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
 
     QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
     scaleViewBox(svgElement);
+
     QStringList viewBox = svgElement.attribute("viewBox").split(" ");
-    qreal dotsPerUnits = renderer->defaultSize().height() / (viewBox.at(3).toDouble() - viewBox.at(1).toDouble());
+    qreal dotsPerUnits = renderer->defaultSize().height() / viewBox.at(3).toDouble();
     qreal newPenWidth = penWidth * dpmm / scale / dotsPerUnits;
 
     if (specialSymbols.contains(key))
