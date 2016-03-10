@@ -84,7 +84,8 @@ int SvgView::renderText(const QStringRef &text)
         symbolBoundingSize.setHeight(symbolItem->boundingRect().height() * symbolItem->scale());
 
         cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
-        preventGoingBeyondRightMargin();
+        qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;
+        preventGoingBeyondRightMargin(letterWidth);
 
         //rendering stops by the end of sheet
         if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
@@ -96,7 +97,7 @@ int SvgView::renderText(const QStringRef &text)
         QPointF symbolItemPos = cursor;
 
         if (isSpecialSymbol)
-            symbolItemPos.ry() += fontSize * dpmm * symbolData.limits.bottomRight().y();
+            symbolItemPos.ry() += fontSize * dpmm - symbolBoundingSize.height() * symbolData.limits.bottomRight().y();
         else
             symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.topLeft().y();
 
@@ -106,7 +107,6 @@ int SvgView::renderText(const QStringRef &text)
         if (connectLetters && lastLetter != nullptr && symbol.isLetter())
             connectLastLetterToCurrent();
 
-        qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;
         lastLetter = symbolItem;
         previousLetterCursor = cursor;
         previousLetterData = symbolData;
@@ -144,10 +144,9 @@ void SvgView::prepareSceneToRender()
         srand(QTime::currentTime().msec());
 }
 
-void SvgView::preventGoingBeyondRightMargin()
+void SvgView::preventGoingBeyondRightMargin(qreal letterWidth)
 {
-    //letter width is not yet known, so let it be equal to the height
-    qreal letterHeight = fontSize * dpmm, letterWidth = letterHeight;
+    qreal letterHeight = fontSize * dpmm;
 
     if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
     {

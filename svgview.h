@@ -74,7 +74,7 @@ private:
 
     void limitScale(qreal factor);  //limited view zoom
     void prepareSceneToRender();
-    void preventGoingBeyondRightMargin();
+    void preventGoingBeyondRightMargin(qreal letterWidth);
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
     void insertSymbol(QChar key, SymbolData &symbolData);
