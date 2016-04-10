@@ -82,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toolBar->actions()[ToolButton::Save]->setShortcut(Qt::ControlModifier + Qt::Key_S);
     ui->toolBar->actions()[ToolButton::Next]->setShortcut(Qt::ControlModifier + Qt::Key_Right);
     ui->toolBar->actions()[ToolButton::Previous]->setShortcut(Qt::ControlModifier + Qt::Key_Left);
+    ui->textEdit->installEventFilter(this);
     ui->toolBar->actions()[ToolButton::Next]->setDisabled(true);
     ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 
@@ -115,13 +116,38 @@ MainWindow::~MainWindow()
     delete sheetNumberLabel;
 }
 
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->textEdit && event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+        if (keyEvent->modifiers() == Qt::ControlModifier &&
+            (keyEvent->key() == Qt::Key_Right || keyEvent->key() == Qt::Key_Left))
+        {
+            if (keyEvent->key() == Qt::Key_Right)
+                 ui->toolBar->actions()[ToolButton::Next]->trigger();
+            else
+                 ui->toolBar->actions()[ToolButton::Previous]->trigger();
+
+            return true;
+        }
+        else
+            return false;
+    }
+    else
+        // pass the event on to the parent class
+        return QMainWindow::eventFilter(obj, event);
+}
+
 void MainWindow::showAboutBox()
 {
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("About") + " Scribbler");
     aboutBox.setIconPixmap(QPixmap("://aboutIcon.png"));
     aboutBox.setText(tr("I'm one-eyed Blot and this is my favourite Scribbler in the universe. <br><br>"
-                        "<strong>Scribbler</strong> ") + version);
+                        "<strong>Scribbler</strong> ") + version + "<br>" +
+                     tr("Qt version: ")+ QT_VERSION_STR);
     aboutBox.setInformativeText("<p>" + tr("Distributed under The MIT License. See License and Credist page.") +
                                 "<br><br>" + tr("Repository:") + "<br>"
                                 "<a href=https://github.com/aizenbit/Scribbler>https://github.com/aizenbit/Scribbler<a></p>");

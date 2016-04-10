@@ -31,7 +31,7 @@ FORMS    += mainwindow.ui \
     preferencesdialog.ui \
     fontdialog.ui
 
-CONFIG   += c++11
+CONFIG   += c++14
 
 RC_ICONS = resources\favicon.ico
 

@@ -27,8 +27,6 @@ public:
     static const qreal &scaleCanvasValueRef;
 
 public slots:
-    QGraphicsScene * getScene() {return scene;}
-
     int renderText(const QStringRef &text = QStringRef());
     QImage saveRenderToImage();
     void loadFont(QString fontpath = QString());

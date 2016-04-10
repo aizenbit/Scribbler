@@ -7,7 +7,7 @@ struct SymbolData {
     QString fileName;
     QPointF inPoint;
     QPointF outPoint;
-    QRectF  limits;
+    QRectF limits;
 };
 
 Q_DECLARE_METATYPE(SymbolData)

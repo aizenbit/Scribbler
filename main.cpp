@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     a.installTranslator(&myTranslator);
 
     qApp->addLibraryPath("./plugins");
-
     MainWindow w;
     w.show();
 
