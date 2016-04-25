@@ -273,6 +273,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         enableDrawButtons(true);
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
         ui->svgEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
+        ui->symbolDataEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
         QList<SymbolData> dataList = font.values(item->parent()->text(0).at(0));
 
         for (const SymbolData &data : dataList)
