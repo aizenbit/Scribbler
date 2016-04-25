@@ -146,6 +146,9 @@
         </layout>
        </item>
        <item>
+        <widget class="SymbolDataEditor" name="symbolDataEditor"/>
+       </item>
+       <item>
         <widget class="SvgEditor" name="svgEditor" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -234,6 +237,11 @@
    <extends>QWidget</extends>
    <header>svgeditor.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SymbolDataEditor</class>
+   <extends>QGraphicsView</extends>
+   <header>symboldataeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

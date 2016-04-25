@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     preferencesdialog.cpp \
     fontdialog.cpp \
     svgeditor.cpp \
-    symboldata.cpp
+    symboldata.cpp \
+    symboldataeditor.cpp
 
 HEADERS  += mainwindow.h \
     svgview.h \
     preferencesdialog.h \
     fontdialog.h \
     svgeditor.h \
-    symboldata.h
+    symboldata.h \
+    symboldataeditor.h
 
 FORMS    += mainwindow.ui \
     preferencesdialog.ui \
