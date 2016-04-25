@@ -280,6 +280,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
             if (data.fileName == item->text(0))
             {
                 ui->svgEditor->setSymbolData(data.inPoint, data.outPoint, data.limits);
+                ui->symbolDataEditor->setSymbolData(data.inPoint, data.outPoint, data.limits);
                 break;
             }
 
