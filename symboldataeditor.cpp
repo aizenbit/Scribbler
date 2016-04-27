@@ -68,6 +68,7 @@ void SymbolDataEditor::limitScale(qreal factor)
     {
         currentScaleFactor = newFactor;
         scale(factor, factor);
+        //scene->items(Qt::AscendingOrder).at(Item::InPoint)->setScale(1.0);
     }
 }
 
@@ -77,16 +78,20 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
     inPoint = fromStored(point);
     outPoint = fromStored(_outPoint);
     limits = QRectF(fromStored(_limits.topLeft()),
-                    fromStored(_limits.bottomRight());
+                    fromStored(_limits.bottomRight()));
 
-    qreal rectWidth = 5;
-    scene->addRect(inPoint.x() - rectWidth / 2,
-                   inPoint.y() - rectWidth / 2,
-                   rectWidth, rectWidth,
-                   QPen(Qt::cyan), QBrush(Qt::darkCyan));
-    QRectF symbolRect = scene->items().at(Item::SymbolItem)->boundingRect();
-    symbolRect.moveTopLeft(scene->items().at(Item::SymbolItem)->pos());
-    scene->addRect(symbolRect);
+    qreal pointWidth = 1;
+    scene->addEllipse(inPoint.x() - pointWidth / 2,
+                      inPoint.y() - pointWidth / 2,
+                      pointWidth, pointWidth,
+                      QPen(Qt::cyan), QBrush(Qt::darkCyan));
+    scene->addEllipse(outPoint.x() - pointWidth / 2,
+                      outPoint.y() - pointWidth / 2,
+                      pointWidth, pointWidth,
+                      QPen(Qt::magenta), QBrush(Qt::darkMagenta));
+    scene->addRect(limits, QPen(Qt::darkYellow, 0));
+    //scene->items(Qt::AscendingOrder).at(Item::InPoint)->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    //scene->items(Qt::AscendingOrder).at(Item::OutPoint)->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 }
 
 QPointF SymbolDataEditor::toStored(const QPointF &point)
@@ -101,10 +106,9 @@ QPointF SymbolDataEditor::toStored(const QPointF &point)
 QPointF SymbolDataEditor::fromStored(const QPointF &point)
 {
     QPointF result;
-    QRectF symbolRect = scene->items().at(Item::SymbolItem)->boundingRect();
+    QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
     result.rx() = point.x() * (symbolRect.width() - 1);
     result.ry() = point.y() * (symbolRect.height() - 1);
-    QPointF itemPos = scene->items().at(Item::SymbolItem)->pos();
-    result += scene->items().at(Item::SymbolItem)->pos();
+    result += symbolRect.bottomRight();
     return result;
 }
