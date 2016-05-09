@@ -20,6 +20,7 @@ public:
 
     void load(const QString & fileName);
     void setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
+    void disableChanges();
     QPointF getInPoint() const {return toStored(inPoint);}
     QPointF getOutPoint() const {return toStored(outPoint);}
     QRectF getLimits() const {return QRectF(toStored(limits.topLeft()),
@@ -27,7 +28,8 @@ public:
 
 protected:
     void wheelEvent(QWheelEvent *event);
-
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private:
     enum Item : int {
@@ -35,16 +37,22 @@ private:
         SymbolItem,
         InPoint,
         OutPoint,
-        LimitsRect
+        LimitsRect,
+        NoItem
     };
 
     QGraphicsScene *scene;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
+    Item itemToChange;
+    //bool changeInPoint, changeOutPoint, changeLimits;
+    qreal pointWidth;
     QPointF inPoint, outPoint;
     QRectF limits;
+
     void limitScale(qreal factor);  //limited view zoom
     QPointF toStored(const QPointF &point) const;
     QPointF fromStored(const QPointF &point) const;
+    void moveItem(const QPoint pos);
 };
 
 #endif // SVGDATAEDITOR_H

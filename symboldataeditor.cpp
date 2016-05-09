@@ -7,12 +7,12 @@ SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
     maxScaleFactor = 20;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    setDragMode(NoDrag);
+    setDragMode(QGraphicsView::NoDrag);
+    disableChanges();
     setRenderHints(QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 
     scene = new QGraphicsScene();
     scene->addRect(0,0,scene->width()-1,scene->height()-1);
-
     setScene(scene);
 }
 
@@ -79,7 +79,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
                     fromStored(_limits.bottomRight()));
 
     qreal maxSceneSide = qMax(scene->sceneRect().width(), scene->sceneRect().height());
-    qreal pointWidth = maxSceneSide / 1000;
+    pointWidth = maxSceneSide / 1000;
     scene->addEllipse(inPoint.x() - pointWidth / 2,
                       inPoint.y() - pointWidth / 2,
                       pointWidth, pointWidth,
@@ -110,4 +110,41 @@ QPointF SymbolDataEditor::fromStored(const QPointF &point) const
     result.ry() = point.y() * symbolRect.height();
     result += symbolRect.topLeft();
     return result;
+}
+
+void SymbolDataEditor::disableChanges()
+{
+    itemToChange = Item::NoItem;
+}
+
+void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
+{
+    if (!(event->modifiers() & Qt::ControlModifier) && event->buttons() == Qt::LeftButton)
+        moveItem(event->pos());
+
+    QGraphicsView::mousePressEvent(event);
+}
+
+void SymbolDataEditor::mouseMoveEvent(QMouseEvent *event)
+{
+    if (!(event->modifiers() & Qt::ControlModifier) && event->buttons() == Qt::LeftButton)
+        moveItem(event->pos());
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
+void SymbolDataEditor::moveItem(const QPoint pos)
+{
+    if (itemToChange == Item::NoItem)
+        return;
+
+    QPointF itemPos = mapToScene(pos);
+
+    if (itemToChange == Item::InPoint || itemToChange == Item::OutPoint)
+    {
+        QGraphicsEllipseItem* item = static_cast<QGraphicsEllipseItem*>(scene->items(Qt::AscendingOrder).at(itemToChange));
+        item->setRect(itemPos.x() - pointWidth / 2,
+                      itemPos.y() - pointWidth / 2,
+                      pointWidth, pointWidth);
+    }
 }
