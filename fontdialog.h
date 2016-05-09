@@ -28,6 +28,10 @@ public:
 signals:
     void fontReady();
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
+
 private:
     enum ContextAction : int {
         Delete,

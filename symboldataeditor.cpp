@@ -7,7 +7,7 @@ SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
     maxScaleFactor = 20;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    setDragMode(ScrollHandDrag);
+    setDragMode(NoDrag);
     setRenderHints(QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 
     scene = new QGraphicsScene();

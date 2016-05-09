@@ -28,6 +28,7 @@ public:
 protected:
     void wheelEvent(QWheelEvent *event);
 
+
 private:
     enum Item : int {
         SceneRect,

@@ -580,3 +580,15 @@ bool FontDialog::isFileItem(QTreeWidgetItem *item)
         return false;
 
 }
+
+void FontDialog::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control)
+        ui->symbolDataEditor->setDragMode(QGraphicsView::ScrollHandDrag);
+}
+
+void FontDialog::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control)
+        ui->symbolDataEditor->setDragMode(QGraphicsView::NoDrag);
+}
