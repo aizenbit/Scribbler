@@ -73,8 +73,7 @@ void SymbolDataEditor::limitScale(qreal factor)
 
 void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
-    QPointF point = _inPoint;
-    inPoint = fromStored(point);
+    inPoint = fromStored(_inPoint);
     outPoint = fromStored(_outPoint);
     limits = QRectF(fromStored(_limits.topLeft()),
                     fromStored(_limits.bottomRight()));
@@ -92,7 +91,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
     scene->addRect(limits, QPen(Qt::darkYellow, 0));
 }
 
-QPointF SymbolDataEditor::toStored(const QPointF &point)
+QPointF SymbolDataEditor::toStored(const QPointF &point) const
 {
     QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
     symbolRect.moveTopLeft(scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->pos());
@@ -102,7 +101,7 @@ QPointF SymbolDataEditor::toStored(const QPointF &point)
     return result;
 }
 
-QPointF SymbolDataEditor::fromStored(const QPointF &point)
+QPointF SymbolDataEditor::fromStored(const QPointF &point) const
 {
     QPointF result;
     QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();

@@ -20,6 +20,10 @@ public:
 
     void load(const QString & fileName);
     void setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
+    QPointF getInPoint() const {return toStored(inPoint);}
+    QPointF getOutPoint() const {return toStored(outPoint);}
+    QRectF getLimits() const {return QRectF(toStored(limits.topLeft()),
+                                            toStored(limits.bottomRight()));}
 
 protected:
     void wheelEvent(QWheelEvent *event);
@@ -38,8 +42,8 @@ private:
     QPointF inPoint, outPoint;
     QRectF limits;
     void limitScale(qreal factor);  //limited view zoom
-    QPointF toStored(const QPointF &point);
-    QPointF fromStored(const QPointF &point);
+    QPointF toStored(const QPointF &point) const;
+    QPointF fromStored(const QPointF &point) const;
 };
 
 #endif // SVGDATAEDITOR_H
