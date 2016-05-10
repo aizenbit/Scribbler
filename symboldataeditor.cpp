@@ -12,7 +12,6 @@ SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
     setRenderHints(QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 
     scene = new QGraphicsScene();
-    scene->addRect(0,0,scene->width()-1,scene->height()-1);
     setScene(scene);
 }
 
@@ -45,7 +44,7 @@ void SymbolDataEditor::load(const QString & fileName)
     symbolItem->setSharedRenderer(new QSvgRenderer(scaledFile));
 
     QSizeF itemSize = symbolItem->renderer()->defaultSize();
-    scene->clear();
+    clear();
     scene->setSceneRect(0, 0, itemSize.width() * 3, itemSize.height() * 3);
     symbolItem->setPos(scene->width() / 2 - itemSize.width() / 2.0,
                        scene->height() / 2 - itemSize.height() / 2.0);
@@ -112,9 +111,32 @@ QPointF SymbolDataEditor::fromStored(const QPointF &point) const
     return result;
 }
 
+void SymbolDataEditor::clear()
+{
+    scene->clear();
+    inPoint = QPointF();
+    outPoint = QPointF();
+    limits = QRectF();
+}
+
 void SymbolDataEditor::disableChanges()
 {
     itemToChange = Item::NoItem;
+}
+
+void SymbolDataEditor::enableInPointChanges()
+{
+    itemToChange = Item::InPoint;
+}
+
+void SymbolDataEditor::enableOutPointChanges()
+{
+    itemToChange = Item::OutPoint;
+}
+
+void SymbolDataEditor::enableLimitsChanges()
+{
+    itemToChange = Item::LimitsRect;
 }
 
 void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
@@ -146,5 +168,10 @@ void SymbolDataEditor::moveItem(const QPoint pos)
         item->setRect(itemPos.x() - pointWidth / 2,
                       itemPos.y() - pointWidth / 2,
                       pointWidth, pointWidth);
+    }
+
+    if (itemToChange == Item::LimitsRect)
+    {
+
     }
 }

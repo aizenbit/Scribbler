@@ -42,6 +42,13 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
             ui->svgEditor, SLOT(enableLimitsDrawing(bool)));
 
+    connect(ui->drawInPointButton, SIGNAL(toggled(bool)),
+            ui->symbolDataEditor, SLOT(enableInPointChanges()));
+    connect(ui->drawOutPointButton, SIGNAL(toggled(bool)),
+            ui->symbolDataEditor, SLOT(enableOutPointChanges()));
+    connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
+            ui->symbolDataEditor, SLOT(enableLimitsChanges()));
+
     ui->drawInPointButton->setShortcut(Qt::AltModifier + Qt::Key_1);
     ui->drawOutPointButton->setShortcut(Qt::AltModifier + Qt::Key_2);
     ui->drawLimitsButton->setShortcut(Qt::AltModifier + Qt::Key_3);
@@ -233,6 +240,8 @@ void FontDialog::rejectChanges()
     ui->choosenSymbolTextEdit->clear();
     ui->fontFileTextEdit->clear();
     ui->treeWidget->clear();
+    ui->symbolDataEditor->disableChanges();
+    ui->symbolDataEditor->clear();
     ui->svgEditor->disableDrawing();
     ui->svgEditor->hideAll();
 }
@@ -264,6 +273,8 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
             ui->choosenSymbolTextEdit->setText(item->text(0));
 
         enableDrawButtons(false);
+        ui->symbolDataEditor->disableChanges();
+        ui->symbolDataEditor->clear();
         ui->svgEditor->hideAll();
         ui->svgEditor->disableDrawing();
         lastItem = nullptr;
@@ -297,6 +308,9 @@ void FontDialog::loadFromEditorToFont()
         newData.inPoint = ui->svgEditor->getInPoint();
         newData.outPoint = ui->svgEditor->getOutPoint();
         newData.limits = ui->svgEditor->getLimits();
+        /*newData.inPoint = ui->symbolDataEditor->getInPoint();
+        newData.outPoint = ui->symbolDataEditor->getOutPoint();
+        newData.limits = ui->symbolDataEditor->getLimits();*/
         QChar key = lastItem->parent()->text(0).at(0);
         QList<SymbolData> dataList = font.values(key);
 
@@ -352,6 +366,8 @@ void FontDialog::deleteItem()
     enableDrawButtons(false);
     ui->svgEditor->hideAll();
     ui->svgEditor->disableDrawing();
+    ui->symbolDataEditor->disableChanges();
+    ui->symbolDataEditor->clear();
     lastItem = nullptr;
 }
 

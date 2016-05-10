@@ -20,11 +20,17 @@ public:
 
     void load(const QString & fileName);
     void setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
+    void clear();
     void disableChanges();
     QPointF getInPoint() const {return toStored(inPoint);}
     QPointF getOutPoint() const {return toStored(outPoint);}
     QRectF getLimits() const {return QRectF(toStored(limits.topLeft()),
                                             toStored(limits.bottomRight()));}
+
+public slots:
+    void enableInPointChanges();
+    void enableOutPointChanges();
+    void enableLimitsChanges();
 
 protected:
     void wheelEvent(QWheelEvent *event);
@@ -44,7 +50,6 @@ private:
     QGraphicsScene *scene;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     Item itemToChange;
-    //bool changeInPoint, changeOutPoint, changeLimits;
     qreal pointWidth;
     QPointF inPoint, outPoint;
     QRectF limits;
