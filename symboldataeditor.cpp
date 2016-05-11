@@ -4,7 +4,7 @@ SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
     minScaleFactor = 0.1;
-    maxScaleFactor = 20;
+    maxScaleFactor = 30;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(QGraphicsView::NoDrag);
@@ -188,7 +188,9 @@ void SymbolDataEditor::mouseReleaseEvent(QMouseEvent *event)
     {
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
         QGraphicsView::mouseReleaseEvent(&fake);
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
+
+        if (itemToChange != Item::LimitsRect)
+            QApplication::setOverrideCursor(Qt::ArrowCursor);
     }
     else
         QGraphicsView::mouseReleaseEvent(event);
@@ -219,14 +221,17 @@ void SymbolDataEditor::calculateSideToChange(QPoint pos)
     QPoint topLeft = mapFromScene(limitsRect.topLeft());
     QPoint bottomRight = mapFromScene(limitsRect.bottomRight());
 
-    if (abs(topLeft.x() - pos.x()) < 10)
-        sideToChange = static_cast<Side>(sideToChange | Side::Left);
-    if (abs(topLeft.y() - pos.y()) < 10)
-        sideToChange = static_cast<Side>(sideToChange | Side::Top);
-    if (abs(bottomRight.x() - pos.x()) < 10)
-        sideToChange = static_cast<Side>(sideToChange | Side::Right);
-    if (abs(bottomRight.y() - pos.y()) < 10)
-        sideToChange = static_cast<Side>(sideToChange | Side::Bottom);
+    if (QRectF(topLeft, bottomRight).adjusted(-10,-10,10,10).contains(pos))
+    {
+        if (abs(topLeft.x() - pos.x()) < 10)
+            sideToChange = static_cast<Side>(sideToChange | Side::Left);
+        if (abs(topLeft.y() - pos.y()) < 10)
+            sideToChange = static_cast<Side>(sideToChange | Side::Top);
+        if (abs(bottomRight.x() - pos.x()) < 10)
+            sideToChange = static_cast<Side>(sideToChange | Side::Right);
+        if (abs(bottomRight.y() - pos.y()) < 10)
+            sideToChange = static_cast<Side>(sideToChange | Side::Bottom);
+    }
 
     if (sideToChange & Side::Left && sideToChange & Side::Right)
         sideToChange = Side::Left;
@@ -242,7 +247,8 @@ void SymbolDataEditor::calculateSideToChange(QPoint pos)
 
 void SymbolDataEditor::changeCursor()
 {
-    if (QApplication::overrideCursor()->shape() != Qt::ArrowCursor)
+    if (QApplication::overrideCursor() != nullptr &&
+            QApplication::overrideCursor()->shape() != Qt::ArrowCursor)
         QApplication::restoreOverrideCursor();
 
     if (sideToChange == Side::Left || sideToChange == Side::Right)
@@ -260,6 +266,8 @@ void SymbolDataEditor::changeCursor()
     if (sideToChange == Side::AllSides)
         QApplication::setOverrideCursor(Qt::SizeAllCursor);
 
+    if (QApplication::overrideCursor() == nullptr)
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void SymbolDataEditor::moveItem(const QPoint pos)
