@@ -7,7 +7,7 @@ SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
     maxScaleFactor = 20;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    setDragMode(QGraphicsView::ScrollHandDrag);
+    setDragMode(QGraphicsView::NoDrag);
     disableChanges();
     setRenderHints(QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 
@@ -50,6 +50,7 @@ void SymbolDataEditor::load(const QString & fileName)
                        scene->height() / 2 - itemSize.height() / 2.0);
     scene->addRect(0, 0, scene->width() - 1, scene->height() - 1);
     scene->addItem(symbolItem);
+    setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 void SymbolDataEditor::wheelEvent(QWheelEvent *event)
@@ -117,6 +118,7 @@ void SymbolDataEditor::clear()
     inPoint = QPointF();
     outPoint = QPointF();
     limits = QRectF();
+    setDragMode(QGraphicsView::NoDrag);
 }
 
 void SymbolDataEditor::disableChanges()
@@ -145,6 +147,7 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
     {
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
         QGraphicsView::mousePressEvent(&fake);
+        QApplication::restoreOverrideCursor();
         return;
     }
 
@@ -173,6 +176,7 @@ void SymbolDataEditor::mouseReleaseEvent(QMouseEvent *event)
     {
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
         QGraphicsView::mouseReleaseEvent(&fake);
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
     }
     else
         QGraphicsView::mouseReleaseEvent(event);
@@ -199,7 +203,7 @@ void SymbolDataEditor::moveItem(const QPoint pos)
 
     if (itemToChange == Item::InPoint || itemToChange == Item::OutPoint)
     {
-        QGraphicsEllipseItem* item = static_cast<QGraphicsEllipseItem*>(scene->items(Qt::AscendingOrder).at(itemToChange));
+        QGraphicsEllipseItem* item = static_cast<QGraphicsEllipseItem *>(scene->items(Qt::AscendingOrder).at(itemToChange));
         item->setRect(itemPos.x() - pointWidth / 2,
                       itemPos.y() - pointWidth / 2,
                       pointWidth, pointWidth);
@@ -207,14 +211,14 @@ void SymbolDataEditor::moveItem(const QPoint pos)
 
     if (itemToChange == Item::LimitsRect)
     {
-        QGraphicsRectItem* item = static_cast<QGraphicsRectItem*>(scene->items(Qt::AscendingOrder).at(itemToChange));
+        QGraphicsRectItem* item = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(itemToChange));
         QPoint globalCursorPos = QCursor::pos();
         QPoint viewPos = mapFromGlobal(globalCursorPos);
         QPointF scenePos = mapToScene(viewPos);
         QRectF newRect = item->rect();
         newRect.moveCenter(scenePos);
 
-        qDebug() << pos << globalCursorPos << viewPos << scenePos << "\n";
+        //qDebug() << pos << globalCursorPos << viewPos << scenePos << "\n";
 
         if (item->rect().contains(scenePos))
             item->setRect(newRect);
