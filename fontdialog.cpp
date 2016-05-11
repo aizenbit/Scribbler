@@ -305,12 +305,12 @@ void FontDialog::loadFromEditorToFont()
     {
         SymbolData newData;
         newData.fileName = lastItem->text(0);
-        newData.inPoint = ui->svgEditor->getInPoint();
+        /*newData.inPoint = ui->svgEditor->getInPoint();
         newData.outPoint = ui->svgEditor->getOutPoint();
-        newData.limits = ui->svgEditor->getLimits();
-        /*newData.inPoint = ui->symbolDataEditor->getInPoint();
+        newData.limits = ui->svgEditor->getLimits();*/
+        newData.inPoint = ui->symbolDataEditor->getInPoint();
         newData.outPoint = ui->symbolDataEditor->getOutPoint();
-        newData.limits = ui->symbolDataEditor->getLimits();*/
+        newData.limits = ui->symbolDataEditor->getLimits();
         QChar key = lastItem->parent()->text(0).at(0);
         QList<SymbolData> dataList = font.values(key);
 

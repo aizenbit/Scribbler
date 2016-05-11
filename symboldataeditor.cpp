@@ -75,6 +75,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
 {
     inPoint = fromStored(_inPoint);
     outPoint = fromStored(_outPoint);
+    qDebug() << _inPoint << _outPoint << toStored(inPoint) << toStored(outPoint) << "\n";
     limits = QRectF(fromStored(_limits.topLeft()),
                     fromStored(_limits.bottomRight()));
 
@@ -98,6 +99,7 @@ QPointF SymbolDataEditor::toStored(const QPointF &point) const
     QPointF result = point - symbolRect.topLeft();
     result.rx() = point.x() / symbolRect.width();
     result.ry() = point.y() / symbolRect.height();
+    result -= QPointF(1.0, 1.0);
     return result;
 }
 
@@ -181,6 +183,8 @@ void SymbolDataEditor::mouseMoveEvent(QMouseEvent *event)
 
 void SymbolDataEditor::mouseReleaseEvent(QMouseEvent *event)
 {
+    rememberChanges();
+
     if (event->button() == Qt::MidButton)
     {
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
@@ -295,5 +299,29 @@ void SymbolDataEditor::moveItem(const QPoint pos)
         }
 
         item->setRect(newRect);
+    }
+}
+
+void SymbolDataEditor::rememberChanges()
+{
+    if (scene->items().isEmpty())
+        return;
+
+    if (itemToChange == Item::InPoint)
+    {
+        QGraphicsEllipseItem* inPointItem = static_cast<QGraphicsEllipseItem *>(scene->items(Qt::AscendingOrder).at(Item::InPoint));
+        inPoint = inPointItem->rect().center();
+    }
+
+    if (itemToChange == Item::OutPoint)
+    {
+        QGraphicsEllipseItem* outPointItem = static_cast<QGraphicsEllipseItem *>(scene->items(Qt::AscendingOrder).at(Item::OutPoint));
+        outPoint = outPointItem->rect().center();
+    }
+
+    if (itemToChange == Item::LimitsRect)
+    {
+        QGraphicsRectItem* limitsRectItem = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(Item::LimitsRect));
+        limits = limitsRectItem->rect();
     }
 }

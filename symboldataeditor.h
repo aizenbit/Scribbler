@@ -73,7 +73,7 @@ private:
     void moveItem(const QPoint pos);
     void calculateSideToChange(QPoint pos);
     void changeCursor();
-
+    void rememberChanges();
 };
 
 #endif // SVGDATAEDITOR_H
