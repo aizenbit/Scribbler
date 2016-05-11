@@ -75,7 +75,6 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
 {
     inPoint = fromStored(_inPoint);
     outPoint = fromStored(_outPoint);
-    qDebug() << _inPoint << _outPoint << toStored(inPoint) << toStored(outPoint) << "\n";
     limits = QRectF(fromStored(_limits.topLeft()),
                     fromStored(_limits.bottomRight()));
 

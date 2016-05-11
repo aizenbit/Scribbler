@@ -11,7 +11,6 @@
 #include <QtWidgets/QAction>
 
 #include "symboldata.h"
-#include "svgeditor.h"
 
 namespace Ui {
 class FontDialog;

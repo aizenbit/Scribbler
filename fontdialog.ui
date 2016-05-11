@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>931</width>
-    <height>747</height>
+    <width>794</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -148,22 +148,6 @@
        <item>
         <widget class="SymbolDataEditor" name="symbolDataEditor"/>
        </item>
-       <item>
-        <widget class="SvgEditor" name="svgEditor" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -232,12 +216,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>SvgEditor</class>
-   <extends>QWidget</extends>
-   <header>svgeditor.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>SymbolDataEditor</class>
    <extends>QGraphicsView</extends>

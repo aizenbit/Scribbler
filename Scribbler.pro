@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     svgview.cpp \
     preferencesdialog.cpp \
     fontdialog.cpp \
-    svgeditor.cpp \
     symboldata.cpp \
     symboldataeditor.cpp
 
@@ -25,7 +24,6 @@ HEADERS  += mainwindow.h \
     svgview.h \
     preferencesdialog.h \
     fontdialog.h \
-    svgeditor.h \
     symboldata.h \
     symboldataeditor.h
 

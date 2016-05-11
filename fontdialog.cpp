@@ -36,13 +36,6 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(contextMenu->actions()[ContextAction::Copy], SIGNAL(triggered(bool)),
             this, SLOT(copyToChoosenSymbol()));
     connect(ui->drawInPointButton, SIGNAL(toggled(bool)),
-            ui->svgEditor, SLOT(enableInPointDrawing(bool)));
-    connect(ui->drawOutPointButton, SIGNAL(toggled(bool)),
-            ui->svgEditor, SLOT(enableOutPointDrawing(bool)));
-    connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
-            ui->svgEditor, SLOT(enableLimitsDrawing(bool)));
-
-    connect(ui->drawInPointButton, SIGNAL(toggled(bool)),
             ui->symbolDataEditor, SLOT(enableInPointChanges()));
     connect(ui->drawOutPointButton, SIGNAL(toggled(bool)),
             ui->symbolDataEditor, SLOT(enableOutPointChanges()));
@@ -142,7 +135,7 @@ void FontDialog::loadFont()
         }
     }
 
-    ui->svgEditor->load(QString());
+    ui->symbolDataEditor->clear();
     enableDrawButtons(false);
 }
 
@@ -242,8 +235,6 @@ void FontDialog::rejectChanges()
     ui->treeWidget->clear();
     ui->symbolDataEditor->disableChanges();
     ui->symbolDataEditor->clear();
-    ui->svgEditor->disableDrawing();
-    ui->svgEditor->hideAll();
 }
 
 void FontDialog::limitTextEdit()
@@ -275,22 +266,18 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         enableDrawButtons(false);
         ui->symbolDataEditor->disableChanges();
         ui->symbolDataEditor->clear();
-        ui->svgEditor->hideAll();
-        ui->svgEditor->disableDrawing();
         lastItem = nullptr;
     }
     else
     {
         enableDrawButtons(true);
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
-        ui->svgEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
         ui->symbolDataEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
         QList<SymbolData> dataList = font.values(item->parent()->text(0).at(0));
 
         for (const SymbolData &data : dataList)
             if (data.fileName == item->text(0))
             {
-                ui->svgEditor->setSymbolData(data.inPoint, data.outPoint, data.limits);
                 ui->symbolDataEditor->setSymbolData(data.inPoint, data.outPoint, data.limits);
                 break;
             }
@@ -305,9 +292,6 @@ void FontDialog::loadFromEditorToFont()
     {
         SymbolData newData;
         newData.fileName = lastItem->text(0);
-        /*newData.inPoint = ui->svgEditor->getInPoint();
-        newData.outPoint = ui->svgEditor->getOutPoint();
-        newData.limits = ui->svgEditor->getLimits();*/
         newData.inPoint = ui->symbolDataEditor->getInPoint();
         newData.outPoint = ui->symbolDataEditor->getOutPoint();
         newData.limits = ui->symbolDataEditor->getLimits();
@@ -364,8 +348,6 @@ void FontDialog::deleteItem()
         delete categoryItem;
 
     enableDrawButtons(false);
-    ui->svgEditor->hideAll();
-    ui->svgEditor->disableDrawing();
     ui->symbolDataEditor->disableChanges();
     ui->symbolDataEditor->clear();
     lastItem = nullptr;
