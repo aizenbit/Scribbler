@@ -75,6 +75,7 @@ private:
     void changeCursor();
     void rememberChanges();
     void correctLimits();
+    void addDataItems();
 };
 
 #endif // SVGDATAEDITOR_H

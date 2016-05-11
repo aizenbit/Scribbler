@@ -166,9 +166,9 @@ void FontDialog::loadSymbols()
     for (QString fileName : files)
     {
         SymbolData symbolData = { QFileInfo(fileName).fileName(),
-                        QPointF(-1.0, -1.0),
-                        QPointF(-1.0, -1.0),
-                        QRectF(-1.0, -1.0, -1.0, -1.0) };
+                        QPointF(),
+                        QPointF(),
+                        QRectF()};
         font.insert(key, symbolData);
         QTreeWidgetItem *fileItem = new QTreeWidgetItem(symbolItem, QStringList(symbolData.fileName));
         symbolItem->addChild(fileItem);
@@ -486,9 +486,9 @@ void FontDialog::autoLoadSymbols()
         QTreeWidgetItem *symbolItem = getSymbolItem(symbol);
 
         SymbolData symbolData = { fileName,
-                                 QPointF(-1.0, -1.0),
-                                 QPointF(-1.0, -1.0),
-                                 QRectF(-1.0, -1.0, -1.0, -1.0) };
+                                 QPointF(),
+                                 QPointF(),
+                                 QRectF()};
         font.insert(symbol, symbolData);
         QTreeWidgetItem *fileItem = new QTreeWidgetItem(symbolItem, QStringList(symbolData.fileName));
         symbolItem->addChild(fileItem);

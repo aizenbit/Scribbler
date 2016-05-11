@@ -50,8 +50,8 @@ void SymbolDataEditor::load(const QString & fileName)
                        scene->height() / 2 - itemSize.height() / 2.0);
     scene->addRect(0, 0, scene->width() - 1, scene->height() - 1);
     scene->addItem(symbolItem);
-    limitScale(currentScaleFactor / qMax(itemSize.width() / width(),
-                                         itemSize.height() / height()));
+    limitScale(qMax(qreal(width()) / itemSize.width(),
+                    qreal(height()) / itemSize.height()) / currentScaleFactor);
     centerOn(symbolItem);
     setDragMode(QGraphicsView::ScrollHandDrag);
 }
@@ -76,22 +76,35 @@ void SymbolDataEditor::limitScale(qreal factor)
 
 void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
-    inPoint = fromStored(_inPoint);
-    outPoint = fromStored(_outPoint);
-    limits = QRectF(fromStored(_limits.topLeft()),
-                    fromStored(_limits.bottomRight()));
+    QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
+    symbolRect.moveTopLeft(scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->pos());
+    symbolRect.adjust(symbolRect.width() / 4, symbolRect.height() / 4,
+                      -symbolRect.width() / 4, -symbolRect.height() / 4);
 
-    qreal maxSceneSide = qMax(scene->sceneRect().width(), scene->sceneRect().height());
-    pointWidth = maxSceneSide / 1000;
-    scene->addEllipse(inPoint.x() - pointWidth / 2,
-                      inPoint.y() - pointWidth / 2,
-                      pointWidth, pointWidth,
-                      QPen(Qt::darkCyan), QBrush(Qt::cyan));
-    scene->addEllipse(outPoint.x() - pointWidth / 2,
-                      outPoint.y() - pointWidth / 2,
-                      pointWidth, pointWidth,
-                      QPen(Qt::darkMagenta), QBrush(Qt::magenta));
-    scene->addRect(limits, QPen(Qt::darkYellow, 0));
+    if (_inPoint.isNull())
+    {
+        inPoint = symbolRect.topLeft();
+        inPoint.ry() += symbolRect.height() / 2;
+    }
+    else
+        inPoint = fromStored(_inPoint);
+
+    if (outPoint.isNull())
+    {
+        outPoint = symbolRect.topRight();
+        outPoint.ry() += symbolRect.height() / 2;
+    }
+    else
+        outPoint = fromStored(_outPoint);
+
+    if (_limits.isNull())
+        limits = symbolRect;
+    else
+        limits = QRectF(fromStored(_limits.topLeft()),
+                        fromStored(_limits.bottomRight()));
+
+    correctLimits();
+    addDataItems();
 }
 
 QPointF SymbolDataEditor::toStored(const QPointF &point) const
@@ -370,4 +383,19 @@ void SymbolDataEditor::correctLimits()
         limitsRectItem->setRect(limits);
     }
 
+}
+
+void SymbolDataEditor::addDataItems()
+{
+    qreal maxSceneSide = qMax(scene->sceneRect().width(), scene->sceneRect().height());
+    pointWidth = maxSceneSide / 1000;
+    scene->addEllipse(inPoint.x() - pointWidth / 2,
+                      inPoint.y() - pointWidth / 2,
+                      pointWidth, pointWidth,
+                      QPen(Qt::darkCyan), QBrush(Qt::cyan));
+    scene->addEllipse(outPoint.x() - pointWidth / 2,
+                      outPoint.y() - pointWidth / 2,
+                      pointWidth, pointWidth,
+                      QPen(Qt::darkMagenta), QBrush(Qt::magenta));
+    scene->addRect(limits, QPen(Qt::darkYellow, 0));
 }
