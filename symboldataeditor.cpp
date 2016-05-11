@@ -151,6 +151,10 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
         QGraphicsView::mousePressEvent(&fake);
         QApplication::restoreOverrideCursor();
+
+        if (QApplication::overrideCursor() != nullptr)
+            QApplication::restoreOverrideCursor();
+
         return;
     }
 
@@ -167,9 +171,10 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
 
 void SymbolDataEditor::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->button() != Qt::MidButton && !(event->buttons() & Qt::LeftButton) &&
+    if (!(event->buttons() & Qt::MidButton) && !(event->buttons() & Qt::LeftButton) &&
             itemToChange == Item::LimitsRect)
     {
+        qDebug() << QTime::currentTime() << "\n";
         calculateSideToChange(event->pos());
         changeCursor();
     }
@@ -189,7 +194,7 @@ void SymbolDataEditor::mouseReleaseEvent(QMouseEvent *event)
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
         QGraphicsView::mouseReleaseEvent(&fake);
 
-        if (itemToChange != Item::LimitsRect)
+        if (QApplication::overrideCursor() == nullptr)
             QApplication::setOverrideCursor(Qt::ArrowCursor);
     }
     else
