@@ -89,7 +89,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
     else
         inPoint = fromStored(_inPoint);
 
-    if (outPoint.isNull())
+    if (_outPoint.isNull())
     {
         outPoint = symbolRect.topRight();
         outPoint.ry() += symbolRect.height() / 2;
