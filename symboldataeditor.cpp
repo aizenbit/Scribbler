@@ -171,10 +171,8 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
 
 void SymbolDataEditor::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!(event->buttons() & Qt::MidButton) && !(event->buttons() & Qt::LeftButton) &&
-            itemToChange == Item::LimitsRect)
+    if (!(event->buttons() & Qt::MidButton) && !(event->buttons() & Qt::LeftButton))
     {
-        qDebug() << QTime::currentTime() << "\n";
         calculateSideToChange(event->pos());
         changeCursor();
     }
@@ -195,7 +193,7 @@ void SymbolDataEditor::mouseReleaseEvent(QMouseEvent *event)
         QGraphicsView::mouseReleaseEvent(&fake);
 
         if (QApplication::overrideCursor() == nullptr)
-            QApplication::setOverrideCursor(Qt::ArrowCursor);
+            changeCursor();
     }
     else
         QGraphicsView::mouseReleaseEvent(event);
@@ -209,8 +207,10 @@ void SymbolDataEditor::enterEvent(QEvent *event)
 
 void SymbolDataEditor::leaveEvent(QEvent *event)
 {
-    QApplication::restoreOverrideCursor();
-    QGraphicsView::enterEvent(event);
+    while(QApplication::overrideCursor() != nullptr)
+        QApplication::restoreOverrideCursor();
+
+    QGraphicsView::leaveEvent(event);
 }
 
 void SymbolDataEditor::calculateSideToChange(QPoint pos)
@@ -256,20 +256,26 @@ void SymbolDataEditor::changeCursor()
             QApplication::overrideCursor()->shape() != Qt::ArrowCursor)
         QApplication::restoreOverrideCursor();
 
-    if (sideToChange == Side::Left || sideToChange == Side::Right)
-        QApplication::setOverrideCursor(Qt::SizeHorCursor);
-    if (sideToChange == Side::Top || sideToChange == Side::Bottom)
-        QApplication::setOverrideCursor(Qt::SizeVerCursor);
+    if (itemToChange == Item::LimitsRect)
+    {
+        if (sideToChange == Side::Left || sideToChange == Side::Right)
+            QApplication::setOverrideCursor(Qt::SizeHorCursor);
+        if (sideToChange == Side::Top || sideToChange == Side::Bottom)
+            QApplication::setOverrideCursor(Qt::SizeVerCursor);
 
-    if (sideToChange == (Side::Left | Side::Top) ||
-            sideToChange == (Side::Right | Side::Bottom))
-        QApplication::setOverrideCursor(Qt::SizeFDiagCursor);
-    if (sideToChange == (Side::Left | Side::Bottom) ||
-            sideToChange == (Side::Right | Side::Top))
-        QApplication::setOverrideCursor(Qt::SizeBDiagCursor);
+        if (sideToChange == (Side::Left | Side::Top) ||
+                sideToChange == (Side::Right | Side::Bottom))
+            QApplication::setOverrideCursor(Qt::SizeFDiagCursor);
+        if (sideToChange == (Side::Left | Side::Bottom) ||
+                sideToChange == (Side::Right | Side::Top))
+            QApplication::setOverrideCursor(Qt::SizeBDiagCursor);
 
-    if (sideToChange == Side::AllSides)
-        QApplication::setOverrideCursor(Qt::SizeAllCursor);
+        if (sideToChange == Side::AllSides)
+            QApplication::setOverrideCursor(Qt::SizeAllCursor);
+    }
+
+    if (itemToChange == Item::InPoint || itemToChange == Item::OutPoint)
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
 
     if (QApplication::overrideCursor() == nullptr)
         QApplication::setOverrideCursor(Qt::ArrowCursor);
