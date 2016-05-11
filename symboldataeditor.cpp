@@ -153,9 +153,8 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
     {
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
         QGraphicsView::mousePressEvent(&fake);
-        QApplication::restoreOverrideCursor();
 
-        if (QApplication::overrideCursor() != nullptr)
+        while (QApplication::overrideCursor() != nullptr)
             QApplication::restoreOverrideCursor();
 
         return;
@@ -220,7 +219,7 @@ void SymbolDataEditor::calculateSideToChange(QPoint pos)
 {
     sideToChange = Side::NoSide;
 
-    if (itemToChange != Item::LimitsRect)
+    if (itemToChange != Item::LimitsRect || scene->items().isEmpty())
         return;
 
     QGraphicsRectItem* limitsItem = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(itemToChange));
@@ -286,7 +285,7 @@ void SymbolDataEditor::changeCursor()
 
 void SymbolDataEditor::moveItem(const QPoint pos)
 {
-    if (itemToChange == Item::NoItem)
+    if (itemToChange == Item::NoItem || scene->items().isEmpty())
         return;
 
     if (itemToChange == Item::InPoint || itemToChange == Item::OutPoint)
@@ -345,4 +344,30 @@ void SymbolDataEditor::rememberChanges()
         QGraphicsRectItem* limitsRectItem = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(Item::LimitsRect));
         limits = limitsRectItem->rect();
     }
+
+    correctLimits();
+}
+
+void SymbolDataEditor::correctLimits()
+{
+    if (limits.height() < 0)
+    {
+        qreal top = limits.top();
+        limits.setTop(limits.bottom());
+        limits.setBottom(top);
+    }
+
+    if (limits.width() < 0)
+    {
+        qreal left = limits.left();
+        limits.setLeft(limits.right());
+        limits.setRight(left);
+    }
+
+    if (scene->items().size() > Item::LimitsRect)
+    {
+        QGraphicsRectItem* limitsRectItem = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(Item::LimitsRect));
+        limitsRectItem->setRect(limits);
+    }
+
 }

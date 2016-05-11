@@ -74,6 +74,7 @@ private:
     void calculateSideToChange(QPoint pos);
     void changeCursor();
     void rememberChanges();
+    void correctLimits();
 };
 
 #endif // SVGDATAEDITOR_H
