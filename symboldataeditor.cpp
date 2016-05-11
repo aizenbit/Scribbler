@@ -50,6 +50,9 @@ void SymbolDataEditor::load(const QString & fileName)
                        scene->height() / 2 - itemSize.height() / 2.0);
     scene->addRect(0, 0, scene->width() - 1, scene->height() - 1);
     scene->addItem(symbolItem);
+    limitScale(currentScaleFactor / qMax(itemSize.width() / width(),
+                                         itemSize.height() / height()));
+    centerOn(symbolItem);
     setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
