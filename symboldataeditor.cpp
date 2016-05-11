@@ -124,6 +124,7 @@ void SymbolDataEditor::clear()
 void SymbolDataEditor::disableChanges()
 {
     itemToChange = Item::NoItem;
+    sideToChange = NoSide;
 }
 
 void SymbolDataEditor::enableInPointChanges()
@@ -139,6 +140,7 @@ void SymbolDataEditor::enableOutPointChanges()
 void SymbolDataEditor::enableLimitsChanges()
 {
     itemToChange = Item::LimitsRect;
+    sideToChange = NoSide;
 }
 
 void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
@@ -164,7 +166,14 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
 
 void SymbolDataEditor::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!(event->modifiers() & Qt::ControlModifier) && event->buttons() == Qt::LeftButton)
+    if (event->button() != Qt::MidButton && !(event->buttons() & Qt::LeftButton) &&
+            itemToChange == Item::LimitsRect)
+    {
+        calculateSideToChange(event->pos());
+        changeCursor();
+    }
+
+    if (event->buttons() & Qt::LeftButton)
         moveItem(event->pos());
 
     QGraphicsView::mouseMoveEvent(event);
@@ -194,15 +203,70 @@ void SymbolDataEditor::leaveEvent(QEvent *event)
     QGraphicsView::enterEvent(event);
 }
 
+void SymbolDataEditor::calculateSideToChange(QPoint pos)
+{
+    sideToChange = Side::NoSide;
+
+    if (itemToChange != Item::LimitsRect)
+        return;
+
+    QGraphicsRectItem* limitsItem = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(itemToChange));
+    QRectF limitsRect = limitsItem->rect();
+
+    QPoint topLeft = mapFromScene(limitsRect.topLeft());
+    QPoint bottomRight = mapFromScene(limitsRect.bottomRight());
+
+    if (abs(topLeft.x() - pos.x()) < 10)
+        sideToChange = static_cast<Side>(sideToChange | Side::Left);
+    if (abs(topLeft.y() - pos.y()) < 10)
+        sideToChange = static_cast<Side>(sideToChange | Side::Top);
+    if (abs(bottomRight.x() - pos.x()) < 10)
+        sideToChange = static_cast<Side>(sideToChange | Side::Right);
+    if (abs(bottomRight.y() - pos.y()) < 10)
+        sideToChange = static_cast<Side>(sideToChange | Side::Bottom);
+
+    if (sideToChange & Side::Left && sideToChange & Side::Right)
+        sideToChange = Side::Left;
+    if (sideToChange & Side::Top && sideToChange & Side::Bottom)
+        sideToChange = Side::Top;
+
+    if (sideToChange == Side::NoSide && limitsRect.contains(mapToScene(pos)))
+    {
+        sideToChange = Side::AllSides;
+        dLimitsCenter = limitsRect.center() - mapToScene(pos);
+    }
+}
+
+void SymbolDataEditor::changeCursor()
+{
+    if (QApplication::overrideCursor()->shape() != Qt::ArrowCursor)
+        QApplication::restoreOverrideCursor();
+
+    if (sideToChange == Side::Left || sideToChange == Side::Right)
+        QApplication::setOverrideCursor(Qt::SizeHorCursor);
+    if (sideToChange == Side::Top || sideToChange == Side::Bottom)
+        QApplication::setOverrideCursor(Qt::SizeVerCursor);
+
+    if (sideToChange == (Side::Left | Side::Top) ||
+            sideToChange == (Side::Right | Side::Bottom))
+        QApplication::setOverrideCursor(Qt::SizeFDiagCursor);
+    if (sideToChange == (Side::Left | Side::Bottom) ||
+            sideToChange == (Side::Right | Side::Top))
+        QApplication::setOverrideCursor(Qt::SizeBDiagCursor);
+
+    if (sideToChange == Side::AllSides)
+        QApplication::setOverrideCursor(Qt::SizeAllCursor);
+
+}
+
 void SymbolDataEditor::moveItem(const QPoint pos)
 {
     if (itemToChange == Item::NoItem)
         return;
 
-    QPointF itemPos = mapToScene(pos);
-
     if (itemToChange == Item::InPoint || itemToChange == Item::OutPoint)
     {
+        QPointF itemPos = mapToScene(pos);
         QGraphicsEllipseItem* item = static_cast<QGraphicsEllipseItem *>(scene->items(Qt::AscendingOrder).at(itemToChange));
         item->setRect(itemPos.x() - pointWidth / 2,
                       itemPos.y() - pointWidth / 2,
@@ -212,15 +276,24 @@ void SymbolDataEditor::moveItem(const QPoint pos)
     if (itemToChange == Item::LimitsRect)
     {
         QGraphicsRectItem* item = static_cast<QGraphicsRectItem *>(scene->items(Qt::AscendingOrder).at(itemToChange));
-        QPoint globalCursorPos = QCursor::pos();
-        QPoint viewPos = mapFromGlobal(globalCursorPos);
-        QPointF scenePos = mapToScene(viewPos);
+
+        QPointF scenePos = mapToScene(pos);
         QRectF newRect = item->rect();
-        newRect.moveCenter(scenePos);
 
-        //qDebug() << pos << globalCursorPos << viewPos << scenePos << "\n";
+        if (sideToChange & Side::Top)
+            newRect.setTop(scenePos.y());
+        if (sideToChange & Side::Bottom)
+            newRect.setBottom(scenePos.y());
+        if (sideToChange & Side::Left)
+            newRect.setLeft(scenePos.x());
+        if (sideToChange & Side::Right)
+            newRect.setRight(scenePos.x());
 
-        if (item->rect().contains(scenePos))
-            item->setRect(newRect);
+        if (sideToChange == Side::AllSides)
+        {
+            newRect.moveCenter(scenePos + dLimitsCenter);
+        }
+
+        item->setRect(newRect);
     }
 }

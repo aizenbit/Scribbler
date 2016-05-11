@@ -50,17 +50,30 @@ private:
         NoItem
     };
 
+    enum Side : int {
+        NoSide = 0x00,
+        Top = 0x01,
+        Bottom = 0x02,
+        Left = 0x04,
+        Right = 0x08,
+        AllSides = 0x10
+    };
+
     QGraphicsScene *scene;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     Item itemToChange;
+    Side sideToChange; //for LimitsRect
     qreal pointWidth;
-    QPointF inPoint, outPoint;
+    QPointF inPoint, outPoint, dLimitsCenter;
     QRectF limits;
 
     void limitScale(qreal factor);  //limited view zoom
     QPointF toStored(const QPointF &point) const;
     QPointF fromStored(const QPointF &point) const;
     void moveItem(const QPoint pos);
+    void calculateSideToChange(QPoint pos);
+    void changeCursor();
+
 };
 
 #endif // SVGDATAEDITOR_H
