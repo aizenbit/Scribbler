@@ -15,7 +15,7 @@ class SymbolDataEditor : public QGraphicsView
     Q_OBJECT
 
 public:
-    SymbolDataEditor(QWidget *parent = 0);
+    explicit SymbolDataEditor(QWidget *parent = 0);
     ~SymbolDataEditor();
 
     void load(const QString & fileName);
@@ -66,6 +66,8 @@ private:
     qreal pointWidth;
     QPointF inPoint, outPoint, dLimitsCenter;
     QRectF limits;
+    QDomDocument doc;
+    qreal pxPerMm = 3.543307;
 
     void limitScale(qreal factor);  //limited view zoom
     QPointF toStored(const QPointF &point) const;
@@ -76,6 +78,7 @@ private:
     void rememberChanges();
     void correctLimits();
     void addDataItems();
+    QPointF getBeginPoint();
 };
 
 #endif // SVGDATAEDITOR_H

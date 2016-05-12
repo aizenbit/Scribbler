@@ -22,7 +22,7 @@ SymbolDataEditor::~SymbolDataEditor()
 
 void SymbolDataEditor::load(const QString & fileName)
 {
-    QDomDocument doc("SVG");
+    doc = QDomDocument("SVG");
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -35,7 +35,6 @@ void SymbolDataEditor::load(const QString & fileName)
     }
 
     file.close();
-
     QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
     SvgView::scaleViewBox(svgElement);
     QByteArray scaledFile = doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8();
@@ -83,8 +82,18 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
 
     if (_inPoint.isNull())
     {
-        inPoint = symbolRect.topLeft();
-        inPoint.ry() += symbolRect.height() / 2;
+        inPoint = getBeginPoint();
+        if (inPoint.isNull())
+        {
+            inPoint = symbolRect.topLeft();
+            inPoint.ry() += symbolRect.height() / 2;
+        }
+        else
+        {
+            //inPoint.rx() *= symbolRect.width();
+            //inPoint.ry() *= symbolRect.height();
+            //inPoint += symbolRect.topLeft();
+        }
     }
     else
         inPoint = fromStored(_inPoint);
@@ -398,4 +407,58 @@ void SymbolDataEditor::addDataItems()
                       pointWidth, pointWidth,
                       QPen(Qt::darkMagenta), QBrush(Qt::magenta));
     scene->addRect(limits, QPen(Qt::darkYellow, 0));
+}
+
+QPointF SymbolDataEditor::getBeginPoint()
+{
+    QPointF result = QPointF(0,0);
+    QDomElement gElement = doc.elementsByTagName("g").item(0).toElement();
+    QString transform = gElement.attribute("transform");
+
+    if (transform.contains("translate"))
+    {
+        QString translate = QRegularExpression("translate(.+)").match(transform).captured();
+        translate.remove("translate(", Qt::CaseInsensitive);
+        translate.remove(")");
+        QString x = translate.left(translate.indexOf(','));
+        QString y = translate.mid(translate.indexOf(',') + 1);
+        result = QPointF(x.toDouble(), y.toDouble());
+    }
+
+    QDomNodeList pathList = doc.elementsByTagName("path");
+
+    if (pathList.isEmpty())
+        return QPointF();
+
+    QDomElement pathElement = pathList.item(0).toElement();
+    QString path = pathElement.attribute("d");
+    QString move = QRegularExpression("^[mM] *-?\\d+\\.?\\d*,? ?-?\\d+\\.?\\d*").match(path).captured();
+    bool absolutely = move.at(0).isUpper();
+    move.remove(QRegularExpression("^[mM] *"));
+    QString x = move.left(move.indexOf(QRegularExpression("[ ,]")));
+    QString y = move.mid(move.indexOf(QRegularExpression("[ ,]")) + 1);
+
+    if (absolutely)
+        result = QPointF(x.toDouble(), y.toDouble());
+    else
+        result += QPointF(x.toDouble(), y.toDouble());
+
+    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
+    QStringList viewBoxValues = svgElement.attribute("viewBox").split(" ");
+
+    QRectF viewBox = QRectF(viewBoxValues.at(0).toDouble(), viewBoxValues.at(1).toDouble(),
+                            viewBoxValues.at(2).toDouble(), viewBoxValues.at(3).toDouble());
+
+
+    QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
+    symbolRect.moveTopLeft(scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->pos());
+
+    result -= viewBox.topLeft();
+    result.rx() /= viewBox.width();
+    result.ry() /= viewBox.height();
+    result.rx() *= symbolRect.width();
+    result.ry() *= symbolRect.height();
+    result += symbolRect.topLeft();
+
+    return result;
 }
