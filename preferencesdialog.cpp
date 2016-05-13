@@ -14,8 +14,6 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
             this, SLOT(changeSheetOrientation()));
     connect(ui->colorButton, SIGNAL(clicked()),
             this, SLOT(setColor()));
-    connect(ui->scaleCanvasSpinBox, SIGNAL(valueChanged(double)),
-            this, SLOT(showWarning()));
 
     sheetSizeSignalMapper = new QSignalMapper(this);
 
@@ -75,8 +73,6 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("use-seed", QVariant(ui->useSeedCheckBox->isChecked()));
     settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
     settings.setValue("round-lines", QVariant(ui->roundCheckBox->isChecked()));
-    settings.setValue("scale-canvas", QVariant(ui->scaleCanvsaCheckBox->isChecked()));
-    settings.setValue("scale-canvas-value", QVariant(ui->scaleCanvasSpinBox->value()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -103,10 +99,6 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->useSeedCheckBox->setChecked(    settings.value("use-seed", true).toBool());
     ui->seedSpinBox->setValue(          settings.value("seed", 12345678).toInt());
     ui->roundCheckBox->setChecked(      settings.value("round-lines", true).toBool());
-    ui->scaleCanvsaCheckBox->setChecked(settings.value("scale-canvas", true).toBool());
-    changedByProgram = true;
-    ui->scaleCanvasSpinBox->setValue(   settings.value("scale-canvas-value", 1.0).toDouble());
-    changedByProgram = false;
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
 
@@ -114,8 +106,6 @@ void PreferencesDialog::loadSettingsFromFile()
                                            .arg(settings.value("font-color", "#0097ff").toString()));
 
     settings.endGroup();
-
-    oldScaleCanvasValue = ui->scaleCanvasSpinBox->value();
 
     setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly
 }
@@ -205,21 +195,4 @@ void PreferencesDialog::setColor()
 bool PreferencesDialog::alternateMargins()
 {
     return ui->alternateMarginsCheckBox->isChecked();
-}
-
-void PreferencesDialog::showWarning()
-{
-    static bool wasShown = false;
-    if (wasShown || changedByProgram)
-        return;
-
-    wasShown = true;
-    ui->scaleCanvasSpinBox->setValue(oldScaleCanvasValue);
-
-    QMessageBox warningBox;
-    warningBox.setIcon(QMessageBox::Warning);
-    warningBox.setWindowTitle(tr("Warning!"));
-    warningBox.setText(tr("Changing this value may harm your font! "
-                          "Don't change it, if you don't know exactly what you're doing!"));
-    warningBox.exec();
 }

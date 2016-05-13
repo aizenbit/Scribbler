@@ -1,9 +1,5 @@
 ﻿#include "svgview.h"
 
-const qreal &SvgView::scaleCanvasValueRef = SvgView::scaleCanvasValue;
-qreal SvgView::scaleCanvasValue;
-bool SvgView::scaleCanvas;
-
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
@@ -331,7 +327,7 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
         }
 
     renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
-    qreal width = renderer->defaultSize().width() + renderer->defaultSize().width() * scaleCanvasValue / 2;
+    qreal width = renderer->defaultSize().width() + renderer->defaultSize().width() / 2;
     font.insert(key, {symbolData, scale, width, renderer});
 }
 
@@ -356,9 +352,6 @@ void SvgView::changeAttribute(QString &attribute, QString parameter, QString new
 
 void SvgView::scaleViewBox(QDomElement &svgElement)
 {
-    if (!scaleCanvas)
-        return;
-
     QStringList viewBoxValues = svgElement.attribute("viewBox").split(" ");
 
     if (viewBoxValues.isEmpty())
@@ -368,10 +361,10 @@ void SvgView::scaleViewBox(QDomElement &svgElement)
     qreal height = viewBoxValues.at(3).toDouble() - viewBoxValues.at(1).toDouble();
 
     QString viewBox = QString("%1 %2 %3 %4")
-            .arg(static_cast<qreal>(viewBoxValues.at(0).toDouble() - width * scaleCanvasValue / 2))
-            .arg(static_cast<qreal>(viewBoxValues.at(1).toDouble() - height * scaleCanvasValue / 2))
-            .arg(static_cast<qreal>(viewBoxValues.at(2).toDouble() + width * scaleCanvasValue))
-            .arg(static_cast<qreal>(viewBoxValues.at(3).toDouble() + height * scaleCanvasValue));
+            .arg(static_cast<qreal>(viewBoxValues.at(0).toDouble() - width / 2))
+            .arg(static_cast<qreal>(viewBoxValues.at(1).toDouble() - height / 2))
+            .arg(static_cast<qreal>(viewBoxValues.at(2).toDouble() + width))
+            .arg(static_cast<qreal>(viewBoxValues.at(3).toDouble() + height));
 
     svgElement.setAttribute("viewBox", viewBox);
 }
@@ -388,10 +381,8 @@ void SvgView::loadSettingsFromFile()
     fontSize =      settings.value("font-size").toDouble();
     penWidth =      settings.value("pen-width").toDouble();
     roundLines =    settings.value("round-lines").toBool();
-    scaleCanvas =   settings.value("scale-canvas").toBool();
     useSeed =       settings.value("use-seed").toBool();
     seed =          settings.value("seed").toInt();
-    scaleCanvasValue =   settings.value("scale-canvas-value").toDouble();
     useCustomFontColor = settings.value("use-custom-font-color").toBool();
     connectLetters =     settings.value("connect-letters").toBool();
 

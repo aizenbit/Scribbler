@@ -38,13 +38,11 @@ private:
     };
 
     bool changedByProgram;
-    qreal oldScaleCanvasValue;
 
 private slots:
     void setSheetSize(int size);
     void setColor();
     void changeSheetOrientation();
-    void showWarning();
 };
 
 #endif // PREFERENCESDIALOG_H

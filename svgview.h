@@ -24,7 +24,6 @@ public:
     ~SvgView();
 
     static void scaleViewBox(QDomElement &svgElement);
-    static const qreal &scaleCanvasValueRef;
 
 public slots:
     int renderText(const QStringRef &text = QStringRef());
@@ -59,9 +58,6 @@ private:
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
-
-    static qreal scaleCanvasValue;
-    static bool scaleCanvas;
 
     SymbolData symbolData, previousLetterData;
     QRectF currentMarginsRect;
