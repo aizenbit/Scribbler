@@ -138,6 +138,21 @@ QPointF SymbolDataEditor::fromStored(const QPointF &point) const
     return result;
 }
 
+QPointF SymbolDataEditor::fromViewBox(const QPointF &point) const
+{
+    QPointF result = point;
+    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
+    QStringList viewBoxValues = svgElement.attribute("viewBox").split(" ");
+
+    QRectF viewBox = QRectF(viewBoxValues.at(0).toDouble(), viewBoxValues.at(1).toDouble(),
+                            viewBoxValues.at(2).toDouble(), viewBoxValues.at(3).toDouble());
+
+    result -= viewBox.topLeft();
+    result.rx() /= viewBox.width();
+    result.ry() /= viewBox.height();
+    return result;
+}
+
 void SymbolDataEditor::clear()
 {
     scene->clear();
@@ -443,22 +458,7 @@ QPointF SymbolDataEditor::getBeginPoint()
     else
         result += QPointF(x.toDouble(), y.toDouble());
 
-    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
-    QStringList viewBoxValues = svgElement.attribute("viewBox").split(" ");
+    result = fromViewBox(result);
 
-    QRectF viewBox = QRectF(viewBoxValues.at(0).toDouble(), viewBoxValues.at(1).toDouble(),
-                            viewBoxValues.at(2).toDouble(), viewBoxValues.at(3).toDouble());
-
-
-    QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
-    symbolRect.moveTopLeft(scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->pos());
-
-    result -= viewBox.topLeft();
-    result.rx() /= viewBox.width();
-    result.ry() /= viewBox.height();
-    result.rx() *= symbolRect.width();
-    result.ry() *= symbolRect.height();
-    result += symbolRect.topLeft();
-
-    return result;
+    return fromStored(result);
 }

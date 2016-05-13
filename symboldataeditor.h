@@ -72,6 +72,7 @@ private:
     void limitScale(qreal factor);  //limited view zoom
     QPointF toStored(const QPointF &point) const;
     QPointF fromStored(const QPointF &point) const;
+    QPointF fromViewBox(const QPointF &point) const;
     void moveItem(const QPoint pos);
     void calculateSideToChange(QPoint pos);
     void changeCursor();
