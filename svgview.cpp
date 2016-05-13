@@ -19,8 +19,6 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     setScene(scene);
 
     centerOn(0.0, 0.0);
-
-    specialSymbols << '.' << ',';
 }
 
 SvgView::~SvgView()
@@ -56,7 +54,6 @@ int SvgView::renderText(const QStringRef &text)
     for (int currentSymbolNumber = 0; currentSymbolNumber < text.length(); currentSymbolNumber++)
     {
         QChar symbol = text.at(currentSymbolNumber);
-        bool isSpecialSymbol = specialSymbols.contains(symbol);
 
         if (!font.contains(symbol))
         {
@@ -76,9 +73,6 @@ int SvgView::renderText(const QStringRef &text)
         symbolItem->setSharedRenderer(data.renderer);
         symbolData = data.symbolData;
 
-        if (isSpecialSymbol)
-            data.scale /= 5;
-
         symbolItem->setScale(data.scale);
         symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
 
@@ -95,11 +89,7 @@ int SvgView::renderText(const QStringRef &text)
 
         QPointF symbolItemPos = cursor;
 
-        if (isSpecialSymbol)
-            symbolItemPos.ry() += fontSize * dpmm - symbolBoundingSize.height() * symbolData.limits.bottomRight().y();
-        else
-            symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.topLeft().y();
-
+        symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.topLeft().y();
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
 
@@ -301,9 +291,6 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
     QStringList viewBox = svgElement.attribute("viewBox").split(" ");
     qreal dotsPerUnits = renderer->defaultSize().height() / viewBox.at(3).toDouble();
     qreal newPenWidth = penWidth * dpmm / scale / dotsPerUnits;
-
-    if (specialSymbols.contains(key))
-        newPenWidth *= 5; //yeah, magic number
 
     QDomNodeList pathList = doc.elementsByTagName("path");
     QDomNodeList styleList = doc.elementsByTagName("style");

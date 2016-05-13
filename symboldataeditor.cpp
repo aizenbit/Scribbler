@@ -3,8 +3,6 @@
 SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
-    minScaleFactor = 0.1;
-    maxScaleFactor = 30;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(QGraphicsView::NoDrag);
@@ -44,10 +42,9 @@ void SymbolDataEditor::load(const QString & fileName)
 
     QSizeF itemSize = symbolItem->renderer()->defaultSize();
     clear();
-    scene->setSceneRect(0, 0, itemSize.width() * 3, itemSize.height() * 3);
+    scene->setSceneRect(0, 0, itemSize.width() * sceneScale, itemSize.height() * sceneScale);
     symbolItem->setPos(scene->width() / 2 - itemSize.width() / 2.0,
                        scene->height() / 2 - itemSize.height() / 2.0);
-    scene->addRect(0, 0, scene->width() - 1, scene->height() - 1);
     scene->addItem(symbolItem);
     limitScale(qMax(qreal(width()) / itemSize.width(),
                     qreal(height()) / itemSize.height()) / currentScaleFactor);
@@ -88,12 +85,6 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
             inPoint = symbolRect.topLeft();
             inPoint.ry() += symbolRect.height() / 2;
         }
-        else
-        {
-            //inPoint.rx() *= symbolRect.width();
-            //inPoint.ry() *= symbolRect.height();
-            //inPoint += symbolRect.topLeft();
-        }
     }
     else
         inPoint = fromStored(_inPoint);
@@ -123,7 +114,7 @@ QPointF SymbolDataEditor::toStored(const QPointF &point) const
     QPointF result = point - symbolRect.topLeft();
     result.rx() = point.x() / symbolRect.width();
     result.ry() = point.y() / symbolRect.height();
-    result -= QPointF(1.0, 1.0);
+    result -= QPointF(2.0,2.0); //sorry, i don't know why this works, but it depends on scaleCanvas
     return result;
 }
 

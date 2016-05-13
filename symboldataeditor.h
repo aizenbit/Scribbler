@@ -42,7 +42,6 @@ protected:
 
 private:
     enum Item : int {
-        SceneRect,
         SymbolItem,
         InPoint,
         OutPoint,
@@ -58,16 +57,15 @@ private:
         Right = 0x08,
         AllSides = 0x10
     };
-
+    const qreal maxScaleFactor = 40, minScaleFactor = 0.1, sceneScale = 5;
     QGraphicsScene *scene;
-    qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
+    qreal currentScaleFactor;
     Item itemToChange;
     Side sideToChange; //for LimitsRect
     qreal pointWidth;
     QPointF inPoint, outPoint, dLimitsCenter;
     QRectF limits;
     QDomDocument doc;
-    qreal pxPerMm = 3.543307;
 
     void limitScale(qreal factor);  //limited view zoom
     QPointF toStored(const QPointF &point) const;
