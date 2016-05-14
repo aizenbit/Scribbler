@@ -90,10 +90,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
         inPoint = fromStored(_inPoint);
 
     if (_outPoint.isNull())
-    {
-        outPoint = symbolRect.topRight();
-        outPoint.ry() += symbolRect.height() / 2;
-    }
+        outPoint = getEndPoint();
     else
         outPoint = fromStored(_outPoint);
 
@@ -433,6 +430,40 @@ QPointF SymbolDataEditor::getBeginPoint()
     return fromStored(result);
 }
 
+QPointF SymbolDataEditor::getEndPoint()
+{
+    QPointF result = getTranslatePoint();
+    QString path = getPathList().last();
+
+    bool absolutely = path.at(0).isUpper();
+
+    if (absolutely)
+        result = getMovePoint(path);
+    else
+        result += getMovePoint(path);
+
+    absolutely = path.at(path.indexOf('c', 0, Qt::CaseInsensitive)).isUpper();
+
+    if (absolutely)
+        result = getLastCurvePoint(path);
+    else
+        result += getLastCurvePoint(path);
+
+    QPointF linePoint = getLinePoint(path);
+
+    if (!linePoint.isNull())
+    {
+        if (path.at(path.indexOf('l')).isUpper())
+            result = linePoint;
+        else
+            result += linePoint;
+    }
+
+    result = fromViewBox(result);
+
+    return fromStored(result);
+}
+
 QPointF SymbolDataEditor::getTranslatePoint()
 {
     QDomElement gElement = doc.elementsByTagName("g").item(0).toElement();
@@ -469,4 +500,53 @@ QStringList SymbolDataEditor::getPathList()
         pathStringList.append(pathDomNodeList.at(i).toElement().attribute("d"));
 
     return pathStringList;
+}
+
+ QPointF SymbolDataEditor::getLastCurvePoint(const QString &path)
+ {
+     QPointF result = QPointF(0.0, 0.0);
+     QString cPart = path.mid(path.indexOf('c', 0, Qt::CaseInsensitive));
+     bool absolutely = cPart.at(0).isUpper();
+     cPart.remove(QRegularExpression("^\\p{L}"));
+     cPart = cPart.mid(0, cPart.indexOf('l'));
+
+     if (cPart.at(cPart.size() - 1).isLetter())
+         cPart.remove(cPart.size() - 1, 1);
+
+     QStringList numbers = cPart.split(QRegularExpression("[, ]"), QString::SkipEmptyParts);
+
+     if (absolutely)
+     {
+         result.rx() = numbers.at(numbers.size() - 2).toDouble();
+         result.ry() = numbers.at(numbers.size() - 1).toDouble();
+     }
+     else
+         for (int i = 5; i < numbers.size(); i += 6)
+             {
+                 result.rx() += numbers.at(i - 1).toDouble();
+                 result.ry() += numbers.at(i).toDouble();
+             }
+
+     return result;
+ }
+
+QPointF SymbolDataEditor::getLinePoint(const QString &path)
+{
+    QPointF result = QPointF();
+
+    if (path.indexOf('l') < 0)
+        return result;
+
+    QString lPart = path.mid(path.indexOf('l', 0, Qt::CaseInsensitive));
+
+    lPart.remove(0, 1);
+    lPart = lPart.mid(0, lPart.indexOf(QRegularExpression("\\p{L}")));
+
+    QStringList numbers = lPart.split(QRegularExpression("[, ]"), QString::SkipEmptyParts);
+
+    if (numbers.size() > 1)
+        result.rx() = numbers.at(0).toDouble();
+        result.ry() = numbers.at(1).toDouble();
+
+    return result;
 }

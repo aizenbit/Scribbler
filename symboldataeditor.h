@@ -78,8 +78,11 @@ private:
     void correctLimits();
     void addDataItems();
     QPointF getBeginPoint();
+    QPointF getEndPoint();
     QPointF getTranslatePoint();
     QPointF getMovePoint(const QString &path);
+    QPointF getLastCurvePoint(const QString &path);
+    QPointF getLinePoint(const QString &path);
     QStringList getPathList();
 };
 
