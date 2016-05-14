@@ -63,11 +63,13 @@ private:
     Item itemToChange;
     Side sideToChange; //for LimitsRect
     qreal pointWidth;
+    bool setupPoints;
     QPointF inPoint, outPoint, dLimitsCenter;
     QRectF limits;
     QDomDocument doc;
 
     void limitScale(qreal factor);  //limited view zoom
+    void loadSettings();
     QPointF toStored(const QPointF &point) const;
     QPointF fromStored(const QPointF &point) const;
     QPointF fromViewBox(const QPointF &point) const;

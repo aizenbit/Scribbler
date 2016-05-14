@@ -240,6 +240,9 @@
               <property name="text">
                <string>Connect Letters</string>
               </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item row="3" column="0">
@@ -441,7 +444,7 @@
                <string>Round Lines</string>
               </property>
               <property name="checked">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -449,6 +452,19 @@
              <widget class="QCheckBox" name="fontColorCheckBox">
               <property name="text">
                <string>Use Font Color</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="setupPointsCheckBox">
+              <property name="text">
+               <string>Setup points automatic by autoload symbols</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

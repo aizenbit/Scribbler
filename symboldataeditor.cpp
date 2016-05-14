@@ -18,8 +18,20 @@ SymbolDataEditor::~SymbolDataEditor()
     delete scene;
 }
 
+void SymbolDataEditor::loadSettings()
+{
+    QSettings settings("Settings.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+
+    setupPoints = settings.value("setup-points").toBool();
+
+    settings.endGroup();
+}
+
 void SymbolDataEditor::load(const QString & fileName)
 {
+    loadSettings();
+
     doc = QDomDocument("SVG");
     QFile file(fileName);
 
@@ -79,8 +91,9 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
 
     if (_inPoint.isNull())
     {
-        inPoint = getBeginPoint();
-        if (inPoint.isNull())
+        if (setupPoints)
+            inPoint = getBeginPoint();
+        else
         {
             inPoint = symbolRect.topLeft();
             inPoint.ry() += symbolRect.height() / 2;
@@ -90,7 +103,15 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
         inPoint = fromStored(_inPoint);
 
     if (_outPoint.isNull())
-        outPoint = getEndPoint();
+    {
+        if (setupPoints)
+            outPoint = getEndPoint();
+        else
+        {
+            outPoint = symbolRect.topRight();
+            outPoint.ry() += symbolRect.height() / 2;
+        }
+    }
     else
         outPoint = fromStored(_outPoint);
 

@@ -73,6 +73,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("use-seed", QVariant(ui->useSeedCheckBox->isChecked()));
     settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
     settings.setValue("round-lines", QVariant(ui->roundCheckBox->isChecked()));
+    settings.setValue("setup-points", QVariant(ui->setupPointsCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -99,6 +100,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->useSeedCheckBox->setChecked(    settings.value("use-seed", true).toBool());
     ui->seedSpinBox->setValue(          settings.value("seed", 12345678).toInt());
     ui->roundCheckBox->setChecked(      settings.value("round-lines", true).toBool());
+    ui->setupPointsCheckBox->setChecked(settings.value("setup-points", true).toBool());
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
 
