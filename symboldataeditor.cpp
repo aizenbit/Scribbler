@@ -416,7 +416,12 @@ void SymbolDataEditor::addDataItems()
 QPointF SymbolDataEditor::getBeginPoint()
 {
     QPointF result = getTranslatePoint();
-    QString path = getPathList().first();
+    QStringList pathList = getPathList();
+
+    if (pathList.isEmpty() || pathList.first().isEmpty())
+        return result;
+
+    QString path = pathList.first();
 
     bool absolutely = path.at(0).isUpper();
 
@@ -433,7 +438,12 @@ QPointF SymbolDataEditor::getBeginPoint()
 QPointF SymbolDataEditor::getEndPoint()
 {
     QPointF result = getTranslatePoint();
-    QString path = getPathList().last();
+    QStringList pathList = getPathList();
+
+    if (pathList.isEmpty() || pathList.last().isEmpty())
+        return result;
+
+    QString path = pathList.last();
 
     bool absolutely = path.at(0).isUpper();
 
@@ -442,7 +452,10 @@ QPointF SymbolDataEditor::getEndPoint()
     else
         result += getMovePoint(path);
 
-    absolutely = path.at(path.indexOf('c', 0, Qt::CaseInsensitive)).isUpper();
+    int indexOfC = path.indexOf('c', 0, Qt::CaseInsensitive);
+
+    if (indexOfC > 0)
+        absolutely = path.at(indexOfC).isUpper();
 
     if (absolutely)
         result = getLastCurvePoint(path);
@@ -474,21 +487,34 @@ QPointF SymbolDataEditor::getTranslatePoint()
         QString translate = QRegularExpression("translate(.+)").match(transform).captured();
         translate.remove("translate(", Qt::CaseInsensitive);
         translate.remove(")");
-        QString x = translate.left(translate.indexOf(','));
-        QString y = translate.mid(translate.indexOf(',') + 1);
-        return QPointF(x.toDouble(), y.toDouble());
+        translate = translate.simplified();
+        int indexOfSeparator = translate.indexOf(QRegularExpression("[, ]"));
+
+        if (indexOfSeparator >= 0 && indexOfSeparator + 1 < translate.size())
+        {
+            QString x = translate.left(indexOfSeparator);
+            QString y = translate.mid(indexOfSeparator + 1);
+            return QPointF(x.toDouble(), y.toDouble());
+        }
     }
-    else
-        return QPointF(0.0, 0.0);
+
+    return QPointF(0.0, 0.0);
 }
 
 QPointF SymbolDataEditor::getMovePoint(const QString &path)
 {
     QString move = QRegularExpression("^[mM] *-?\\d+\\.?\\d*,? ?-?\\d+\\.?\\d*").match(path).captured();
     move.remove(QRegularExpression("^[mM] *"));
-    QString x = move.left(move.indexOf(QRegularExpression("[ ,]")));
-    QString y = move.mid(move.indexOf(QRegularExpression("[ ,]")) + 1);
-    return QPointF(x.toDouble(), y.toDouble());
+    int indexOfSeparator = move.indexOf(QRegularExpression("[ ,]"));
+
+    if (indexOfSeparator >= 0 && indexOfSeparator + 1 < move.size())
+    {
+        QString x = move.left(indexOfSeparator);
+        QString y = move.mid(indexOfSeparator + 1);
+        return QPointF(x.toDouble(), y.toDouble());
+    }
+
+    return QPointF(0.0, 0.0);
 }
 
 QStringList SymbolDataEditor::getPathList()
@@ -505,7 +531,13 @@ QStringList SymbolDataEditor::getPathList()
  QPointF SymbolDataEditor::getLastCurvePoint(const QString &path)
  {
      QPointF result = QPointF(0.0, 0.0);
-     QString cPart = path.mid(path.indexOf('c', 0, Qt::CaseInsensitive));
+     int indexOfC = path.indexOf('c', 0, Qt::CaseInsensitive);
+
+     if (indexOfC < 0)
+         return result;
+
+     QString cPart = path.mid(indexOfC);
+
      bool absolutely = cPart.at(0).isUpper();
      cPart.remove(QRegularExpression("^\\p{L}"));
      cPart = cPart.mid(0, cPart.indexOf('l'));
@@ -514,6 +546,9 @@ QStringList SymbolDataEditor::getPathList()
          cPart.remove(cPart.size() - 1, 1);
 
      QStringList numbers = cPart.split(QRegularExpression("[, ]"), QString::SkipEmptyParts);
+
+     if (numbers.size() < 2)
+         return result;
 
      if (absolutely)
      {
@@ -545,8 +580,10 @@ QPointF SymbolDataEditor::getLinePoint(const QString &path)
     QStringList numbers = lPart.split(QRegularExpression("[, ]"), QString::SkipEmptyParts);
 
     if (numbers.size() > 1)
+    {
         result.rx() = numbers.at(0).toDouble();
         result.ry() = numbers.at(1).toDouble();
+    }
 
     return result;
 }
