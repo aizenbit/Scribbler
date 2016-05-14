@@ -402,8 +402,9 @@ void SymbolDataEditor::correctLimits()
 
 void SymbolDataEditor::addDataItems()
 {
-    qreal maxSceneSide = qMax(scene->sceneRect().width(), scene->sceneRect().height());
-    pointWidth = maxSceneSide / 1000;
+    QGraphicsItem * symbolItem = scene->items(Qt::AscendingOrder).at(Item::SymbolItem);
+    qreal maxSymbolSide = qMax(symbolItem->boundingRect().width(), symbolItem->boundingRect().height());
+    pointWidth = maxSymbolSide / 300;
     scene->addEllipse(inPoint.x() - pointWidth / 2,
                       inPoint.y() - pointWidth / 2,
                       pointWidth, pointWidth,
@@ -417,7 +418,23 @@ void SymbolDataEditor::addDataItems()
 
 QPointF SymbolDataEditor::getBeginPoint()
 {
-    QPointF result = QPointF(0,0);
+    QPointF result = getTranslatePoint();
+    QString path = getPathList().first();
+
+    bool absolutely = path.at(0).isUpper();
+
+    if (absolutely)
+        result = getMovePoint(path);
+    else
+        result += getMovePoint(path);
+
+    result = fromViewBox(result);
+
+    return fromStored(result);
+}
+
+QPointF SymbolDataEditor::getTranslatePoint()
+{
     QDomElement gElement = doc.elementsByTagName("g").item(0).toElement();
     QString transform = gElement.attribute("transform");
 
@@ -428,28 +445,28 @@ QPointF SymbolDataEditor::getBeginPoint()
         translate.remove(")");
         QString x = translate.left(translate.indexOf(','));
         QString y = translate.mid(translate.indexOf(',') + 1);
-        result = QPointF(x.toDouble(), y.toDouble());
+        return QPointF(x.toDouble(), y.toDouble());
     }
+    else
+        return QPointF(0.0, 0.0);
+}
 
-    QDomNodeList pathList = doc.elementsByTagName("path");
-
-    if (pathList.isEmpty())
-        return QPointF();
-
-    QDomElement pathElement = pathList.item(0).toElement();
-    QString path = pathElement.attribute("d");
+QPointF SymbolDataEditor::getMovePoint(const QString &path)
+{
     QString move = QRegularExpression("^[mM] *-?\\d+\\.?\\d*,? ?-?\\d+\\.?\\d*").match(path).captured();
-    bool absolutely = move.at(0).isUpper();
     move.remove(QRegularExpression("^[mM] *"));
     QString x = move.left(move.indexOf(QRegularExpression("[ ,]")));
     QString y = move.mid(move.indexOf(QRegularExpression("[ ,]")) + 1);
+    return QPointF(x.toDouble(), y.toDouble());
+}
 
-    if (absolutely)
-        result = QPointF(x.toDouble(), y.toDouble());
-    else
-        result += QPointF(x.toDouble(), y.toDouble());
+QStringList SymbolDataEditor::getPathList()
+{
+    QDomNodeList pathDomNodeList = doc.elementsByTagName("path");
+    QStringList pathStringList;
 
-    result = fromViewBox(result);
+    for (int i = 0; i < pathDomNodeList.size(); i++)
+        pathStringList.append(pathDomNodeList.at(i).toElement().attribute("d"));
 
-    return fromStored(result);
+    return pathStringList;
 }

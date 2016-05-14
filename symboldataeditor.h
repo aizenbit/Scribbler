@@ -78,6 +78,9 @@ private:
     void correctLimits();
     void addDataItems();
     QPointF getBeginPoint();
+    QPointF getTranslatePoint();
+    QPointF getMovePoint(const QString &path);
+    QStringList getPathList();
 };
 
 #endif // SVGDATAEDITOR_H
