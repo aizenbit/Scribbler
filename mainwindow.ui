@@ -48,8 +48,6 @@
     <addaction name="actionConvert_to_Handwritten"/>
     <addaction name="actionLoad_Text_from_File"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_Font"/>
-    <addaction name="actionFont_Editor"/>
     <addaction name="separator"/>
     <addaction name="actionSave_Current_Sheet_as"/>
     <addaction name="actionSave_All_Sheets"/>
@@ -59,7 +57,7 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>&amp;Edit</string>
+     <string>&amp;Settings</string>
     </property>
     <addaction name="actionShow_ToolBar"/>
     <addaction name="actionPreferences"/>
@@ -72,7 +70,15 @@
     <addaction name="actionLicenses_and_Credits"/>
     <addaction name="actionAbout_Scribbler"/>
    </widget>
+   <widget class="QMenu" name="menuFont">
+    <property name="title">
+     <string>&amp;Font</string>
+    </property>
+    <addaction name="actionLoad_Font"/>
+    <addaction name="actionFont_Editor"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuFont"/>
    <addaction name="menuEdit"/>
    <addaction name="menuAbout"/>
   </widget>
@@ -106,7 +112,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Save Current Sheet as Image</string>
+    <string>&amp;Save Current Sheet</string>
    </property>
   </action>
   <action name="actionPreferences">
