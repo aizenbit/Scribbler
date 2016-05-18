@@ -74,7 +74,7 @@ int SvgView::renderText(const QStringRef &text)
 
         cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
         qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;
-        preventGoingBeyondRightMargin(letterWidth);
+        preventGoingBeyondRightMargin(letterWidth, text.toString(), currentSymbolNumber);
 
         //rendering stops by the end of sheet
         if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
@@ -85,7 +85,7 @@ int SvgView::renderText(const QStringRef &text)
 
         QPointF symbolItemPos = cursor;
 
-        symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.topLeft().y();
+        symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.top();
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
 
@@ -95,6 +95,7 @@ int SvgView::renderText(const QStringRef &text)
         lastLetter = symbolItem;
         previousLetterCursor = cursor;
         previousLetterData = symbolData;
+        previousLetterWidth = letterWidth;
         cursor.rx() += letterWidth + letterSpacing * dpmm;
         endOfSheet++;
 
@@ -129,15 +130,53 @@ void SvgView::prepareSceneToRender()
         srand(QTime::currentTime().msec());
 }
 
-void SvgView::preventGoingBeyondRightMargin(qreal letterWidth)
+void SvgView::preventGoingBeyondRightMargin(qreal letterWidth, QString text, int currentSymbolIndex)
 {
     qreal letterHeight = fontSize * dpmm;
+    int previousSymbolIndex = currentSymbolIndex - 1;
 
     if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
     {
-        lastLetter = nullptr;
-        cursor += QPointF(currentMarginsRect.x() - cursor.x(), letterHeight + lineSpacing * dpmm);
-        cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
+        if (wordWrap && previousSymbolIndex >= 0 &&
+                previousSymbolIndex < text.size() &&
+                text.at(currentSymbolIndex).isLetterOrNumber() &&
+                text.at(previousSymbolIndex).isLetterOrNumber())
+        {
+            if (text.at(currentSymbolIndex) == 'o')
+                qDebug() << QString(text.at(currentSymbolIndex));
+            int lastSpace = text.lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
+            int symbolsToWrap = currentSymbolIndex - lastSpace - 1;
+
+            if (connectLetters)
+                symbolsToWrap = symbolsToWrap * 2 - 1;
+
+            int itemsCount = scene->items().size();
+            qreal leftOffset = scene->items(Qt::AscendingOrder)[itemsCount - symbolsToWrap]->pos().x() - currentMarginsRect.x();
+
+            if (connectLetters)
+            {
+                previousLetterCursor.rx() -= leftOffset;
+                previousLetterCursor.ry() += letterHeight + lineSpacing * dpmm;
+            }
+
+            for (int i = symbolsToWrap; i > 0; i--)
+            {
+                QPointF pos = scene->items(Qt::AscendingOrder)[itemsCount - i]->pos();
+                pos.rx() -= leftOffset;
+                pos.ry() += letterHeight + lineSpacing * dpmm;
+                scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
+            }
+
+            cursor.rx() = previousLetterCursor.x() + previousLetterWidth;
+            cursor.ry() += letterHeight + lineSpacing * dpmm;
+
+        }
+        else
+        {
+            lastLetter = nullptr;
+            cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x(); //WTF???
+            cursor.ry() += letterHeight + lineSpacing * dpmm;
+        }
     }
 }
 
@@ -172,17 +211,18 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
     switch (symbol.toLatin1())
     {
     case '\t':
-        cursor += QPointF(fontSize * dpmm * spacesInTab, 0.0);
+        cursor.rx() += fontSize * dpmm * spacesInTab;
         lastLetter = nullptr;
         break;
 
     case '\n':
-        cursor += QPointF(currentMarginsRect.x() - cursor.x(), (fontSize + lineSpacing) * dpmm);
+        cursor.rx() = currentMarginsRect.x();
+        cursor.ry() += (fontSize + lineSpacing) * dpmm;
         lastLetter = nullptr;
         break;
 
     default:
-        cursor += QPointF((fontSize + letterSpacing) * dpmm, 0.0);
+        cursor.rx() += (fontSize + letterSpacing) * dpmm;
         lastLetter = nullptr;
         break;
     }
@@ -383,6 +423,7 @@ void SvgView::loadSettingsFromFile()
     roundLines =    settings.value("round-lines").toBool();
     useSeed =       settings.value("use-seed").toBool();
     seed =          settings.value("seed").toInt();
+    wordWrap =      settings.value("wrap-words").toBool();
     useCustomFontColor = settings.value("use-custom-font-color").toBool();
     connectLetters =     settings.value("connect-letters").toBool();
 

@@ -53,7 +53,7 @@ private:
     int spacesInTab;
     int seed;
     bool useCustomFontColor, changeMargins, connectLetters,
-         useSeed, roundLines;
+         useSeed, roundLines, wordWrap;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
@@ -63,11 +63,12 @@ private:
     QRectF currentMarginsRect;
     QSizeF symbolBoundingSize;
     QPointF cursor, previousLetterCursor;
+    qreal previousLetterWidth;
     QGraphicsSvgItem *lastLetter;
 
     void limitScale(qreal factor);  //limited view zoom
     void prepareSceneToRender();
-    void preventGoingBeyondRightMargin(qreal letterWidth);
+    void preventGoingBeyondRightMargin(qreal letterWidth, QString text, int currentSymbolIndex);
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
     void insertSymbol(QChar key, SymbolData &symbolData);

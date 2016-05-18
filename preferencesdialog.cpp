@@ -70,6 +70,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("is-sheet-orientation-vertical", QVariant(ui->VRadioButton->isChecked()));
     settings.setValue("alternate-margins-of-even-sheets", QVariant(ui->alternateMarginsCheckBox->isChecked()));
     settings.setValue("connect-letters", QVariant(ui->connectLettersCheckBox->isChecked()));
+    settings.setValue("wrap-words", QVariant(ui->wrapWordsCheckBox->isChecked()));
     settings.setValue("use-seed", QVariant(ui->useSeedCheckBox->isChecked()));
     settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
     settings.setValue("round-lines", QVariant(ui->roundCheckBox->isChecked()));
@@ -103,6 +104,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->setupPointsCheckBox->setChecked(settings.value("setup-points", true).toBool());
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
+    ui->wrapWordsCheckBox->setChecked(  settings.value("wrap-words", true).toBool());
 
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
