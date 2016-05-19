@@ -53,7 +53,7 @@ private:
     int spacesInTab;
     int seed;
     bool useCustomFontColor, changeMargins, connectLetters,
-         useSeed, roundLines, wordWrap;
+         useSeed, roundLines, wordWrap, hyphenateWords;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
@@ -68,11 +68,13 @@ private:
 
     void limitScale(qreal factor);  //limited view zoom
     void prepareSceneToRender();
-    void preventGoingBeyondRightMargin(qreal letterWidth, QString text, int currentSymbolIndex);
+    void preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, int currentSymbolIndex);
     void connectLastLetterToCurrent();
     void processUnknownSymbol(const QChar &symbol);
     void insertSymbol(QChar key, SymbolData &symbolData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
+    void wrapWords(QStringRef text, int currentSymbolIndex);
+    void hyphenate(QStringRef text, int currentSymbolIndex);
 };
 
 #endif // SVGVIEW_H
