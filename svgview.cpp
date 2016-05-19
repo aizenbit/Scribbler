@@ -13,7 +13,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 
     scene = new QGraphicsScene();
     setScene(scene);
-    hyphenateWords = true;
+
     centerOn(0.0, 0.0);
 }
 
@@ -492,6 +492,7 @@ void SvgView::loadSettingsFromFile()
     wordWrap =      settings.value("wrap-words").toBool();
     useCustomFontColor = settings.value("use-custom-font-color").toBool();
     connectLetters =     settings.value("connect-letters").toBool();
+    hyphenateWords =     settings.value("hyphenate-words").toBool();
 
     sheetRect = QRectF(0, 0,
                        settings.value("sheet-width").toInt() * dpmm,
@@ -528,13 +529,9 @@ void SvgView::loadHyphenRules()
         QString rule = settings.value(key).toString();
 
         for (QString &variable : variables.uniqueKeys())
-        {
-            qDebug() << variable << variables[variable];
             rule.replace(variable, variables[variable]);
-        }
 
         hyphenRules.push_back(QRegularExpression(rule));
-        qDebug() << settings.value(key).toString() << rule;
     }
 
     settings.endGroup();

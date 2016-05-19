@@ -75,6 +75,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("seed", QVariant(ui->seedSpinBox->value()));
     settings.setValue("round-lines", QVariant(ui->roundCheckBox->isChecked()));
     settings.setValue("setup-points", QVariant(ui->setupPointsCheckBox->isChecked()));
+    settings.setValue("hyphenate-words", QVariant(ui->hyphenateWordsCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -105,6 +106,7 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
     ui->wrapWordsCheckBox->setChecked(  settings.value("wrap-words", true).toBool());
+    ui->hyphenateWordsCheckBox->setChecked(  settings.value("hyphenate-words", true).toBool());
 
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>483</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -298,12 +298,15 @@
             <item>
              <widget class="QCheckBox" name="hyphenateWordsCheckBox">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text">
                <string>Hyphenate words</string>
               </property>
               <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
