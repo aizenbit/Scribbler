@@ -43,6 +43,7 @@ void SvgView::limitScale(qreal factor)
 int SvgView::renderText(const QStringRef &text)
 {
     prepareSceneToRender();
+    loadHyphenRules();
 
     int endOfSheet = 0;
 
@@ -183,39 +184,11 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
     int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
     int nextSpace = text.toString().indexOf(QRegularExpression("\\s"), currentSymbolIndex);
     QString word = text.mid(lastSpace + 1, nextSpace - lastSpace).toString();
-
-    QString RUS_A("[абвгдеёжзийклмнопрстуфхцчшщъыьэюя]");
-    QString RUS_V("[аеёиоуыэюя]");
-    QString RUS_N("[бвгджзклмнпрстфхцчшщ]");
-    QString RUS_X("[йъь]");
-
-    QRegExp re1(QString("(") + RUS_X + ")(" + RUS_A +
-                  RUS_A + ")",
-                  Qt::CaseInsensitive);
-    QRegExp re2(QString("(") + RUS_V + ")(" + RUS_V +
-                  RUS_A + ")",
-                  Qt::CaseInsensitive);
-    QRegExp re3(QString("(") + RUS_V + RUS_N + ")(" +
-                  RUS_N + RUS_V + ")",
-                  Qt::CaseInsensitive);
-    QRegExp re4(QString("(") + RUS_N + RUS_V + ")(" +
-                  RUS_N + RUS_V + ")",
-                  Qt::CaseInsensitive);
-    QRegExp re5(QString("(") + RUS_V + RUS_N + ")(" +
-                  RUS_N + RUS_N + RUS_V + ")",
-                  Qt::CaseInsensitive);
-    QRegExp re6(QString("(") + RUS_V + RUS_N + RUS_N +
-                  ")(" + RUS_N + RUS_N + RUS_V + ")",
-                  Qt::CaseInsensitive);
-
     QString hypher = "\\1-\\2";
     QString hyphenWord = word;
-    hyphenWord = hyphenWord.replace(re1, hypher);
-    hyphenWord = hyphenWord.replace(re2, hypher);
-    hyphenWord = hyphenWord.replace(re3, hypher);
-    hyphenWord = hyphenWord.replace(re4, hypher);
-    hyphenWord = hyphenWord.replace(re5, hypher);
-    hyphenWord = hyphenWord.replace(re6, hypher);
+
+    for (QRegularExpression &rule : hyphenRules)
+        hyphenWord.replace(rule, hypher);
 
     int currentSymbolInWord = currentSymbolIndex - lastSpace - 1;
 
@@ -536,6 +509,35 @@ void SvgView::loadSettingsFromFile()
 
     scene->setSceneRect(sheetRect);
     renderText();
+}
+
+void SvgView::loadHyphenRules()
+{
+    hyphenRules.clear();
+    QMap<QString, QString> variables;
+    QSettings settings("hyphenRules.ini", QSettings::IniFormat);
+    settings.beginGroup("Variables");
+
+    for (const QString &name : settings.childKeys())
+        variables.insert(name, QString::fromUtf8(settings.value(name).toString().toLatin1()));
+
+    settings.endGroup();
+    settings.beginGroup("Rules");
+    for (const QString &key : settings.childKeys())
+    {
+        QString rule = settings.value(key).toString();
+
+        for (QString &variable : variables.uniqueKeys())
+        {
+            qDebug() << variable << variables[variable];
+            rule.replace(variable, variables[variable]);
+        }
+
+        hyphenRules.push_back(QRegularExpression(rule));
+        qDebug() << settings.value(key).toString() << rule;
+    }
+
+    settings.endGroup();
 }
 
 void SvgView::hideBorders(bool hide)

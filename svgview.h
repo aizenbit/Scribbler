@@ -58,6 +58,7 @@ private:
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
+    QVector<QRegularExpression> hyphenRules;
 
     SymbolData symbolData, previousLetterData;
     QRectF currentMarginsRect;
@@ -76,6 +77,7 @@ private:
     void wrapWords(QStringRef text, int currentSymbolIndex);
     void wrapLastSymbols(int symbolsToWrap);
     bool hyphenate(QStringRef text, int currentSymbolIndex);
+    void loadHyphenRules();
 };
 
 #endif // SVGVIEW_H
