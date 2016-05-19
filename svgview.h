@@ -75,7 +75,7 @@ private:
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
     void wrapWords(QStringRef text, int currentSymbolIndex);
     void wrapLastSymbols(int symbolsToWrap);
-    void hyphenate(QStringRef text, int currentSymbolIndex);
+    bool hyphenate(QStringRef text, int currentSymbolIndex);
 };
 
 #endif // SVGVIEW_H
