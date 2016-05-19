@@ -257,6 +257,9 @@ QGraphicsSvgItem * SvgView::generateHyphen(int symbolsToWrap)
     if (!font.contains('-'))
         return nullptr;
 
+    if (connectLetters)
+        symbolsToWrap = symbolsToWrap * 2 - 1;
+
     QGraphicsSvgItem *hyphen = new QGraphicsSvgItem();
 
     SvgData data = font.values('-').at(qrand() % font.values('-').size());
@@ -266,7 +269,7 @@ QGraphicsSvgItem * SvgView::generateHyphen(int symbolsToWrap)
     SymbolData hyphenData = data.symbolData;
 
     QSizeF  hyphenBoundingSize = hyphen->boundingRect().size() * hyphen->scale();
-    QGraphicsItem* nearestLetter = scene->items(Qt::AscendingOrder).at(scene->items().size() - symbolsToWrap - 2);
+    QGraphicsItem* nearestLetter = scene->items(Qt::AscendingOrder).at(scene->items().size() - symbolsToWrap);
     QPointF hyphenPos = cursor;
     hyphenPos.ry() -= hyphenBoundingSize.height() * hyphenData.limits.top();
     hyphenPos.rx() = nearestLetter->pos().x() + nearestLetter->boundingRect().width();
