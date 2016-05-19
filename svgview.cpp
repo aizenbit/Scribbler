@@ -139,7 +139,7 @@ void SvgView::preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, 
         hyphenate(text, currentSymbolIndex);
         wrapWords(text, currentSymbolIndex);
 
-        if (!wordWrap)
+        if (!wordWrap && !hyphenateWords)
         {
             lastLetter = nullptr;
             cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x(); //WTF???
@@ -164,13 +164,11 @@ void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
     int symbolsToWrap = currentSymbolIndex - lastSpace - 1;
 
     wrapLastSymbols(symbolsToWrap);
-
-    cursor.rx() = previousLetterCursor.x() + previousLetterWidth;
-    cursor.ry() += letterHeight + lineSpacing * dpmm;
 }
 
 void SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 {
+    qreal letterHeight = fontSize * dpmm;
     int previousSymbolIndex = currentSymbolIndex - 1;
 
     if (!hyphenateWords || previousSymbolIndex < 0 ||
@@ -182,8 +180,7 @@ void SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 
     int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
     int nextSpace = text.toString().indexOf(QRegularExpression("\\s"), currentSymbolIndex);
-    QString word = text.mid(lastSpace, nextSpace - lastSpace).toString();
-    qDebug() << word;
+    QString word = text.mid(lastSpace + 1, nextSpace - lastSpace).toString();
 
     QString RUS_A("[абвгдеёжзийклмнопрстуфхцчшщъыьэюя]");
     QString RUS_V("[аеёиоуыэюя]");
@@ -210,26 +207,45 @@ void SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
                   Qt::CaseInsensitive);
 
     QString hypher = "\\1-\\2";
+    QString hyphenWord = word;
+    hyphenWord = hyphenWord.replace(re1, hypher);
+    hyphenWord = hyphenWord.replace(re2, hypher);
+    hyphenWord = hyphenWord.replace(re3, hypher);
+    hyphenWord = hyphenWord.replace(re4, hypher);
+    hyphenWord = hyphenWord.replace(re5, hypher);
+    hyphenWord = hyphenWord.replace(re6, hypher);
 
-    word = word.replace(re1, hypher);
-    word = word.replace(re2, hypher);
-    word = word.replace(re3, hypher);
-    word = word.replace(re4, hypher);
-    word = word.replace(re5, hypher);
-    word = word.replace(re6, hypher);
+    int currentSymbolInWord = currentSymbolIndex - lastSpace - 1;
 
-    qDebug() << word;
+    for (int i = 0; i <= currentSymbolInWord; i++)
+        if (hyphenWord.at(i) == '-')
+            currentSymbolInWord++;
+
+    qreal indexOfLastHyphen = hyphenWord.lastIndexOf('-', currentSymbolInWord);
+    qreal symbolsToWrap = currentSymbolInWord - indexOfLastHyphen - 1;
+
+    if (indexOfLastHyphen > 0 && symbolsToWrap > 0)
+        wrapLastSymbols(symbolsToWrap);
+    else
+        return;
+
+    if (connectLetters)
+        scene->removeItem(scene->items(Qt::AscendingOrder).last());
 }
 
 void SvgView::wrapLastSymbols(int symbolsToWrap)
 {
+    if (symbolsToWrap <= 0 || symbolsToWrap >= scene->items().size())
+        return;
+
+    int itemsCount = scene->items().size();
     qreal letterHeight = fontSize * dpmm;
     qreal itemsToWrap = symbolsToWrap;
 
     if (connectLetters)
         itemsToWrap = symbolsToWrap * 2 - 1;
 
-    int itemsCount = scene->items().size();
+
     qreal leftOffset = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap]->pos().x() - currentMarginsRect.x();
 
     if (connectLetters)
@@ -245,6 +261,9 @@ void SvgView::wrapLastSymbols(int symbolsToWrap)
         pos.ry() += letterHeight + lineSpacing * dpmm;
         scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
     }
+
+    cursor.rx() = previousLetterCursor.x() + previousLetterWidth;
+    cursor.ry() += letterHeight + lineSpacing * dpmm;
 }
 
 void SvgView::connectLastLetterToCurrent()
