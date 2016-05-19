@@ -13,7 +13,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 
     scene = new QGraphicsScene();
     setScene(scene);
-
+    hyphenateWords = true;
     centerOn(0.0, 0.0);
 }
 
@@ -136,8 +136,9 @@ void SvgView::preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, 
 
     if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
     {
-
+        hyphenate(text, currentSymbolIndex);
         wrapWords(text, currentSymbolIndex);
+
         if (!wordWrap)
         {
             lastLetter = nullptr;
@@ -186,9 +187,56 @@ void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
     cursor.ry() += letterHeight + lineSpacing * dpmm;
 }
 
-void hyphenate(QStringRef text, int currentSymbolIndex)
+void SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 {
+    int previousSymbolIndex = currentSymbolIndex - 1;
 
+    if (!hyphenateWords || previousSymbolIndex < 0 ||
+            previousSymbolIndex >= text.size() ||
+            !text.at(currentSymbolIndex).isLetterOrNumber() ||
+            !text.at(previousSymbolIndex).isLetterOrNumber() ||
+            cursor.y() - previousLetterCursor.y() > 0.0000001)
+        return;
+
+    int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
+    int nextSpace = text.toString().indexOf(QRegularExpression("\\s"), currentSymbolIndex);
+    QString word = text.mid(lastSpace, nextSpace - lastSpace).toString();
+    qDebug() << word;
+
+    QString RUS_A("[абвгдеёжзийклмнопрстуфхцчшщъыьэюя]");
+    QString RUS_V("[аеёиоуыэюя]");
+    QString RUS_N("[бвгджзклмнпрстфхцчшщ]");
+    QString RUS_X("[йъь]");
+
+    QRegExp re1(QString("(") + RUS_X + ")(" + RUS_A +
+                  RUS_A + ")",
+                  Qt::CaseInsensitive);
+    QRegExp re2(QString("(") + RUS_V + ")(" + RUS_V +
+                  RUS_A + ")",
+                  Qt::CaseInsensitive);
+    QRegExp re3(QString("(") + RUS_V + RUS_N + ")(" +
+                  RUS_N + RUS_V + ")",
+                  Qt::CaseInsensitive);
+    QRegExp re4(QString("(") + RUS_N + RUS_V + ")(" +
+                  RUS_N + RUS_V + ")",
+                  Qt::CaseInsensitive);
+    QRegExp re5(QString("(") + RUS_V + RUS_N + ")(" +
+                  RUS_N + RUS_N + RUS_V + ")",
+                  Qt::CaseInsensitive);
+    QRegExp re6(QString("(") + RUS_V + RUS_N + RUS_N +
+                  ")(" + RUS_N + RUS_N + RUS_V + ")",
+                  Qt::CaseInsensitive);
+
+    QString hypher = "\\1-\\2";
+
+    word = word.replace(re1, hypher);
+    word = word.replace(re2, hypher);
+    word = word.replace(re3, hypher);
+    word = word.replace(re4, hypher);
+    word = word.replace(re5, hypher);
+    word = word.replace(re6, hypher);
+
+    qDebug() << word;
 }
 
 void SvgView::connectLastLetterToCurrent()
