@@ -155,33 +155,15 @@ void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 
     if (!wordWrap || previousSymbolIndex < 0 ||
             previousSymbolIndex >= text.size() ||
-            !text.at(currentSymbolIndex).isLetterOrNumber() ||
-            !text.at(previousSymbolIndex).isLetterOrNumber() ||
+            !(text.at(currentSymbolIndex).isLetterOrNumber() || text.at(currentSymbolIndex).isPunct()) ||
+            !(text.at(previousSymbolIndex).isLetterOrNumber() || text.at(previousSymbolIndex).isPunct()) ||
             cursor.y() - previousLetterCursor.y() > 0.0000001)
         return;
 
     int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
     int symbolsToWrap = currentSymbolIndex - lastSpace - 1;
 
-    if (connectLetters)
-        symbolsToWrap = symbolsToWrap * 2 - 1;
-
-    int itemsCount = scene->items().size();
-    qreal leftOffset = scene->items(Qt::AscendingOrder)[itemsCount - symbolsToWrap]->pos().x() - currentMarginsRect.x();
-
-    if (connectLetters)
-    {
-        previousLetterCursor.rx() -= leftOffset;
-        previousLetterCursor.ry() += letterHeight + lineSpacing * dpmm;
-    }
-
-    for (int i = symbolsToWrap; i > 0; i--)
-    {
-        QPointF pos = scene->items(Qt::AscendingOrder)[itemsCount - i]->pos();
-        pos.rx() -= leftOffset;
-        pos.ry() += letterHeight + lineSpacing * dpmm;
-        scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
-    }
+    wrapLastSymbols(symbolsToWrap);
 
     cursor.rx() = previousLetterCursor.x() + previousLetterWidth;
     cursor.ry() += letterHeight + lineSpacing * dpmm;
@@ -237,6 +219,32 @@ void SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
     word = word.replace(re6, hypher);
 
     qDebug() << word;
+}
+
+void SvgView::wrapLastSymbols(int symbolsToWrap)
+{
+    qreal letterHeight = fontSize * dpmm;
+    qreal itemsToWrap = symbolsToWrap;
+
+    if (connectLetters)
+        itemsToWrap = symbolsToWrap * 2 - 1;
+
+    int itemsCount = scene->items().size();
+    qreal leftOffset = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap]->pos().x() - currentMarginsRect.x();
+
+    if (connectLetters)
+    {
+        previousLetterCursor.rx() -= leftOffset;
+        previousLetterCursor.ry() += letterHeight + lineSpacing * dpmm;
+    }
+
+    for (int i = itemsToWrap; i > 0; i--)
+    {
+        QPointF pos = scene->items(Qt::AscendingOrder)[itemsCount - i]->pos();
+        pos.rx() -= leftOffset;
+        pos.ry() += letterHeight + lineSpacing * dpmm;
+        scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
+    }
 }
 
 void SvgView::connectLastLetterToCurrent()

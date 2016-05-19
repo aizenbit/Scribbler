@@ -74,6 +74,7 @@ private:
     void insertSymbol(QChar key, SymbolData &symbolData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
     void wrapWords(QStringRef text, int currentSymbolIndex);
+    void wrapLastSymbols(int symbolsToWrap);
     void hyphenate(QStringRef text, int currentSymbolIndex);
 };
 
