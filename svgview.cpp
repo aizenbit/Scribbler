@@ -516,7 +516,7 @@ void SvgView::loadHyphenRules()
 {
     hyphenRules.clear();
     QMap<QString, QString> variables;
-    QSettings settings("hyphenRules.ini", QSettings::IniFormat);
+    QSettings settings("hyphenationRules.ini", QSettings::IniFormat);
     settings.beginGroup("Variables");
 
     for (const QString &name : settings.childKeys())
