@@ -204,9 +204,11 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
     if (indexOfLastHyphen > 0 && symbolsToWrap > 0)
     {
         int itemsCount = scene->items().size();
-
+        int itemsToWrap = symbolsToWrap;
+        if (connectLetters)
+            itemsToWrap = symbolsToWrap * 2 - 1;
         if (connectLetters && hyphenWord.at(currentSymbolInWord).isLetter())
-            scene->removeItem(scene->items(Qt::AscendingOrder).at(itemsCount - 1));
+            scene->removeItem(scene->items(Qt::AscendingOrder).at(itemsCount - itemsToWrap));
 
         QGraphicsSvgItem *hyphen = generateHyphen(symbolsToWrap);
         wrapLastSymbols(symbolsToWrap);
@@ -229,7 +231,7 @@ void SvgView::wrapLastSymbols(int symbolsToWrap)
         return;
 
     int itemsCount = scene->items().size();
-    qreal itemsToWrap = symbolsToWrap;
+    int itemsToWrap = symbolsToWrap;
     qreal letterHeight = fontSize * dpmm;
 
     if (connectLetters)

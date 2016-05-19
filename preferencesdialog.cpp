@@ -87,12 +87,12 @@ void PreferencesDialog::loadSettingsFromFile()
     settings.beginGroup("Settings");
     ui->dpiSpinBox->setValue(           settings.value("dpi", 300).toInt());
     ui->letterSpacingSpinBox->setValue( settings.value("letter-spacing", 1.0).toDouble());
-    ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 8.0).toDouble());
+    ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 5.0).toDouble());
     ui->spacesInTabSpinBox->setValue(   settings.value("spaces-in-tab", 4).toInt());
-    ui->fontSizeSpinBox->setValue(      settings.value("font-size", 8.0).toDouble());
+    ui->fontSizeSpinBox->setValue(      settings.value("font-size", 5.0).toDouble());
     ui->penWidthSpinBox->setValue(      settings.value("pen-width", 0.5).toDouble());
-    ui->sheetWidthSpinBox->setValue(    settings.value("sheet-width", 148).toInt());
-    ui->sheetHeightSpinBox->setValue(   settings.value("sheet-height", 210).toInt());
+    ui->sheetWidthSpinBox->setValue(    settings.value("sheet-width", 210).toInt());
+    ui->sheetHeightSpinBox->setValue(   settings.value("sheet-height", 297).toInt());
     ui->rightMarginsSpinBox->setValue(  settings.value("right-margin", 20).toInt());
     ui->leftMarginsSpinBox->setValue(   settings.value("left-margin", 10).toInt());
     ui->topMarginsSpinBox->setValue(    settings.value("top-margin", 10).toInt());
