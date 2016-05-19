@@ -78,6 +78,7 @@ private:
     void wrapLastSymbols(int symbolsToWrap);
     bool hyphenate(QStringRef text, int currentSymbolIndex);
     void loadHyphenRules();
+    QGraphicsSvgItem * generateHyphen(int symbolsToWrap);
 };
 
 #endif // SVGVIEW_H

@@ -66,6 +66,7 @@ int SvgView::renderText(const QStringRef &text)
         }
 
         QGraphicsSvgItem *symbolItem = new QGraphicsSvgItem();
+
         SvgData data = font.values(symbol).at(qrand() % font.values(symbol).size());
         symbolItem->setSharedRenderer(data.renderer);
         symbolData = data.symbolData;
@@ -73,8 +74,9 @@ int SvgView::renderText(const QStringRef &text)
         symbolItem->setScale(data.scale);
         symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
 
-        cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
         qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;
+
+        cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
         preventGoingBeyondRightMargin(letterWidth, text, currentSymbolNumber);
 
         //rendering stops by the end of sheet
@@ -206,7 +208,11 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
         if (connectLetters && hyphenWord.at(currentSymbolInWord).isLetter())
             scene->removeItem(scene->items(Qt::AscendingOrder).at(itemsCount - 1));
 
+        QGraphicsSvgItem *hyphen = generateHyphen(symbolsToWrap);
         wrapLastSymbols(symbolsToWrap);
+
+        if (hyphen != nullptr)
+            scene->addItem(hyphen);
     }
     else
         return false;
@@ -244,6 +250,29 @@ void SvgView::wrapLastSymbols(int symbolsToWrap)
         pos.ry() += letterHeight + lineSpacing * dpmm;
         scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
     }
+}
+
+QGraphicsSvgItem * SvgView::generateHyphen(int symbolsToWrap)
+{
+    if (!font.contains('-'))
+        return nullptr;
+
+    QGraphicsSvgItem *hyphen = new QGraphicsSvgItem();
+
+    SvgData data = font.values('-').at(qrand() % font.values('-').size());
+    hyphen->setSharedRenderer(data.renderer);
+    hyphen->setScale(data.scale);
+
+    SymbolData hyphenData = data.symbolData;
+
+    QSizeF  hyphenBoundingSize = hyphen->boundingRect().size() * hyphen->scale();
+    QGraphicsItem* nearestLetter = scene->items(Qt::AscendingOrder).at(scene->items().size() - symbolsToWrap - 2);
+    QPointF hyphenPos = cursor;
+    hyphenPos.ry() -= hyphenBoundingSize.height() * hyphenData.limits.top();
+    hyphenPos.rx() = nearestLetter->pos().x() + nearestLetter->boundingRect().width();
+    hyphen->setPos(hyphenPos);
+
+    return hyphen;
 }
 
 void SvgView::connectLastLetterToCurrent()
