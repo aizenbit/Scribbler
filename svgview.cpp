@@ -92,8 +92,8 @@ int SvgView::renderText(const QStringRef &text)
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
 
-        if (connectLetters && lastLetter != nullptr && symbol.isLetter())
-            connectLastLetterToCurrent();
+        /*if (connectLetters && lastLetter != nullptr && symbol.isLetter())
+            connectLastLetterToCurrent();*/
 
         lastLetter = symbolItem;
         previousSymbolCursor = cursor;
@@ -139,19 +139,22 @@ void SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
 
     if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - symbolWidth))
     {
-        if (!hyphenate(text, currentSymbolIndex))
-            wrapWords(text, currentSymbolIndex);
+        bool hyphenateHappened = hyphenate(text, currentSymbolIndex);
+        bool wrapWordHappened = false;
 
-        if (!wordWrap && !hyphenateWords)
+        if (!hyphenateHappened)
+            wrapWordHappened = wrapWords(text, currentSymbolIndex);
+
+        if (!hyphenateHappened && !wrapWordHappened)
         {
             lastLetter = nullptr;
-            cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x(); //WTF???
+            cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x();
             cursor.ry() += symbolHeight + lineSpacing * dpmm;
         }
     }
 }
 
-void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
+bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 {
     qreal symbolHeight = fontSize * dpmm;
     int previousSymbolIndex = currentSymbolIndex - 1;
@@ -160,15 +163,21 @@ void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
             previousSymbolIndex >= text.size() ||
             !(text.at(currentSymbolIndex).isLetterOrNumber() || text.at(currentSymbolIndex).isPunct()) ||
             !(text.at(previousSymbolIndex).isLetterOrNumber() || text.at(previousSymbolIndex).isPunct()))
-        return;
+        return false;
 
     int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
     int symbolsToWrap = currentSymbolIndex - lastSpace - 1;
 
-    wrapLastSymbols(symbolsToWrap);
+    qDebug() << QString(text.at(currentSymbolIndex)) << text.mid(lastSpace, currentSymbolIndex - lastSpace);
 
-    cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth;
-    cursor.ry() += symbolHeight + lineSpacing * dpmm;
+    if (wrapLastSymbols(symbolsToWrap))
+    {
+        cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth - symbolBoundingSize.width() * symbolData.limits.topLeft().x();
+        cursor.ry() += symbolHeight + lineSpacing * dpmm;
+        return true;
+    }
+
+    return false;
 }
 
 bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
@@ -225,33 +234,33 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
     return true;
 }
 
-void SvgView::wrapLastSymbols(int symbolsToWrap)
+bool SvgView::wrapLastSymbols(int symbolsToWrap)
 {
     if (symbolsToWrap <= 0 || symbolsToWrap >= scene->items().size())
-        return;
+        return false;
 
     int itemsCount = scene->items().size();
-    int itemsToWrap = symbolsToWrap;
-    qreal symbolHeight = fontSize * dpmm;
+    int itemsToWrap = symbolsToWrap; //TODO: consider missing items
 
-    if (connectLetters)
-        itemsToWrap = symbolsToWrap * 2 - 1;
+    qreal firstWrapItemPos = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap]->pos().x();
 
-    qreal leftOffset = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap]->pos().x() - currentMarginsRect.x();
+    if (firstWrapItemPos == currentMarginsRect.x())
+        return false;
 
-    if (connectLetters)
-    {
-        previousSymbolCursor.rx() -= leftOffset;
-        previousSymbolCursor.ry() += symbolHeight + lineSpacing * dpmm;
-    }
+    qreal leftOffset = firstWrapItemPos - currentMarginsRect.x();
+
+    previousSymbolCursor.rx() -= leftOffset;
+    previousSymbolCursor.ry() += (fontSize + lineSpacing) * dpmm;
 
     for (int i = itemsToWrap; i > 0; i--)
     {
         QPointF pos = scene->items(Qt::AscendingOrder)[itemsCount - i]->pos();
         pos.rx() -= leftOffset;
-        pos.ry() += symbolHeight + lineSpacing * dpmm;
+        pos.ry() += (fontSize + lineSpacing) * dpmm;
         scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
     }
+
+    return true;
 }
 
 QGraphicsSvgItem * SvgView::generateHyphen(int symbolsToWrap)

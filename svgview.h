@@ -74,8 +74,8 @@ private:
     void processUnknownSymbol(const QChar &symbol);
     void insertSymbol(QChar key, SymbolData &symbolData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
-    void wrapWords(QStringRef text, int currentSymbolIndex);
-    void wrapLastSymbols(int symbolsToWrap);
+    bool wrapWords(QStringRef text, int currentSymbolIndex);
+    bool wrapLastSymbols(int symbolsToWrap);
     bool hyphenate(QStringRef text, int currentSymbolIndex);
     void loadHyphenRules();
     QGraphicsSvgItem * generateHyphen(int symbolsToWrap);
