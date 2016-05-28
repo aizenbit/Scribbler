@@ -74,10 +74,10 @@ int SvgView::renderText(const QStringRef &text)
         symbolItem->setScale(data.scale);
         symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
 
-        qreal letterWidth = data.width * data.symbolData.limits.width() * data.scale;
+        qreal symbolWidth = data.width * data.symbolData.limits.width() * data.scale;
 
         cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.topLeft().x();
-        preventGoingBeyondRightMargin(letterWidth, text, currentSymbolNumber);
+        preventGoingBeyondRightMargin(symbolWidth, text, currentSymbolNumber);
 
         //rendering stops by the end of sheet
         if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
@@ -96,10 +96,10 @@ int SvgView::renderText(const QStringRef &text)
             connectLastLetterToCurrent();
 
         lastLetter = symbolItem;
-        previousLetterCursor = cursor;
-        previousLetterData = symbolData;
-        previousLetterWidth = letterWidth;
-        cursor.rx() += letterWidth + letterSpacing * dpmm;
+        previousSymbolCursor = cursor;
+        previousSymbolData = symbolData;
+        previousSymbolWidth = symbolWidth;
+        cursor.rx() += symbolWidth + letterSpacing * dpmm;
         endOfSheet++;
 
         if (!symbol.isLetter())
@@ -133,11 +133,11 @@ void SvgView::prepareSceneToRender()
         srand(QTime::currentTime().msec());
 }
 
-void SvgView::preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, int currentSymbolIndex)
+void SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, int currentSymbolIndex)
 {
-    qreal letterHeight = fontSize * dpmm;
+    qreal symbolHeight = fontSize * dpmm;
 
-    if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - letterWidth))
+    if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - symbolWidth))
     {
         if (!hyphenate(text, currentSymbolIndex))
             wrapWords(text, currentSymbolIndex);
@@ -146,14 +146,14 @@ void SvgView::preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, 
         {
             lastLetter = nullptr;
             cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x(); //WTF???
-            cursor.ry() += letterHeight + lineSpacing * dpmm;
+            cursor.ry() += symbolHeight + lineSpacing * dpmm;
         }
     }
 }
 
 void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 {
-    qreal letterHeight = fontSize * dpmm;
+    qreal symbolHeight = fontSize * dpmm;
     int previousSymbolIndex = currentSymbolIndex - 1;
 
     if (!wordWrap || previousSymbolIndex < 0 ||
@@ -167,20 +167,20 @@ void SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 
     wrapLastSymbols(symbolsToWrap);
 
-    cursor.rx() = previousLetterCursor.x() + previousLetterWidth;
-    cursor.ry() += letterHeight + lineSpacing * dpmm;
+    cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth;
+    cursor.ry() += symbolHeight + lineSpacing * dpmm;
 }
 
 bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 {
-    qreal letterHeight = fontSize * dpmm;
+    qreal symbolHeight = fontSize * dpmm;
     int previousSymbolIndex = currentSymbolIndex - 1;
 
     if (!hyphenateWords || previousSymbolIndex < 0 ||
             previousSymbolIndex >= text.size() ||
             !text.at(currentSymbolIndex).isLetterOrNumber() ||
             !text.at(previousSymbolIndex).isLetterOrNumber() ||
-            cursor.y() - previousLetterCursor.y() > 0.0000001)
+            cursor.y() - previousSymbolCursor.y() > 0.0000001)
         return false;
 
     int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
@@ -219,8 +219,8 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
     else
         return false;
 
-    cursor.rx() = previousLetterCursor.x() + previousLetterWidth;
-    cursor.ry() += letterHeight + lineSpacing * dpmm;
+    cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth;
+    cursor.ry() += symbolHeight + lineSpacing * dpmm;
 
     return true;
 }
@@ -232,7 +232,7 @@ void SvgView::wrapLastSymbols(int symbolsToWrap)
 
     int itemsCount = scene->items().size();
     int itemsToWrap = symbolsToWrap;
-    qreal letterHeight = fontSize * dpmm;
+    qreal symbolHeight = fontSize * dpmm;
 
     if (connectLetters)
         itemsToWrap = symbolsToWrap * 2 - 1;
@@ -241,15 +241,15 @@ void SvgView::wrapLastSymbols(int symbolsToWrap)
 
     if (connectLetters)
     {
-        previousLetterCursor.rx() -= leftOffset;
-        previousLetterCursor.ry() += letterHeight + lineSpacing * dpmm;
+        previousSymbolCursor.rx() -= leftOffset;
+        previousSymbolCursor.ry() += symbolHeight + lineSpacing * dpmm;
     }
 
     for (int i = itemsToWrap; i > 0; i--)
     {
         QPointF pos = scene->items(Qt::AscendingOrder)[itemsCount - i]->pos();
         pos.rx() -= leftOffset;
-        pos.ry() += letterHeight + lineSpacing * dpmm;
+        pos.ry() += symbolHeight + lineSpacing * dpmm;
         scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
     }
 }
@@ -287,11 +287,11 @@ void SvgView::connectLastLetterToCurrent()
     lastLetterBoundingRect.setHeight(lastLetter->boundingRect().height() * lastLetter->scale());
 
     QPointF inPoint, outPoint;
-    outPoint.rx() = previousLetterCursor.x() +
-            previousLetterData.outPoint.x() * lastLetterBoundingRect.width();
-    outPoint.ry() = previousLetterCursor.y() +
-            previousLetterData.outPoint.y() * lastLetterBoundingRect.height() -
-            lastLetterBoundingRect.height() * previousLetterData.limits.topLeft().y();
+    outPoint.rx() = previousSymbolCursor.x() +
+            previousSymbolData.outPoint.x() * lastLetterBoundingRect.width();
+    outPoint.ry() = previousSymbolCursor.y() +
+            previousSymbolData.outPoint.y() * lastLetterBoundingRect.height() -
+            lastLetterBoundingRect.height() * previousSymbolData.limits.topLeft().y();
 
     inPoint.rx() = cursor.x() +
             symbolData.inPoint.x() * symbolBoundingSize.width();
@@ -371,25 +371,25 @@ void SvgView::loadFont(QString fontpath)
     QString fontDirectory = QFileInfo(fontpath).path() + '/';
 
     for (const QString &key : fontSettings.childKeys())
-        for (SymbolData letterData : fontSettings.value(key).value<QList<SymbolData>>())
+        for (SymbolData symbolData : fontSettings.value(key).value<QList<SymbolData>>())
         {
-            letterData.fileName = fontDirectory + letterData.fileName;
+            symbolData.fileName = fontDirectory + symbolData.fileName;
             if (key == "slash")
-                insertSymbol('/', letterData);
+                insertSymbol('/', symbolData);
             else if (key == "backslash")
-                insertSymbol('\\', letterData);
+                insertSymbol('\\', symbolData);
             else
-                insertSymbol(key.at(0), letterData);
+                insertSymbol(key.at(0), symbolData);
         }
 
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on a freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
     for (const QString &key : fontSettings.childKeys())
-        for (SymbolData letterData : fontSettings.value(key).value<QList<SymbolData>>())
+        for (SymbolData symbolData : fontSettings.value(key).value<QList<SymbolData>>())
         {
-            letterData.fileName = fontDirectory + letterData.fileName;
-            insertSymbol(key.at(0), letterData);
+            symbolData.fileName = fontDirectory + symbolData.fileName;
+            insertSymbol(key.at(0), symbolData);
         }
 
     fontSettings.endGroup();
@@ -404,8 +404,8 @@ void SvgView::loadFont(QString fontpath)
 void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
 {
     QSvgRenderer *renderer = new QSvgRenderer(symbolData.fileName);
-    qreal letterHeight = renderer->defaultSize().height() * symbolData.limits.height();
-    qreal scale = fontSize * dpmm / letterHeight;
+    qreal symbolHeight = renderer->defaultSize().height() * symbolData.limits.height();
+    qreal scale = fontSize * dpmm / symbolHeight;
 
     QDomDocument doc("SVG");
     QFile file(symbolData.fileName);

@@ -60,11 +60,11 @@ private:
     QColor fontColor;
     QVector<QRegularExpression> hyphenRules;
 
-    SymbolData symbolData, previousLetterData;
+    SymbolData symbolData, previousSymbolData;
     QRectF currentMarginsRect;
     QSizeF symbolBoundingSize;
-    QPointF cursor, previousLetterCursor;
-    qreal previousLetterWidth;
+    QPointF cursor, previousSymbolCursor;
+    qreal previousSymbolWidth;
     QGraphicsSvgItem *lastLetter;
 
     void limitScale(qreal factor);  //limited view zoom
