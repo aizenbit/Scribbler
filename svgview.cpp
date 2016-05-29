@@ -58,7 +58,12 @@ int SvgView::renderText(const QStringRef &text)
             endOfSheet++;
 
             if (cursor.x() > currentMarginsRect.bottomRight().x() - (fontSize + letterSpacing) * dpmm)
-                cursor += QPointF(currentMarginsRect.x() - cursor.x(), (fontSize + lineSpacing) * dpmm);
+            {
+                cursor.rx() = currentMarginsRect.x();
+                cursor.ry() += (fontSize + lineSpacing) * dpmm;
+                storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
+                storedSymbolData.push_back(QVector<SymbolData>());
+            }
             if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
                 break;
 
@@ -99,7 +104,7 @@ int SvgView::renderText(const QStringRef &text)
         cursor.rx() += symbolWidth + letterSpacing * dpmm;
         endOfSheet++;
 
-        if (symbol.isLetter() && !newLine)
+        if (symbol.isLetter())
         {
             storedSymbolData.last().push_back(symbolData);
             storedWordItems.last().push_back(symbolItem);
@@ -157,6 +162,8 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
         {
             cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x();
             cursor.ry() += (fontSize + lineSpacing) * dpmm;
+            storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
+            storedSymbolData.push_back(QVector<SymbolData>());
         }
 
         lastLetter = nullptr;
@@ -227,6 +234,8 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
         {
             previousSymbolCursor.rx() = marginsRect.x() - previousSymbolWidth;
             previousSymbolCursor.ry() += (fontSize + lineSpacing) * dpmm;
+            storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
+            storedSymbolData.push_back(QVector<SymbolData>());
         }
 
         if (hyphen != nullptr)
@@ -259,6 +268,20 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
 
     previousSymbolCursor.rx() -= leftOffset;
     previousSymbolCursor.ry() += (fontSize + lineSpacing) * dpmm;
+    storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
+    storedSymbolData.push_back(QVector<SymbolData>());
+
+    for (int i = itemsToWrap; i > 0; i--)
+    {
+        int size = storedWordItems.size();
+        int wordSize = storedWordItems.at(size - 2).size();
+
+        if (wordSize <= itemsToWrap)
+            break;
+
+        storedWordItems.last().push_back(storedWordItems[size - 2].takeAt(wordSize - i));
+        storedSymbolData.last().push_back(storedSymbolData[size - 2].takeAt(wordSize - i));
+    }
 
     for (int i = itemsToWrap; i > 0; i--)
     {
@@ -323,14 +346,12 @@ void SvgView::connectLetters()
             outPoint.rx() = previousLetter->pos().x() +
                     pLSymbolData.outPoint.x() * pLBoundingRect.width();
             outPoint.ry() = previousLetter->pos().y() +
-                    pLSymbolData.outPoint.y() * pLBoundingRect.height() -
-                    pLBoundingRect.height() * pLSymbolData.limits.top();
+                    pLSymbolData.outPoint.y() * pLBoundingRect.height();
 
             inPoint.rx() = currentLetter->pos().x() +
                     cLSymbolData.inPoint.x() * cLBoundingRect.width();
             inPoint.ry() = currentLetter->pos().y() +
-                    cLSymbolData.inPoint.y() * cLBoundingRect.height() -
-                    cLBoundingRect.height() * cLSymbolData.limits.top();
+                    cLSymbolData.inPoint.y() * cLBoundingRect.height();
 
             QPen pen(fontColor);
             pen.setWidth(penWidth * dpmm);
@@ -387,6 +408,9 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
         lastLetter = nullptr;
         break;
     }
+
+    storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
+    storedSymbolData.push_back(QVector<SymbolData>());
 }
 
 QImage SvgView::saveRenderToImage()
