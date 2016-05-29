@@ -48,11 +48,13 @@ private:
 
     QGraphicsScene *scene;
     QMultiMap<QChar, SvgData> font;
+    QVector<QVector<QGraphicsSvgItem *>> storedWordItems;
+    QVector<QVector<SymbolData>> storedSymbolData;
     int dpi;  //dots per inch
     int dpmm; //dots per millimeter
     int spacesInTab;
     int seed;
-    bool useCustomFontColor, changeMargins, connectLetters,
+    bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     qreal fontSize, penWidth, letterSpacing, lineSpacing;
@@ -69,8 +71,9 @@ private:
 
     void limitScale(qreal factor);  //limited view zoom
     void prepareSceneToRender();
-    void preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, int currentSymbolIndex);
+    bool preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, int currentSymbolIndex);
     void connectLastLetterToCurrent();
+    void connectLetters();
     void processUnknownSymbol(const QChar &symbol);
     void insertSymbol(QChar key, SymbolData &symbolData);
     void changeAttribute(QString &attribute, QString parameter, QString newValue);
