@@ -276,7 +276,7 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
         int size = storedWordItems.size();
         int wordSize = storedWordItems.at(size - 2).size();
 
-        if (wordSize <= itemsToWrap)
+        if (wordSize <= i)
             break;
 
         storedWordItems.last().push_back(storedWordItems[size - 2].takeAt(wordSize - i));
