@@ -406,6 +406,8 @@ void MainWindow::printAllSheets(QPrinter *printer)
     if (printer->outputFormat() != QPrinter::PdfFormat)
     {
         QPrintDialog dialog(printer);
+        dialog.addEnabledOption(QAbstractPrintDialog::PrintPageRange);
+        dialog.setMinMax(1, INT_MAX);
         if (dialog.exec() != QPrintDialog::Accepted)
             return;
     }
@@ -422,6 +424,13 @@ void MainWindow::printAllSheets(QPrinter *printer)
     {                                                            //i.e. while printing all sheets
         renderNextSheet();
         ui->svgView->hideBorders(true);
+        int to = printer->toPage(), from = printer->fromPage();
+
+        if (printer->fromPage() != 0 && printer->fromPage() > currentSheetNumber + 1)
+            continue;
+        if (printer->toPage() != 0 && printer->toPage() < currentSheetNumber + 1)
+            continue;
+
         QImage image = ui->svgView->saveRenderToImage();
         if (image.format() == QImage::Format_Invalid || !printer->isValid())
         {
@@ -430,8 +439,10 @@ void MainWindow::printAllSheets(QPrinter *printer)
         }
         painter.drawImage(0, 0, image);
 
-        if (ui->toolBar->actions()[ToolButton::Next]->isEnabled()) //if "Next Sheet" tool button is disabled,
-            printer->newPage();                                    //i.e this sheet is the last
+        if (ui->toolBar->actions()[ToolButton::Next]->isEnabled() //if "Next Sheet" tool button is enabled,
+               && (printer->toPage() != 0                         //i.e this sheet is not the last,
+                   && currentSheetNumber + 1 < printer->toPage()))//and we're not going out of page range
+            printer->newPage();                                   //defined by user
     }
 
     painter.end();
