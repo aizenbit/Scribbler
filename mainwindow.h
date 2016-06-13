@@ -46,7 +46,7 @@ private:
     QLabel *sheetNumberLabel;
     QVector<int> sheetPointers; //pointers to the beginning of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
-    const QString version = "0.8.1 beta";
+    const QString version = "0.8.2 beta";
     void saveAllSheetsToImages(const QString &fileName, const int indexOfExtension);
     void saveAllSheetsToPDF(const QString &fileName);
     void preparePrinter(QPrinter *printer);

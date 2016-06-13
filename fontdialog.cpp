@@ -62,9 +62,6 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
     ui->splitter->setSizes(QList <int> () << 200 << 350);
     lastItem = nullptr;
-
-    ui->buttonBox->button(QDialogButtonBox::Save)->setText(tr("Save"));
-    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 FontDialog::~FontDialog()

@@ -362,32 +362,6 @@ void SvgView::connectLetters()
     }
 }
 
-void SvgView::connectLastLetterToCurrent()
-{
-    QSizeF lastLetterBoundingRect;
-    lastLetterBoundingRect.setWidth(lastLetter->boundingRect().width() * lastLetter->scale());
-    lastLetterBoundingRect.setHeight(lastLetter->boundingRect().height() * lastLetter->scale());
-
-    QPointF inPoint, outPoint;
-    outPoint.rx() = previousSymbolCursor.x() +
-            previousSymbolData.outPoint.x() * lastLetterBoundingRect.width();
-    outPoint.ry() = previousSymbolCursor.y() +
-            previousSymbolData.outPoint.y() * lastLetterBoundingRect.height() -
-            lastLetterBoundingRect.height() * previousSymbolData.limits.topLeft().y();
-
-    inPoint.rx() = cursor.x() +
-            symbolData.inPoint.x() * symbolBoundingSize.width();
-    inPoint.ry() = cursor.y() +
-            symbolData.inPoint.y() * symbolBoundingSize.height() -
-            symbolBoundingSize.height() * symbolData.limits.topLeft().y();
-
-    QPen pen(fontColor);
-    pen.setWidth(penWidth * dpmm);
-    pen.setCapStyle(Qt::RoundCap);
-
-    scene->addLine(outPoint.x(), outPoint.y(), inPoint.x(), inPoint.y(), pen);
-}
-
 void SvgView::processUnknownSymbol(const QChar &symbol)
 {
     switch (symbol.toLatin1())

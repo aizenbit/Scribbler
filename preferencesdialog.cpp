@@ -38,9 +38,6 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
     ui->seedSpinBox->setMaximum(std::numeric_limits<int>::max());
     ui->seedSpinBox->setMinimum(std::numeric_limits<int>::min());
-
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("OK"));
-    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
 PreferencesDialog::~PreferencesDialog()

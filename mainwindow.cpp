@@ -424,7 +424,6 @@ void MainWindow::printAllSheets(QPrinter *printer)
     {                                                            //i.e. while printing all sheets
         renderNextSheet();
         ui->svgView->hideBorders(true);
-        int to = printer->toPage(), from = printer->fromPage();
 
         if (printer->fromPage() != 0 && printer->fromPage() > currentSheetNumber + 1)
             continue;
