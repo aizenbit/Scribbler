@@ -6,6 +6,7 @@ FontDialog::FontDialog(QWidget *parent) :
     ui(new Ui::FontDialog)
 {
     ui->setupUi(this);
+
     buttonGroup = new QButtonGroup();
     buttonGroup->addButton(ui->drawInPointButton);
     buttonGroup->addButton(ui->drawOutPointButton);
@@ -20,7 +21,7 @@ FontDialog::FontDialog(QWidget *parent) :
     connect(ui->fontFilePushButton, SIGNAL(clicked()),
             this, SLOT(loadFont()));
     connect(ui->SymbolFilesPushButton, SIGNAL(clicked()),
-            this, SLOT(loadSymbols()));
+            this, SLOT(addNewSymbols()));
     connect(ui->autoLoadPushButton, SIGNAL(clicked()),
             this, SLOT(autoLoadSymbols()));
     connect(ui->buttonBox, SIGNAL(accepted()),
@@ -45,22 +46,27 @@ FontDialog::FontDialog(QWidget *parent) :
     ui->drawInPointButton->setShortcut(Qt::AltModifier + Qt::Key_1);
     ui->drawOutPointButton->setShortcut(Qt::AltModifier + Qt::Key_2);
     ui->drawLimitsButton->setShortcut(Qt::AltModifier + Qt::Key_3);
-    ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
+
     ui->drawInPointButton->setCheckable(true);
     ui->drawOutPointButton->setCheckable(true);
     ui->drawLimitsButton->setCheckable(true);
-    contextMenu->actions()[ContextAction::Copy]->setEnabled(false);
+
     ui->drawInPointButton->setIcon(QIcon("://dark_cyan_dot.png"));
     ui->drawOutPointButton->setIcon(QIcon("://dark_magnetta_dot.png"));
     ui->drawLimitsButton->setIcon(QIcon("://border.png"));
+
     ui->drawInPointButton->setToolTip(tr("In Point"));
     ui->drawOutPointButton->setToolTip(tr("Out Point"));
     ui->drawLimitsButton->setToolTip(tr("Limits"));
+
     ui->treeWidget->setColumnCount(1);
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->treeWidget->setSortingEnabled(true);
     ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
+
     ui->splitter->setSizes(QList <int> () << 200 << 350);
+    contextMenu->actions()[ContextAction::Copy]->setEnabled(false);
+    ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
     lastItem = nullptr;
 }
 
@@ -136,7 +142,7 @@ void FontDialog::loadFont()
     enableDrawButtons(false);
 }
 
-void FontDialog::loadSymbols()
+void FontDialog::addNewSymbols()
 {
     QStringList files = QFileDialog::getOpenFileNames(0, tr("Choose"), "",
                                                          tr("SVG") +
@@ -238,7 +244,7 @@ void FontDialog::limitTextEdit()
 {
     QString text = ui->choosenSymbolTextEdit->toPlainText();
 
-    if(!fontFileName.isEmpty())
+    if (!fontFileName.isEmpty())
     {
         ui->SymbolFilesPushButton->setEnabled(!text.isEmpty());
         contextMenu->actions()[ContextAction::Copy]->setEnabled(!text.isEmpty());
@@ -329,7 +335,7 @@ void FontDialog::deleteItem()
                 break;
             }
 
-        if(symbolItem->childCount() == 0)
+        if (symbolItem->childCount() == 0)
             delete symbolItem;
     }
     else

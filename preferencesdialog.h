@@ -1,3 +1,9 @@
+/*!
+  PreferencesDialog - class representing the Settings window.
+
+  This class also writes settings to a file, reads settings
+  from a file and sets the default values.
+*/
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
@@ -30,7 +36,7 @@ signals:
 private:
     Ui::PreferencesDialog *ui;
     QSignalMapper *sheetSizeSignalMapper;  //this is necessary to connect QRadioButtons
-                                            //from the sheetSize group to setSheetSize()
+                                           //from the sheetSize group to setSheetSize()
     enum class SheetSize {
         A4,
         A5,

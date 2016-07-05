@@ -47,7 +47,7 @@ int SvgView::renderText(const QStringRef &text)
 
     int endOfSheet = 0;
 
-    //---Sequentially add the symbols to the scene
+    //Sequentially add the symbols to the scene
     for (int currentSymbolNumber = 0; currentSymbolNumber < text.length(); currentSymbolNumber++)
     {
         QChar symbol = text.at(currentSymbolNumber);
@@ -64,6 +64,7 @@ int SvgView::renderText(const QStringRef &text)
                 storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
                 storedSymbolData.push_back(QVector<SymbolData>());
             }
+
             if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
                 break;
 
@@ -73,12 +74,12 @@ int SvgView::renderText(const QStringRef &text)
         QGraphicsSvgItem *symbolItem = new QGraphicsSvgItem();
 
         SvgData data = font.values(symbol).at(qrand() % font.values(symbol).size());
-        symbolItem->setSharedRenderer(data.renderer);
         symbolData = data.symbolData;
 
+        symbolItem->setSharedRenderer(data.renderer);
         symbolItem->setScale(data.scale);
-        symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
 
+        symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
         qreal symbolWidth = symbolBoundingSize.width() * symbolData.limits.width();
 
         preventGoingBeyondRightMargin(symbolWidth, text, currentSymbolNumber);
@@ -93,6 +94,7 @@ int SvgView::renderText(const QStringRef &text)
         QPointF symbolItemPos = cursor;
         symbolItemPos.rx() -= symbolBoundingSize.width() * symbolData.limits.left();
         symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.top();
+
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
 
@@ -206,22 +208,32 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 
     int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
     int nextSpace = text.toString().indexOf(QRegularExpression("\\s"), currentSymbolIndex);
-    QString word = text.mid(lastSpace + 1, nextSpace - lastSpace).toString();
+    QString word;
+
+    if (nextSpace > 0)
+        word = text.mid(lastSpace + 1, nextSpace - lastSpace).toString();
+    else
+        word = text.mid(lastSpace + 1, text.size() - 1).toString();
+
     QString hypher = "\\1-\\2";
     QString hyphenWord = word;
 
+    //divide word into syllables with hyphens
     for (QRegularExpression &rule : hyphenRules)
         hyphenWord.replace(rule, hypher);
 
     int currentSymbolInWord = currentSymbolIndex - lastSpace - 1;
 
+    //find new position of current letter
     for (int i = 0; i <= currentSymbolInWord; i++)
         if (hyphenWord.at(i) == '-')
             currentSymbolInWord++;
 
+    //find hyphen, which is nearest to current letter
     qreal indexOfLastHyphen = hyphenWord.lastIndexOf('-', currentSymbolInWord);
     qreal symbolsToWrap = currentSymbolInWord - indexOfLastHyphen - 1;
 
+    //generate hyphens item and hyphenate
     if (indexOfLastHyphen > 0 && symbolsToWrap >= 0)
     {
         QGraphicsSvgItem *hyphen = generateHyphen(symbolsToWrap);
@@ -251,6 +263,7 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
     if (symbolsToWrap <= 0 || symbolsToWrap >= scene->items().size())
         return false;
 
+    //find the first item to wrap and it's position
     int itemsCount = scene->items().size();
     int itemsToWrap = symbolsToWrap; //TODO: consider missing items
     QGraphicsItem * firstWrapItem = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap];
@@ -260,6 +273,7 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
     if (firstWrapItemPos == currentMarginsRect.x())
         return false;
 
+    //this is how much you need to move symbols to the left
     qreal leftOffset = firstWrapItemPos + firstWrapItemWidth - currentMarginsRect.x();
 
     previousSymbolCursor.rx() -= leftOffset;
@@ -267,6 +281,8 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
     storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
     storedSymbolData.push_back(QVector<SymbolData>());
 
+    //transfer symbols in a new column to half of
+    //the wrapped word were not connected with the line
     for (int i = itemsToWrap; i > 0; i--)
     {
         int size = storedWordItems.size();
@@ -279,6 +295,7 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
         storedSymbolData.last().push_back(storedSymbolData[size - 2].takeAt(wordSize - i));
     }
 
+    //wrap items
     for (int i = itemsToWrap; i > 0; i--)
     {
         QPointF pos = scene->items(Qt::AscendingOrder)[itemsCount - i]->pos();
@@ -330,6 +347,7 @@ void SvgView::connectLetters()
             QGraphicsSvgItem * currentLetter = storedWordItems.at(currentWord).at(currentSymbol);
             QGraphicsSvgItem * previousLetter = storedWordItems.at(currentWord).at(currentSymbol - 1);
 
+            //pL means previous letter; cL - current letter
             QSizeF pLBoundingRect, cLBoundingRect;
             pLBoundingRect.setWidth(previousLetter->boundingRect().width() * previousLetter->scale());
             pLBoundingRect.setHeight(previousLetter->boundingRect().height() * previousLetter->scale());
@@ -338,6 +356,7 @@ void SvgView::connectLetters()
             SymbolData pLSymbolData = storedSymbolData.at(currentWord).at(currentSymbol - 1);
             SymbolData cLSymbolData = storedSymbolData.at(currentWord).at(currentSymbol);
 
+            //calculate coordinates of points
             QPointF inPoint, outPoint;
             outPoint.rx() = previousLetter->pos().x() +
                     pLSymbolData.outPoint.x() * pLBoundingRect.width();
@@ -477,6 +496,7 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
 
     file.close();
 
+    //get necessary SVG nodes
     QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
     scaleViewBox(svgElement);
 
@@ -486,8 +506,8 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
 
     QDomNodeList pathList = doc.elementsByTagName("path");
     QDomNodeList styleList = doc.elementsByTagName("style");
-    QDomNodeList gList = doc.elementsByTagName("g");
 
+    //change necessary attributes
     if (!styleList.isEmpty())
     {
         QDomElement element = styleList.item(0).toElement();
@@ -522,6 +542,7 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
             element.setAttribute("style", style);
         }
 
+    //load changed symbol
     renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
     font.insert(key, {symbolData, scale, renderer});
 }

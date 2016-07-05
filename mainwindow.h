@@ -1,3 +1,15 @@
+/*!
+  MainWindow - class representing the main window.
+
+  All functions that can be called up via the menu or toolbar,
+  are described here. This is rendering, printing, saving,
+  calling other windows, error output, etc.
+
+  The Font Editor window represented by class FontEditor,
+  the Settings windows - by class PreferencesDialog. Class SvgView
+  is used to display the sheet with handwritten text and
+  to place characters on a sheet correctly.
+*/
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

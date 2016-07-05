@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>557</height>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -278,6 +278,9 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_15">
+              <property name="toolTip">
+               <string>This is space width</string>
+              </property>
               <property name="text">
                <string>Word Spacing (mm):</string>
               </property>
@@ -393,6 +396,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
                <widget class="QLabel" name="label_11">
+                <property name="toolTip">
+                 <string>Space width is set by word spacing</string>
+                </property>
                 <property name="text">
                  <string>Spaces in Tab:</string>
                 </property>

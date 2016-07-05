@@ -1,3 +1,18 @@
+/*!
+  SvgView - class representing sheet of paper with handwritten text.
+
+  It reads settings from a file, loads current font, changes it, places
+  letters on a sheet, connects letters in words and displays the result.
+  It also generates the QImage for MainWindow::save* functions.
+
+  Algorithm placing characters on a sheet is described in the function
+  renderText(). It takes the QStringRef with text, places as many characters
+  as fit on a single sheet and returns the number of character on which the
+  function has stopped.
+
+  preventGoingBeyondRightMargin() prevents going beyond right margin (your C.O.)
+  with wrapping or hypphenating words, or just simply starting a new line.
+*/
 #ifndef SVGVIEW_H
 #define SVGVIEW_H
 
@@ -42,7 +57,6 @@ private:
     {
         SymbolData symbolData;
         qreal scale;
-        //qreal width;
         QSvgRenderer *renderer;
     };
 
@@ -65,7 +79,8 @@ private:
     SymbolData symbolData, previousSymbolData;
     QRectF currentMarginsRect;
     QSizeF symbolBoundingSize;
-    QPointF cursor, previousSymbolCursor;
+    QPointF cursor, previousSymbolCursor; //cursor is pointing to where will be placed
+                                          //the top left corner of the next character limits
     qreal previousSymbolWidth;
 
     void limitScale(qreal factor);  //limited view zoom

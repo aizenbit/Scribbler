@@ -1,3 +1,27 @@
+/*!
+  FontDialog - class representing the Font Editor window.
+  It is designed to create and edit handwritten font.
+
+  The handwritten font is a folder with SVG images and INI file
+  that contains information about the association
+  of characters and images, as well as some additional data.
+  These data are the limits, inPoint and outPoint.
+  Limits show part of the symbol, which must be within the line.
+  In fact, it is a rectangle with a height equal to the height
+  of the line and the width equal to the width of the character.
+  InPoint and outPoint are the points of entry and exit of
+  connecting lines for the letters.
+
+  Font Editor allows the user to:
+  * Create a new font and open for editing an existing one;
+  * Upload the image to the font or remove it;
+  * Automatically associate the symbol and image with analyzing
+    the name of image.
+  * Edit additional data.
+
+  For editing the additional data and displaying the selected
+  character is used class SymbolDataEditor.
+*/
 #ifndef FONTDIALOG_H
 #define FONTDIALOG_H
 
@@ -43,7 +67,7 @@ private:
 
 private slots:
     void loadFont();
-    void loadSymbols();
+    void addNewSymbols();
     void saveFont();
     void rejectChanges();
     void deleteItem();

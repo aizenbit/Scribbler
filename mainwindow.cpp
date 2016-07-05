@@ -191,6 +191,7 @@ void MainWindow::showLicensesBox()
                                    "Thanks to <a href=http://pro.guap.ru/privateoffice/main/462>Elizaveta Grebennikova</a>, "
                                    "<a href=https://github.com/aksenoff>aksenoff</a>, "
                                    "<a href=https://virink.com/domerk>Daniel Domerk</a>, "
+                                   "<a href=https://github.com/dive155>dive155</a>, "
                                    "<a href=http://www.livelib.ru/reader/Azure_wave>Anastasiya Belozerskaya</a> "
                                    "and grey eminence for a help. =)"));
     aboutBox.exec();
