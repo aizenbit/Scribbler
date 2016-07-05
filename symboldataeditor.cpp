@@ -133,8 +133,7 @@ QPointF SymbolDataEditor::toStored(const QPointF &point) const
     QPointF result = point - symbolRect.topLeft();
     result.rx() = point.x() / symbolRect.width();
     result.ry() = point.y() / symbolRect.height();
-    result -= QPointF(2.0,2.0); //sorry, i don't know why this works, but it depends on scaleCanvas
-    return result;
+    result -= QPointF(2.0,2.0); //WARNING: I don't know why this works, but it depends on SvgView::scaleViewBox()
 }
 
 QPointF SymbolDataEditor::fromStored(const QPointF &point) const
@@ -196,6 +195,7 @@ void SymbolDataEditor::enableLimitsChanges()
 
 void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
 {
+    //drag the scene by middle mouse button
     if (event->button() == Qt::MidButton)
     {
         QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
@@ -207,6 +207,7 @@ void SymbolDataEditor::mousePressEvent(QMouseEvent *event)
         return;
     }
 
+    //move current item by left mouse button
     if (event->button() == Qt::LeftButton)
     {
         moveItem(event->pos());
