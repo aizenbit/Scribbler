@@ -96,7 +96,6 @@ int SvgView::renderText(const QStringRef &text)
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
 
-        lastLetter = symbolItem;
         previousSymbolCursor = cursor;
         previousSymbolData = symbolData;
         previousSymbolWidth = symbolWidth;
@@ -127,7 +126,6 @@ void SvgView::prepareSceneToRender()
     storedWordItems.clear();
     storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
     storedSymbolData.push_back(QVector<SymbolData>());
-    lastLetter = nullptr;
 
     if (changeMargins)
         currentMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
@@ -166,7 +164,6 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
             storedSymbolData.push_back(QVector<SymbolData>());
         }
 
-        lastLetter = nullptr;
         return true;
     }
 
@@ -366,19 +363,20 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
     switch (symbol.toLatin1())
     {
     case '\t':
-        cursor.rx() += fontSize * dpmm * spacesInTab;
-        lastLetter = nullptr;
+        cursor.rx() += wordSpacing * dpmm * spacesInTab;
         break;
 
     case '\n':
         cursor.rx() = currentMarginsRect.x();
         cursor.ry() += (fontSize + lineSpacing) * dpmm;
-        lastLetter = nullptr;
+        break;
+
+    case ' ':
+        cursor.rx() += (wordSpacing - letterSpacing) * dpmm;
         break;
 
     default:
         cursor.rx() += (fontSize + letterSpacing) * dpmm;
-        lastLetter = nullptr;
         break;
     }
 
@@ -574,6 +572,7 @@ void SvgView::loadSettingsFromFile()
     dpmm = dpi / 25.4;
     letterSpacing = settings.value("letter-spacing").toDouble();
     lineSpacing =   settings.value("line-spacing").toDouble();
+    wordSpacing =   settings.value("word-spacing").toDouble();
     spacesInTab =   settings.value("spaces-in-tab").toInt();
     fontSize =      settings.value("font-size").toDouble();
     penWidth =      settings.value("pen-width").toDouble();

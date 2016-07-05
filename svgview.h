@@ -57,7 +57,7 @@ private:
     bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
-    qreal fontSize, penWidth, letterSpacing, lineSpacing;
+    qreal fontSize, penWidth, letterSpacing, lineSpacing, wordSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
     QVector<QRegularExpression> hyphenRules;
@@ -67,7 +67,6 @@ private:
     QSizeF symbolBoundingSize;
     QPointF cursor, previousSymbolCursor;
     qreal previousSymbolWidth;
-    QGraphicsSvgItem *lastLetter;
 
     void limitScale(qreal factor);  //limited view zoom
     void prepareSceneToRender();

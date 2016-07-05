@@ -52,6 +52,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.beginGroup("Settings");
     settings.setValue("dpi", QVariant(ui->dpiSpinBox->value()));
     settings.setValue("letter-spacing", QVariant(ui->letterSpacingSpinBox->value()));
+    settings.setValue("word-spacing", QVariant(ui->wordSpacingSpinBox->value()));
     settings.setValue("line-spacing", QVariant(ui->lineSpacingSpinBox->value()));
     settings.setValue("spaces-in-tab", QVariant(ui->spacesInTabSpinBox->value()));
     settings.setValue("font-size", QVariant(ui->fontSizeSpinBox->value()));
@@ -84,6 +85,7 @@ void PreferencesDialog::loadSettingsFromFile()
     settings.beginGroup("Settings");
     ui->dpiSpinBox->setValue(           settings.value("dpi", 300).toInt());
     ui->letterSpacingSpinBox->setValue( settings.value("letter-spacing", 1.0).toDouble());
+    ui->wordSpacingSpinBox->setValue( settings.value("word-spacing", 3.0).toDouble());
     ui->lineSpacingSpinBox->setValue(   settings.value("line-spacing", 5.0).toDouble());
     ui->spacesInTabSpinBox->setValue(   settings.value("spaces-in-tab", 4).toInt());
     ui->fontSizeSpinBox->setValue(      settings.value("font-size", 5.0).toDouble());
