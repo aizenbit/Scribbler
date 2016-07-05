@@ -182,8 +182,8 @@ bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
             !(text.at(previousSymbolIndex).isLetterOrNumber() || text.at(previousSymbolIndex).isPunct()))
         return false;
 
-    int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
-    int symbolsToWrap = currentSymbolIndex - lastSpace - 1;
+    int lastNonLetter = text.toString().lastIndexOf(QRegularExpression("[^\\p{L}]"), currentSymbolIndex);
+    int symbolsToWrap = currentSymbolIndex - lastNonLetter - 1;
 
     if (wrapLastSymbols(symbolsToWrap))
     {
@@ -206,14 +206,14 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
             cursor.y() - previousSymbolCursor.y() > 0.0000001)
         return false;
 
-    int lastSpace = text.toString().lastIndexOf(QRegularExpression("\\s"), currentSymbolIndex);
-    int nextSpace = text.toString().indexOf(QRegularExpression("\\s"), currentSymbolIndex);
+    int lastNonLetter = text.toString().lastIndexOf(QRegularExpression("[^\\p{L}]"), currentSymbolIndex);
+    int nextNonLetter = text.toString().indexOf(QRegularExpression("[^\\p{L}]"), currentSymbolIndex);
     QString word;
 
-    if (nextSpace > 0)
-        word = text.mid(lastSpace + 1, nextSpace - lastSpace).toString();
+    if (nextNonLetter > 0)
+        word = text.mid(lastNonLetter + 1, nextNonLetter - lastNonLetter).toString();
     else
-        word = text.mid(lastSpace + 1, text.size() - 1).toString();
+        word = text.mid(lastNonLetter + 1, text.size() - 1).toString();
 
     QString hypher = "\\1-\\2";
     QString hyphenWord = word;
@@ -222,10 +222,10 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
     for (QRegularExpression &rule : hyphenRules)
         hyphenWord.replace(rule, hypher);
 
-    int currentSymbolInWord = currentSymbolIndex - lastSpace - 1;
+    int currentSymbolInWord = currentSymbolIndex - lastNonLetter - 1;
 
     //find new position of current letter
-    for (int i = 0; i <= currentSymbolInWord; i++)
+    for (int i = 0; i <= currentSymbolInWord && currentSymbolInWord < hyphenWord.size(); i++)
         if (hyphenWord.at(i) == '-')
             currentSymbolInWord++;
 
