@@ -6,6 +6,7 @@ SymbolDataEditor::SymbolDataEditor(QWidget *parent) : QGraphicsView(parent)
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(QGraphicsView::NoDrag);
+    loadSettings();
     disableChanges();
     setRenderHints(QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
 

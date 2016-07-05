@@ -3,7 +3,7 @@
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
-    maxScaleFactor = 1.5; //if this is exceeded, graphic artifacts will occure
+    maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
     minScaleFactor = 0.05;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
@@ -79,10 +79,9 @@ int SvgView::renderText(const QStringRef &text)
         symbolItem->setScale(data.scale);
         symbolBoundingSize = symbolItem->boundingRect().size() * symbolItem->scale();
 
-        qreal symbolWidth = data.width * data.symbolData.limits.width() * data.scale;
+        qreal symbolWidth = symbolBoundingSize.width() * symbolData.limits.width();
 
-        cursor.rx() -= symbolBoundingSize.width() * symbolData.limits.left();
-        bool newLine = preventGoingBeyondRightMargin(symbolWidth, text, currentSymbolNumber);
+        preventGoingBeyondRightMargin(symbolWidth, text, currentSymbolNumber);
 
         //rendering stops by the end of sheet
         if (cursor.y() > currentMarginsRect.bottomRight().y() - fontSize * dpmm)
@@ -92,7 +91,7 @@ int SvgView::renderText(const QStringRef &text)
         }
 
         QPointF symbolItemPos = cursor;
-
+        symbolItemPos.rx() -= symbolBoundingSize.width() * symbolData.limits.left();
         symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.top();
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
@@ -114,6 +113,7 @@ int SvgView::renderText(const QStringRef &text)
             storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
             storedSymbolData.push_back(QVector<SymbolData>());
         }
+
     }
 
     connectLetters();
@@ -160,7 +160,7 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
 
         if (!hyphenateHappened && !wrapWordHappened)
         {
-            cursor.rx() = currentMarginsRect.x() - symbolBoundingSize.width() * symbolData.limits.topLeft().x();
+            cursor.rx() = currentMarginsRect.x();
             cursor.ry() += (fontSize + lineSpacing) * dpmm;
             storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
             storedSymbolData.push_back(QVector<SymbolData>());
@@ -188,8 +188,7 @@ bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 
     if (wrapLastSymbols(symbolsToWrap))
     {
-        cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth
-                      - symbolBoundingSize.width() * symbolData.limits.topLeft().x();
+        cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth;
         cursor.ry() += (fontSize + lineSpacing) * dpmm;
         return true;
     }
@@ -526,8 +525,7 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
         }
 
     renderer->load(doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8());
-    qreal width = renderer->defaultSize().width() + renderer->defaultSize().width() / 2;
-    font.insert(key, {symbolData, scale, width, renderer});
+    font.insert(key, {symbolData, scale, renderer});
 }
 
 void SvgView::changeAttribute(QString &attribute, QString parameter, QString newValue)

@@ -42,7 +42,7 @@ private:
     {
         SymbolData symbolData;
         qreal scale;
-        qreal width;
+        //qreal width;
         QSvgRenderer *renderer;
     };
 
