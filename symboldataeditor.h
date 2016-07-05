@@ -1,23 +1,23 @@
 /*!
-  SymbolDataEditor - class representing an editor of the symbol data.
-  It is included into the Font Editor window.
+    SymbolDataEditor - class representing an editor of the symbol data.
+    It is included into the Font Editor window.
 
-  The handwritten font is a folder with SVG images and INI file that
-  contains information about the association of characters and images,
-  as well as some additional data. These data are the limits, inPoint
-  and outPoint. Limits show part of the symbol, which must be within
-  the line. In fact, it is a rectangle with a height equal to the height
-  of the line and the width equal to the width of the character. InPoint
-  and outPoint are the points of entry and exit of connecting lines for
-  the letters.
+    The handwritten font is a folder with SVG images and INI file that
+    contains information about the associations of characters and images,
+    as well as some additional data. This data includes the limits,
+    inPoint and outPoint. Limits show part of the symbol, which part of
+    the symbol must be within the line. It's a rectangle with a height
+    equal to the height of the line and the width equal to the width of
+    the character. InPoint and outPoint are the points of entry and exit
+    of connecting lines for the letter.
 
-  Data are not stored in the absolute coordinates, they are converted
-  to the relative to the image side.
+    Data is not stored in absolute coordinates, it's stored as a relative
+    position to the image side
 
-  This class allows to set additional data with moving markers of points
-  or changing rectangle of limits. It also changes the cursor to make
-  editing more clearer for user and converts data from absolute
-  to relative coordinates.
+    This class allows to set additional data by moving markers of points
+    or changing rectangle of limits. It also changes the cursor to make
+    editing easier for user and converts data from absolute to relative
+    coordinates.
 */
 #ifndef SVGDATAEDITOR_H
 #define SVGDATAEDITOR_H

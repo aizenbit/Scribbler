@@ -1,17 +1,17 @@
 /*!
-  SvgView - class representing sheet of paper with handwritten text.
+    SvgView - class representing a sheet of paper with handwritten text.
 
-  It reads settings from a file, loads current font, changes it, places
-  letters on a sheet, connects letters in words and displays the result.
-  It also generates the QImage for MainWindow::save* functions.
+    It reads settings from a file, loads current font, changes it, places
+    letters on a sheet, connects letters within words and displays the result.
+    It also generates a QImage for MainWindow::save* functions.
 
-  Algorithm placing characters on a sheet is described in the function
-  renderText(). It takes the QStringRef with text, places as many characters
-  as fit on a single sheet and returns the number of character on which the
-  function has stopped.
+    An algorithm that places characters on a sheet is described in the function
+    renderText(). It takes the QStringRef with text, places as many characters
+    as possible on a single sheet and returns the number of the first character
+    that function has not processed.
 
-  preventGoingBeyondRightMargin() prevents going beyond right margin (your C.O.)
-  with wrapping or hypphenating words, or just simply starting a new line.
+    preventGoingBeyondRightMargin() prevents going beyond right margin (your C.O.)
+    by wrapping or hypphenating words, or just simply starts a new line.
 */
 #ifndef SVGVIEW_H
 #define SVGVIEW_H

@@ -1,8 +1,8 @@
 /*!
-  PreferencesDialog - class representing the Settings window.
+    PreferencesDialog - class representing the Settings window.
 
-  This class also writes settings to a file, reads settings
-  from a file and sets the default values.
+    This class also record settings, extract settings from a file
+    and sets the default values.
 */
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
