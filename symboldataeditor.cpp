@@ -134,6 +134,7 @@ QPointF SymbolDataEditor::toStored(const QPointF &point) const
     result.rx() = point.x() / symbolRect.width();
     result.ry() = point.y() / symbolRect.height();
     result -= QPointF(2.0,2.0); //WARNING: I don't know why this works, but it depends on SvgView::scaleViewBox()
+    return result;
 }
 
 QPointF SymbolDataEditor::fromStored(const QPointF &point) const
