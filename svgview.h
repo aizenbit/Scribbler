@@ -10,7 +10,7 @@
     as possible on a single sheet and returns the number of the first character
     that function has not processed.
 
-    preventGoingBeyondRightMargin() prevents going beyond right margin (your C.O.)
+    preventGoingBeyondRightMargin() prevents going beyond right margin
     by wrapping or hypphenating words, or just simply starts a new line.
 */
 #ifndef SVGVIEW_H
