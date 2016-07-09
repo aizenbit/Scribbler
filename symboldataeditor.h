@@ -39,7 +39,7 @@ public:
     explicit SymbolDataEditor(QWidget *parent = 0);
     ~SymbolDataEditor();
 
-    void load(const QString & fileName);
+    void load(const QString & fileName); //!< loads specified item
     void setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
     void clear();
     void disableChanges();
@@ -82,14 +82,14 @@ private:
     QGraphicsScene *scene;
     qreal currentScaleFactor;
     Item itemToChange;
-    Side sideToChange; //for LimitsRect
+    Side sideToChange; //for Item::LimitsRect
     qreal pointWidth;
     bool setupPoints;
     QPointF inPoint, outPoint, dLimitsCenter;
     QRectF limits;
     QDomDocument doc;
 
-    void limitScale(qreal factor);  //limited view zoom
+    void limitScale(qreal factor);  //!< limited view zoom
     void loadSettings();
     QPointF toStored(const QPointF &point) const;
     QPointF fromStored(const QPointF &point) const;

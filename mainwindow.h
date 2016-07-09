@@ -62,14 +62,14 @@ private:
     QErrorMessage *errorMessage;
     QLabel *sheetNumberLabel;
 
-    QVector<int> sheetPointers; //pointers to the first character of the sheets
-    int currentSheetNumber;     //number of sheet that is displaying or rendering now
+    QVector<int> sheetPointers; //!< pointers to the first character of the sheets
+    int currentSheetNumber;     //!< number of sheet that is displaying or rendering now
     QString text;
 
     void saveAllSheetsToImages(const QString &fileName, const int indexOfExtension);
     void saveAllSheetsToPDF(const QString &fileName);
     void preparePrinter(QPrinter *printer);
-    QString simplifyEnd(const QString &str); //returns string without whitespaces at the end
+    QString simplifyEnd(const QString &str); //!< returns string without whitespaces at the end
 
 private slots:
     void showAboutBox();

@@ -62,15 +62,16 @@ private:
 
     QGraphicsScene *scene;
     QMultiMap<QChar, SvgData> font;
-    QVector<QVector<QGraphicsSvgItem *>> storedWordItems;
-    QVector<QVector<SymbolData>> storedSymbolData;
-    int dpi;  //dots per inch
-    int dpmm; //dots per millimeter
+    QVector<QVector<QGraphicsSvgItem *>> storedWordItems; //!< there stored items that forming words
+    QVector<QVector<SymbolData>> storedSymbolData; //!< data for items in storedWordItems
+    int dpi;  //!< dots per inch
+    int dpmm; //!< dots per millimeter
     int spacesInTab;
     int seed;
     bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden;
-    qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
+    qreal maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
+    qreal minScaleFactor = 0.05, currentScaleFactor = 1.0;
     qreal fontSize, penWidth, letterSpacing, lineSpacing, wordSpacing;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
@@ -79,17 +80,18 @@ private:
     SymbolData symbolData, previousSymbolData;
     QRectF currentMarginsRect;
     QSizeF symbolBoundingSize;
-    QPointF cursor, previousSymbolCursor; //cursor is pointing to where will be placed
-                                          //the top left corner of the next character limits
+    QPointF cursor; /*!< cursor is pointing to where will be placed
+                         the top left corner of the next character limits */
+    QPointF previousSymbolCursor;
     qreal previousSymbolWidth;
 
-    void limitScale(qreal factor);  //limited view zoom
+    void limitScale(qreal factor);  //!< limited view zoom
     void prepareSceneToRender();
     bool preventGoingBeyondRightMargin(qreal letterWidth, QStringRef text, int currentSymbolIndex);
     void connectLetters();
     void processUnknownSymbol(const QChar &symbol);
     void insertSymbol(QChar key, SymbolData &symbolData);
-    void changeAttribute(QString &attribute, QString parameter, QString newValue);
+    void changeAttribute(QString &attribute, QString parameter, QString newValue); //!< changes value of parameter in XML attribute
     bool wrapWords(QStringRef text, int currentSymbolIndex);
     bool wrapLastSymbols(int symbolsToWrap);
     bool hyphenate(QStringRef text, int currentSymbolIndex);

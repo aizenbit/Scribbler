@@ -4,7 +4,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
     areBordersHidden = false;
-    maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
+    maxScaleFactor = 1.5;
     minScaleFactor = 0.05;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);

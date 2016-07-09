@@ -261,7 +261,7 @@ void MainWindow::renderNextSheet()
     ui->toolBar->actions()[ToolButton::Previous]->setEnabled(true);
     showSheetNumber(currentSheetNumber);
 
-    if (endOfSheet >= text.length())    //this sheet is the last
+    if (endOfSheet >= text.length())    //i.e. this sheet is the last
     {
         ui->toolBar->actions()[ToolButton::Next]->setDisabled(true);
         return;
