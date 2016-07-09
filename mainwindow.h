@@ -40,7 +40,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+      bool eventFilter(QObject *obj, QEvent *ev);
+
 private:
+    const QString version = "0.8.3 beta";
+
     enum ToolButton : int {
         Render,
         Print,
@@ -56,16 +61,15 @@ private:
     FontDialog *fontDialog;
     QErrorMessage *errorMessage;
     QLabel *sheetNumberLabel;
-    QVector<int> sheetPointers; //pointers to the beginning of the sheets
+
+    QVector<int> sheetPointers; //pointers to the first character of the sheets
     int currentSheetNumber;     //number of sheet that is displaying or rendering now
-    const QString version = "0.8.2 beta";
+    QString text;
+
     void saveAllSheetsToImages(const QString &fileName, const int indexOfExtension);
     void saveAllSheetsToPDF(const QString &fileName);
     void preparePrinter(QPrinter *printer);
-    QString simplifyEnd(const QString &str);
-
-protected:
-      bool eventFilter(QObject *obj, QEvent *ev);
+    QString simplifyEnd(const QString &str); //returns string without whitespaces at the end
 
 private slots:
     void showAboutBox();

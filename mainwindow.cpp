@@ -116,14 +116,15 @@ MainWindow::~MainWindow()
     delete sheetNumberLabel;
 }
 
-bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
-    if (obj == ui->textEdit && event->type() == QEvent::KeyPress)
+    if (object == ui->textEdit && event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 
         if (keyEvent->modifiers() == Qt::ControlModifier &&
-            (keyEvent->key() == Qt::Key_Right || keyEvent->key() == Qt::Key_Left))
+                (keyEvent->key() == Qt::Key_Right ||
+                 keyEvent->key() == Qt::Key_Left))
         {
             if (keyEvent->key() == Qt::Key_Right)
                  ui->toolBar->actions()[ToolButton::Next]->trigger();
@@ -137,7 +138,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     }
     else
         // pass the event on to the parent class
-        return QMainWindow::eventFilter(obj, event);
+        return QMainWindow::eventFilter(object, event);
 }
 
 void MainWindow::showAboutBox()
@@ -188,7 +189,8 @@ void MainWindow::showLicensesBox()
                                    "are licensed by <a href=http://creativecommons.org/licenses/by/3.0/ "
                                    "title=Creative Commons BY 3.0>CC BY 3.0</a>.<br><br>"
 
-                                   "Thanks to <a href=http://pro.guap.ru/privateoffice/main/462>Elizaveta Grebennikova</a>, "
+                                   "Thanks to "
+                                   "<a href=http://pro.guap.ru/privateoffice/main/462>Elizaveta Grebennikova</a>, "
                                    "<a href=https://github.com/aksenoff>aksenoff</a>, "
                                    "<a href=https://virink.com/domerk>Daniel Domerk</a>, "
                                    "<a href=https://github.com/dive155>dive155</a>, "
@@ -228,10 +230,10 @@ void MainWindow::renderFirstSheet()
     sheetPointers.push_back(0);
 
     currentSheetNumber = 0;
-    ui->svgView->hideBorders(false);
+    //ui->svgView->hideBorders(false);
 
-    QString text = ui->textEdit->toPlainText();
-    text = simplifyEnd(text);
+    text = ui->textEdit->toPlainText();
+    text = simplifyEnd(text); //to avoid blank sheets at the end
     int endOfSheet = ui->svgView->renderText(QStringRef(&text));
 
     sheetPointers.push_back(endOfSheet);
@@ -247,15 +249,13 @@ void MainWindow::renderFirstSheet()
 void MainWindow::renderNextSheet()
 {
     currentSheetNumber++;
-    ui->svgView->hideBorders(false);
+    //ui->svgView->hideBorders(false);
 
     if (preferencesDialog->alternateMargins())
         ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
     else
         ui->svgView->changeLeftRightMargins(false);
 
-    QString text = ui->textEdit->toPlainText();
-    text = simplifyEnd(text);
     int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
     int endOfSheet = ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
     endOfSheet += sheetPointers.at(currentSheetNumber);
@@ -276,14 +276,13 @@ void MainWindow::renderNextSheet()
 void MainWindow::renderPreviousSheet()
 {
     currentSheetNumber--;
-    ui->svgView->hideBorders(false);
+    //ui->svgView->hideBorders(false);
 
     if (preferencesDialog->alternateMargins())
         ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
     else
         ui->svgView->changeLeftRightMargins(false);
 
-    QString text = ui->textEdit->toPlainText();
     int lettersToTheEnd = sheetPointers.at(currentSheetNumber + 1) - sheetPointers.at(currentSheetNumber);
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
@@ -508,7 +507,6 @@ QString MainWindow::simplifyEnd(const QString& str)
 
 void MainWindow::countMissedCharacters()
 {
-    QString text = ui->textEdit->toPlainText().simplified();
     QList<QChar> fontKeys = ui->svgView->getFontKeys();
     QSet <QChar> missedCharacters;
 
