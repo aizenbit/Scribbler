@@ -66,7 +66,7 @@ private:
     int currentSheetNumber;     //!< number of sheet that is displaying or rendering now
     QString text;
 
-    void saveAllSheetsToImages(const QString &fileName, const int indexOfExtension);
+    void saveAllSheetsToImages(const QString &fileName);
     void saveAllSheetsToPDF(const QString &fileName);
     void preparePrinter(QPrinter *printer);
     QString simplifyEnd(const QString &str); //!< returns string without whitespaces at the end

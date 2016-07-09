@@ -269,15 +269,20 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
     //find the first item to wrap and it's position
     int itemsCount = scene->items().size();
     int itemsToWrap = symbolsToWrap; //TODO: consider missing items
-    QGraphicsItem * firstWrapItem = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap];
-    qreal firstWrapItemPos = firstWrapItem->pos().x();
-    qreal firstWrapItemWidth = firstWrapItem->boundingRect().size().width();
+    QGraphicsItem * firstItemToWrap = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap];
+    qreal firstWrapItemPosX = firstItemToWrap->pos().x();
 
-    if (firstWrapItemPos == currentMarginsRect.x())
+    if (firstWrapItemPosX == currentMarginsRect.x())
         return false;
 
     //this is how much you need to move symbols to the left
-    qreal leftOffset = firstWrapItemPos + firstWrapItemWidth - currentMarginsRect.x();
+    qreal leftOffset = firstWrapItemPosX - currentMarginsRect.x();
+
+    if (storedSymbolData.last().size() - symbolsToWrap >= 0) //TODO: consider missing items and get rid of this check
+    {
+        SymbolData firstItemToWrapData = storedSymbolData.last().at(storedSymbolData.last().size() - symbolsToWrap);
+        leftOffset += firstItemToWrap->boundingRect().size().width() * firstItemToWrap->scale() * firstItemToWrapData.limits.left();
+    }
 
     previousSymbolCursor.rx() -= leftOffset;
     previousSymbolCursor.ry() += (fontSize + lineSpacing) * dpmm;
@@ -307,6 +312,7 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
         scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
     }
 
+    scene->addEllipse(firstItemToWrap->pos().x(), firstItemToWrap->pos().y(), 15,15, QPen(Qt::red));
     return true;
 }
 

@@ -333,35 +333,41 @@ void MainWindow::saveAllSheets()
                                                        tr("PDF") +
                                                           "(*.pdf);;" +
                                                        tr("PNG") +
-                                                          "(*.png);;" +
-                                                       tr("All Files") +
-                                                          "(*.*)");
-    int indexOfExtension = fileName.indexOf(QRegularExpression("\\.\\w+$"), 0);
-    if (indexOfExtension == -1)
-        return;
+                                                          "(*.png)");
 
-    if (fileName.mid(indexOfExtension) == ".png")
-        saveAllSheetsToImages(fileName, indexOfExtension);
+    QString extension = QRegularExpression("\\.\\w+$").match(fileName).captured();
 
-    if (fileName.mid(indexOfExtension) == ".pdf")
+    if (extension == ".png")
+        saveAllSheetsToImages(fileName);
+
+    if (extension == ".pdf")
         saveAllSheetsToPDF(fileName);
 }
 
-void MainWindow::saveAllSheetsToImages(const QString &fileName, const int indexOfExtension)
+void MainWindow::saveAllSheetsToImages(const QString &fileName)
 {
+    int indexOfExtension = fileName.indexOf(QRegularExpression("\\.\\w+$"), 0);
     QString currentFileName;
     currentSheetNumber = -1;
     ui->toolBar->actions()[ToolButton::Next]->setEnabled(true);
+    ui->svgView->hideBorders(true);
 
     while (ui->toolBar->actions()[ToolButton::Next]->isEnabled()) //while "Next Sheet" tool button is enabled,
     {                                                             //i.e. while rendering all sheets
         renderNextSheet();
         currentFileName = fileName;
-        currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
+
+        if (currentSheetNumber > 0 || ui->toolBar->actions()[ToolButton::Next]->isEnabled())
+            //i.e. there is more than one sheet
+            currentFileName.insert(indexOfExtension, QString("_%1").arg(currentSheetNumber));
+
         saveSheet(currentFileName);
     }
+
     ui->svgView->hideBorders(false);
 
+    //we used renderNextSheet() for the first sheet instead of renderFirstSheet()
+    //so we need to check the number of sheet and disable previous toolbutton if needed
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 }
@@ -378,10 +384,10 @@ void MainWindow::saveAllSheetsToPDF(const QString &fileName)
 
     currentSheetNumber = -1;
     ui->toolBar->actions()[ToolButton::Next]->setEnabled(true);
-
     ui->svgView->hideBorders(true);
-    while (ui->toolBar->actions()[ToolButton::Next]->isEnabled())//while "Next Sheet" tool button is enabled,
-    {                                                            //i.e. while printing all sheets
+
+    while (ui->toolBar->actions()[ToolButton::Next]->isEnabled()) //while "Next Sheet" tool button is enabled,
+    {                                                             //i.e. while printing all sheets
         renderNextSheet();
 
         QImage image = ui->svgView->saveRenderToImage();
@@ -392,12 +398,14 @@ void MainWindow::saveAllSheetsToPDF(const QString &fileName)
         painter.drawImage(0, 0, image);
 
         if (ui->toolBar->actions()[ToolButton::Next]->isEnabled()) //if "Next Sheet" tool button is enabled,
-            printer.newPage();                                    //i.e this sheet isn't the last one
+            printer.newPage();                                     //i.e this sheet isn't the last one
     }
 
     painter.end();
     ui->svgView->hideBorders(false);
 
+    //we used renderNextSheet() for the first sheet instead of renderFirstSheet()
+    //so we need to check the number of sheet and disable previous toolbutton if needed
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 }
@@ -423,7 +431,6 @@ void MainWindow::printSheet()
 
     painter.drawImage(0, 0, image);
     painter.end();
-
 }
 
 void MainWindow::printAllSheets()
@@ -446,8 +453,8 @@ void MainWindow::printAllSheets()
     ui->toolBar->actions()[ToolButton::Next]->setEnabled(true);
     ui->svgView->hideBorders(true);
 
-    while (ui->toolBar->actions()[ToolButton::Next]->isEnabled())//while "Next Sheet" tool button is enabled,
-    {                                                            //i.e. while printing all sheets
+    while (ui->toolBar->actions()[ToolButton::Next]->isEnabled()) //while "Next Sheet" tool button is enabled,
+    {                                                             //i.e. while printing all sheets
         renderNextSheet();
 
         if (printer.fromPage() != 0 && printer.fromPage() > currentSheetNumber + 1)
@@ -463,14 +470,16 @@ void MainWindow::printAllSheets()
         painter.drawImage(0, 0, image);
 
         if (ui->toolBar->actions()[ToolButton::Next]->isEnabled() //if "Next Sheet" tool button is enabled,
-               && (printer.toPage() != 0                         //i.e this sheet is not the last,
-                   && currentSheetNumber + 1 < printer.toPage()))//and we're not going out of page range
-            printer.newPage();                                   //defined by user
+               && (printer.toPage() != 0                          //i.e this sheet is not the last,
+                   && currentSheetNumber + 1 < printer.toPage())) //and we're not going out of page range
+            printer.newPage();                                    //defined by user
     }
 
     painter.end();
     ui->svgView->hideBorders(false);
 
+    //we used renderNextSheet() for the first sheet instead of renderFirstSheet()
+    //so we need to check the number of sheet and disable previous toolbutton if needed
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 }
