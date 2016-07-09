@@ -3,6 +3,7 @@
 SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
 {
     currentScaleFactor = 1.0;
+    areBordersHidden = false;
     maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
     minScaleFactor = 0.05;
 
@@ -146,6 +147,8 @@ void SvgView::prepareSceneToRender()
         srand(seed);
     else
         srand(QTime::currentTime().msec());
+
+    hideBorders(areBordersHidden);
 }
 
 bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, int currentSymbolIndex)
@@ -650,6 +653,7 @@ void SvgView::loadHyphenRules()
 
 void SvgView::hideBorders(bool hide)
 {
+    areBordersHidden = hide;
     scene->items(Qt::AscendingOrder).at(0)->setVisible(!hide); //sheetRect
     scene->items(Qt::AscendingOrder).at(1)->setVisible(!hide); //marginsRect
 }

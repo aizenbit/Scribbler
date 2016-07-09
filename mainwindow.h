@@ -82,7 +82,7 @@ private slots:
     void saveSheet(QString fileName = QString());
     void saveAllSheets();
     void printSheet();
-    void printAllSheets(QPrinter *printer = new QPrinter(QPrinter::HighResolution));
+    void printAllSheets();
     void loadTextFromFile();
     void loadSettings();
     void countMissedCharacters();

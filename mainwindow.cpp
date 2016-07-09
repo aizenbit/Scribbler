@@ -230,7 +230,6 @@ void MainWindow::renderFirstSheet()
     sheetPointers.push_back(0);
 
     currentSheetNumber = 0;
-    //ui->svgView->hideBorders(false);
 
     text = ui->textEdit->toPlainText();
     text = simplifyEnd(text); //to avoid blank sheets at the end
@@ -249,7 +248,6 @@ void MainWindow::renderFirstSheet()
 void MainWindow::renderNextSheet()
 {
     currentSheetNumber++;
-    //ui->svgView->hideBorders(false);
 
     if (preferencesDialog->alternateMargins())
         ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
@@ -276,7 +274,6 @@ void MainWindow::renderNextSheet()
 void MainWindow::renderPreviousSheet()
 {
     currentSheetNumber--;
-    //ui->svgView->hideBorders(false);
 
     if (preferencesDialog->alternateMargins())
         ui->svgView->changeLeftRightMargins(currentSheetNumber % 2);
@@ -371,10 +368,38 @@ void MainWindow::saveAllSheetsToImages(const QString &fileName, const int indexO
 
 void MainWindow::saveAllSheetsToPDF(const QString &fileName)
 {
-    QPrinter *printer = new QPrinter(QPrinter::PrinterResolution);
-    printer->setOutputFormat(QPrinter::PdfFormat);
-    printer->setOutputFileName(fileName);
-    printAllSheets(printer);
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+    preparePrinter(&printer);
+
+    QPainter painter(&printer);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    currentSheetNumber = -1;
+    ui->toolBar->actions()[ToolButton::Next]->setEnabled(true);
+
+    ui->svgView->hideBorders(true);
+    while (ui->toolBar->actions()[ToolButton::Next]->isEnabled())//while "Next Sheet" tool button is enabled,
+    {                                                            //i.e. while printing all sheets
+        renderNextSheet();
+
+        QImage image = ui->svgView->saveRenderToImage();
+
+        if (image.format() == QImage::Format_Invalid || !printer.isValid())
+            return;
+
+        painter.drawImage(0, 0, image);
+
+        if (ui->toolBar->actions()[ToolButton::Next]->isEnabled()) //if "Next Sheet" tool button is enabled,
+            printer.newPage();                                    //i.e this sheet isn't the last one
+    }
+
+    painter.end();
+    ui->svgView->hideBorders(false);
+
+    if (currentSheetNumber == 0)
+        ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 }
 
 void MainWindow::printSheet()
@@ -401,53 +426,50 @@ void MainWindow::printSheet()
 
 }
 
-void MainWindow::printAllSheets(QPrinter *printer)
+void MainWindow::printAllSheets()
 {
-    if (printer->outputFormat() != QPrinter::PdfFormat)
-    {
-        QPrintDialog dialog(printer);
-        dialog.addEnabledOption(QAbstractPrintDialog::PrintPageRange);
-        dialog.setMinMax(1, INT_MAX);
-        if (dialog.exec() != QPrintDialog::Accepted)
-            return;
-    }
+    QPrinter printer(QPrinter::HighResolution);
 
-    preparePrinter(printer);
+    QPrintDialog dialog(&printer);
+    dialog.addEnabledOption(QAbstractPrintDialog::PrintPageRange);
+    dialog.setMinMax(1, INT_MAX);
 
-    QPainter painter(printer);
+    if (dialog.exec() != QPrintDialog::Accepted)
+        return;
+
+    preparePrinter(&printer);
+
+    QPainter painter(&printer);
     painter.setRenderHint(QPainter::Antialiasing);
 
     currentSheetNumber = -1;
     ui->toolBar->actions()[ToolButton::Next]->setEnabled(true);
+    ui->svgView->hideBorders(true);
 
     while (ui->toolBar->actions()[ToolButton::Next]->isEnabled())//while "Next Sheet" tool button is enabled,
     {                                                            //i.e. while printing all sheets
         renderNextSheet();
-        ui->svgView->hideBorders(true);
 
-        if (printer->fromPage() != 0 && printer->fromPage() > currentSheetNumber + 1)
+        if (printer.fromPage() != 0 && printer.fromPage() > currentSheetNumber + 1)
             continue;
-        if (printer->toPage() != 0 && printer->toPage() < currentSheetNumber + 1)
+        if (printer.toPage() != 0 && printer.toPage() < currentSheetNumber + 1)
             continue;
 
         QImage image = ui->svgView->saveRenderToImage();
-        if (image.format() == QImage::Format_Invalid || !printer->isValid())
-        {
-            delete printer;
+
+        if (image.format() == QImage::Format_Invalid || !printer.isValid())
             return;
-        }
+
         painter.drawImage(0, 0, image);
 
         if (ui->toolBar->actions()[ToolButton::Next]->isEnabled() //if "Next Sheet" tool button is enabled,
-               && (printer->toPage() != 0                         //i.e this sheet is not the last,
-                   && currentSheetNumber + 1 < printer->toPage()))//and we're not going out of page range
-            printer->newPage();                                   //defined by user
+               && (printer.toPage() != 0                         //i.e this sheet is not the last,
+                   && currentSheetNumber + 1 < printer.toPage()))//and we're not going out of page range
+            printer.newPage();                                   //defined by user
     }
 
     painter.end();
     ui->svgView->hideBorders(false);
-
-    delete printer;
 
     if (currentSheetNumber == 0)
         ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);

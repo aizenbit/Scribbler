@@ -69,7 +69,7 @@ private:
     int spacesInTab;
     int seed;
     bool useCustomFontColor, changeMargins, connectingLetters,
-         useSeed, roundLines, wordWrap, hyphenateWords;
+         useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden;
     qreal maxScaleFactor, minScaleFactor, currentScaleFactor;
     qreal fontSize, penWidth, letterSpacing, lineSpacing, wordSpacing;
     QRectF sheetRect, marginsRect;
