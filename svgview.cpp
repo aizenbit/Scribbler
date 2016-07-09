@@ -243,7 +243,7 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 
         if (!wrapLastSymbols(symbolsToWrap))
         {
-            previousSymbolCursor.rx() = marginsRect.x();
+            previousSymbolCursor.rx() = currentMarginsRect.x() - previousSymbolWidth;
             previousSymbolCursor.ry() += (fontSize + lineSpacing) * dpmm;
             storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
             storedSymbolData.push_back(QVector<SymbolData>());
