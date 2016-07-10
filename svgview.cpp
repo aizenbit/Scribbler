@@ -653,6 +653,7 @@ void SvgView::loadSettingsFromFile()
 void SvgView::loadHyphenRules()
 {
     hyphenRules.clear();
+    //load variables with their values first
     QMap<QString, QString> variables;
     QSettings settings("hyphenationRules.ini", QSettings::IniFormat);
     settings.beginGroup("Variables");
@@ -660,12 +661,15 @@ void SvgView::loadHyphenRules()
     for (const QString &name : settings.childKeys())
         variables.insert(name, QString::fromUtf8(settings.value(name).toString().toLatin1()));
 
+    //than load rules
     settings.endGroup();
     settings.beginGroup("Rules");
+
     for (const QString &key : settings.childKeys())
     {
         QString rule = settings.value(key).toString();
 
+        //and replace variables on their values
         for (QString &variable : variables.uniqueKeys())
             rule.replace(variable, variables[variable]);
 

@@ -46,6 +46,8 @@ void SymbolDataEditor::load(const QString & fileName)
     }
 
     file.close();
+
+    //scale viewbox because it is necessary in SvgView::insertSymbol()
     QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
     SvgView::scaleViewBox(svgElement);
     QByteArray scaledFile = doc.toString(0).replace(">\n<tspan", "><tspan").toUtf8();
@@ -55,10 +57,14 @@ void SymbolDataEditor::load(const QString & fileName)
 
     QSizeF itemSize = symbolItem->renderer()->defaultSize();
     clear();
+
+    //add changed item to the scene
     scene->setSceneRect(0, 0, itemSize.width() * sceneScale, itemSize.height() * sceneScale);
     symbolItem->setPos(scene->width() / 2 - itemSize.width() / 2.0,
                        scene->height() / 2 - itemSize.height() / 2.0);
     scene->addItem(symbolItem);
+
+    //autoscale graphicsview depending on items and views size
     limitScale(qMax(qreal(width()) / itemSize.width(),
                     qreal(height()) / itemSize.height()) / currentScaleFactor);
     centerOn(symbolItem);
@@ -90,6 +96,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
     symbolRect.adjust(symbolRect.width() / 4, symbolRect.height() / 4,
                       -symbolRect.width() / 4, -symbolRect.height() / 4);
 
+    //try to set data automatically if they're not set
     if (_inPoint.isNull())
     {
         if (setupPoints)
