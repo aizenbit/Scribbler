@@ -43,7 +43,7 @@ private:
         Custom
     };
 
-    bool changedByProgram;
+    bool changedByProgram; //!< are spinboxes changed by program or by user; look at setSheetSize()
 
 private slots:
     void setSheetSize(int size);

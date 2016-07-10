@@ -179,12 +179,13 @@ bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 {
     int previousSymbolIndex = currentSymbolIndex - 1;
 
-    if (!wordWrap || previousSymbolIndex < 0 ||
-            previousSymbolIndex >= text.size() ||
+    if (!wordWrap ||
+            previousSymbolIndex < 0 || previousSymbolIndex >= text.size() ||
             !(text.at(currentSymbolIndex).isLetterOrNumber() || text.at(currentSymbolIndex).isPunct()) ||
             !(text.at(previousSymbolIndex).isLetterOrNumber() || text.at(previousSymbolIndex).isPunct()))
         return false;
 
+    //wrap all the last letters
     int lastNonLetter = text.toString().lastIndexOf(QRegularExpression("[^\\p{L}]"), currentSymbolIndex);
     int symbolsToWrap = currentSymbolIndex - lastNonLetter - 1;
 
@@ -209,10 +210,12 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
             cursor.y() - previousSymbolCursor.y() > 0.0000001)
         return false;
 
+    //find word boundary
     int lastNonLetter = text.toString().lastIndexOf(QRegularExpression("[^\\p{L}]"), currentSymbolIndex);
     int nextNonLetter = text.toString().indexOf(QRegularExpression("[^\\p{L}]"), currentSymbolIndex);
     QString word;
 
+    //select a word
     if (nextNonLetter > 0)
         word = text.mid(lastNonLetter + 1, nextNonLetter - lastNonLetter).toString();
     else
@@ -312,7 +315,6 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
         scene->items(Qt::AscendingOrder)[itemsCount - i]->setPos(pos);
     }
 
-    scene->addEllipse(firstItemToWrap->pos().x(), firstItemToWrap->pos().y(), 15,15, QPen(Qt::red));
     return true;
 }
 
@@ -328,17 +330,26 @@ QGraphicsSvgItem * SvgView::generateHyphen(int symbolsToWrap)
 
     QGraphicsSvgItem *hyphen = new QGraphicsSvgItem();
 
+    //prepare hyphens item
     SvgData data = font.values('-').at(qrand() % font.values('-').size());
     hyphen->setSharedRenderer(data.renderer);
     hyphen->setScale(data.scale);
 
     SymbolData hyphenData = data.symbolData;
 
+    //calculate hyphens position
     QSizeF  hyphenBoundingSize = hyphen->boundingRect().size() * hyphen->scale();
     QGraphicsItem* nearestLetter = scene->items(Qt::AscendingOrder).at(scene->items().size() - symbolsToWrap);
     QPointF hyphenPos = cursor;
     hyphenPos.ry() -= hyphenBoundingSize.height() * hyphenData.limits.top();
-    hyphenPos.rx() = nearestLetter->pos().x() + nearestLetter->boundingRect().width() * nearestLetter->scale(); //TODO: you know what
+    hyphenPos.rx() = nearestLetter->pos().x() + nearestLetter->boundingRect().width() * nearestLetter->scale();
+
+    if (storedSymbolData.last().size() - symbolsToWrap >= 0) //TODO: consider missing items and get rid of this check
+    {
+        SymbolData nearestLetterData = storedSymbolData.last().at(storedSymbolData.last().size() - symbolsToWrap);
+        hyphenPos.rx() -=  nearestLetter->boundingRect().width() * nearestLetter->scale() * (1.0 - nearestLetterData.limits.right());
+    }
+
     hyphen->setPos(hyphenPos);
 
     return hyphen;
@@ -356,7 +367,7 @@ void SvgView::connectLetters()
             QGraphicsSvgItem * currentLetter = storedWordItems.at(currentWord).at(currentSymbol);
             QGraphicsSvgItem * previousLetter = storedWordItems.at(currentWord).at(currentSymbol - 1);
 
-            //pL means previous letter; cL - current letter
+            //calculate boudingRects; pL means previous letter; cL - current letter
             QSizeF pLBoundingRect, cLBoundingRect;
             pLBoundingRect.setWidth(previousLetter->boundingRect().width() * previousLetter->scale());
             pLBoundingRect.setHeight(previousLetter->boundingRect().height() * previousLetter->scale());
@@ -377,6 +388,7 @@ void SvgView::connectLetters()
             inPoint.ry() = currentLetter->pos().y() +
                     cLSymbolData.inPoint.y() * cLBoundingRect.height();
 
+            //prepare a pen and draw the line
             QPen pen(fontColor);
             pen.setWidth(penWidth * dpmm);
             pen.setCapStyle(Qt::RoundCap);
@@ -391,7 +403,7 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
     switch (symbol.toLatin1())
     {
     case '\t':
-        cursor.rx() += wordSpacing * dpmm * spacesInTab;
+        cursor.rx() += wordSpacing * dpmm * spacesInTab - letterSpacing * dpmm;
         break;
 
     case '\n':
@@ -445,6 +457,7 @@ void SvgView::loadFont(QString fontpath)
         return;
     }
 
+    //clear the loaded font
     for (SvgData &data : font.values())
     {
         delete data.renderer;
@@ -454,6 +467,7 @@ void SvgView::loadFont(QString fontpath)
 
     QString fontDirectory = QFileInfo(fontpath).path() + '/';
 
+    //load the data of symbols except the data for capital (uppercase) letters
     for (const QString &key : fontSettings.childKeys())
         for (SymbolData symbolData : fontSettings.value(key).value<QList<SymbolData>>())
         {
@@ -466,6 +480,7 @@ void SvgView::loadFont(QString fontpath)
                 insertSymbol(key.at(0), symbolData);
         }
 
+    //Load uppercase letters.
     //It's a dirty hack, which helps to distinguish uppercase and lowercase
     //letters on a freaking case-insensetive Windows
     fontSettings.beginGroup("UpperCase");
@@ -491,6 +506,7 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
     qreal symbolHeight = renderer->defaultSize().height() * symbolData.limits.height();
     qreal scale = fontSize * dpmm / symbolHeight;
 
+    //start SVG editing
     QDomDocument doc("SVG");
     QFile file(symbolData.fileName);
 
@@ -505,10 +521,11 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
 
     file.close();
 
-    //get necessary SVG nodes
-    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
-    scaleViewBox(svgElement);
 
+    QDomElement svgElement = doc.elementsByTagName("svg").item(0).toElement();
+    scaleViewBox(svgElement); //scale viewBox to avoid the cut lines with an increase in the width of the line
+
+    //get necessary SVG nodes
     QStringList viewBox = svgElement.attribute("viewBox").split(" ");
     qreal dotsPerUnits = renderer->defaultSize().height() / viewBox.at(3).toDouble();
     qreal newPenWidth = penWidth * dpmm / scale / dotsPerUnits;
@@ -516,7 +533,7 @@ void SvgView::insertSymbol(QChar key, SymbolData &symbolData)
     QDomNodeList pathList = doc.elementsByTagName("path");
     QDomNodeList styleList = doc.elementsByTagName("style");
 
-    //change necessary attributes
+    //change necessary attributes; they can be in "style" nodes or in "path" nodes
     if (!styleList.isEmpty())
     {
         QDomElement element = styleList.item(0).toElement();
@@ -571,7 +588,8 @@ void SvgView::changeAttribute(QString &attribute, QString parameter, QString new
     {
         int semicolon = attribute.lastIndexOf(QRegularExpression(";"));
         int endSign = attribute.lastIndexOf(QRegularExpression(";|}"));
-        attribute.insert(semicolon > endSign ? semicolon : endSign, (attribute.isEmpty() ? "" : ";") + parameter + ":" + newValue);
+        attribute.insert(semicolon > endSign ? semicolon : endSign,
+                         (attribute.isEmpty() ? "" : ";") + parameter + ":" + newValue);
     }
 }
 
