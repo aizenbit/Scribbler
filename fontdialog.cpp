@@ -439,20 +439,24 @@ void FontDialog::autoLoadSymbols()
         return;
 
     QMap <QString, QChar> markNames;
-    markNames.insert("colon.svg", ':');
-    markNames.insert("slash.svg", '/');
-    markNames.insert("backslash.svg", '\\');
-    markNames.insert("question.svg", '?');
-    markNames.insert("vertical.svg", '|');
-    markNames.insert("asterisk.svg", '*');
-    markNames.insert("less.svg", '<');
-    markNames.insert("greater.svg", '>');
-    markNames.insert("caret.svg", '^');
+    markNames.insert("dot", '.');
+    markNames.insert("colon", ':');
+    markNames.insert("semicolon", ';');
+    markNames.insert("slash", '/');
+    markNames.insert("backslash", '\\');
+    markNames.insert("question", '?');
+    markNames.insert("vertical", '|');
+    markNames.insert("asterisk", '*');
+    markNames.insert("less", '<');
+    markNames.insert("greater", '>');
+    markNames.insert("caret", '^');
+    markNames.insert("quotes", '"');
 
     QRegularExpression upLetters("^UP_._?[0-9]*\\.svg");
     upLetters.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
     QRegularExpression symbols("^._?[0-9]*\\.svg");
     symbols.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    QString marks("_?[0-9]*\\.svg");
 
     for (QString fileName : files)
     {
@@ -466,8 +470,12 @@ void FontDialog::autoLoadSymbols()
             if (fileName.at(3).isLetter())
                 symbol = fileName.at(3).toUpper();
 
-        if (markNames.contains(fileName.toLower()))
-            symbol = markNames[fileName.toLower()];
+        for (QString name : markNames.keys())
+            if (QRegularExpression(name + marks).match(fileName.toLower()).hasMatch())
+            {
+                 symbol = markNames[name];
+                 break;
+            }
 
         if (symbol.isNull())
             continue;
