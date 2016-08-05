@@ -16,5 +16,4 @@ It can be used to design invitations, greetings and inscriptions of celebrations
 
 #### Screenshot:
 
-![screenshot](https://cloud.githubusercontent.com/assets/5664923/16589495/19e9d8cc-42dc-11e6-9a2a-49d3ae93ce8b.png)
-
+![screenshot](https://cloud.githubusercontent.com/assets/5664923/17451681/5576bbe6-5b71-11e6-806f-c4be061f7221.png)
