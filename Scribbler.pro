@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Scribbler
 TEMPLATE = app
-
+DEFINES += QT_COMPILING_QSTRING_COMPAT_CPP
 
 SOURCES += main.cpp\
         mainwindow.cpp \
