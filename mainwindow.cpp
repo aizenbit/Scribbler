@@ -91,19 +91,6 @@ MainWindow::MainWindow(QWidget *parent) :
     currentSheetNumber = 0;
 
     preferencesDialog->loadSettingsFromFile();
-
-    /* NOTE: This is a hack to avoid a bug. When program starts, it takes some time
-     * (at least 1 ms on my configuration, but I set the delay to 100 ms just to make sure
-     * that it will work on weaker machines) before it can write settings to file,
-     * otherwise ui->colorButton->palette().background().color() will return
-     * default buttons background color (usually grey), which will be written to settings
-     * file once program launches.
-     */
-
-    QTime dieTime = QTime::currentTime().addMSecs(100);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-
     preferencesDialog->loadSettingsToFile();
 }
 
