@@ -32,6 +32,7 @@
 #include <QtWidgets/QTreeWidgetItem>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QMessageBox>
 
 #include "symboldata.h"
 
@@ -83,6 +84,8 @@ private slots:
     bool isFileItem(QTreeWidgetItem *item);
     bool isSymbolItem(QTreeWidgetItem *item);
     bool isCategoryItem(QTreeWidgetItem *item);
+    void showError();
+    void resetSymbolDataEditor();
 };
 
 #endif // FONTDIALOG_H

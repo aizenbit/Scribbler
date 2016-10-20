@@ -229,15 +229,12 @@ void FontDialog::rejectChanges()
 {
     font.clear();
     fontFileName.clear();
-    lastItem = nullptr;
-    enableDrawButtons(false);
     ui->SymbolFilesPushButton->setEnabled(false);
     ui->autoLoadPushButton->setEnabled(false);
     ui->choosenSymbolTextEdit->clear();
     ui->fontFileTextEdit->clear();
     ui->treeWidget->clear();
-    ui->symbolDataEditor->disableChanges();
-    ui->symbolDataEditor->clear();
+    resetSymbolDataEditor();
 }
 
 void FontDialog::limitTextEdit()
@@ -266,16 +263,22 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
         if (isSymbolItem(item))
             ui->choosenSymbolTextEdit->setText(item->text(0));
 
-        enableDrawButtons(false);
-        ui->symbolDataEditor->disableChanges();
-        ui->symbolDataEditor->clear();
-        lastItem = nullptr;
+        resetSymbolDataEditor();
     }
     else
     {
+        QString fileName = QFileInfo(fontFileName).path() + '/' + item->text(0);
+
+        if (!QFileInfo(fileName).isReadable())
+        {
+            resetSymbolDataEditor();
+            showError();
+            return;
+        }
+
         enableDrawButtons(true);
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
-        ui->symbolDataEditor->load(QFileInfo(fontFileName).path() + '/' + item->text(0));
+        ui->symbolDataEditor->load(fileName);
         QList<SymbolData> dataList = font.values(item->parent()->text(0).at(0));
 
         for (const SymbolData &data : dataList)
@@ -350,10 +353,7 @@ void FontDialog::deleteItem()
     if (categoryItem->childCount() == 0)
         delete categoryItem;
 
-    enableDrawButtons(false);
-    ui->symbolDataEditor->disableChanges();
-    ui->symbolDataEditor->clear();
-    lastItem = nullptr;
+    resetSymbolDataEditor();
 }
 
 void FontDialog::enableDrawButtons(bool enable)
@@ -588,4 +588,20 @@ bool FontDialog::isFileItem(QTreeWidgetItem *item)
     else
         return false;
 
+}
+
+void FontDialog::showError()
+{
+    QMessageBox messageBox;
+    messageBox.setIcon(QMessageBox::Warning);
+    messageBox.setText(tr("Cannot read this file."));
+    messageBox.exec();
+}
+
+void FontDialog::resetSymbolDataEditor()
+{
+    enableDrawButtons(false);
+    ui->symbolDataEditor->disableChanges();
+    ui->symbolDataEditor->clear();
+    lastItem = nullptr;
 }

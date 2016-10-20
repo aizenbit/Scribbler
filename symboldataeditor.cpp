@@ -91,6 +91,9 @@ void SymbolDataEditor::limitScale(qreal factor)
 
 void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
+    if (scene->items().size() <= 0)
+        return;
+
     QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
     symbolRect.moveTopLeft(scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->pos());
     symbolRect.adjust(symbolRect.width() / 4, symbolRect.height() / 4,
