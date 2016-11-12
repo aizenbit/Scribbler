@@ -161,7 +161,8 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
         if (!hyphenateHappened)
             wrapWordHappened = wrapWords(text, currentSymbolIndex);
 
-        if (!hyphenateHappened && !wrapWordHappened)
+        if (!hyphenateHappened && !wrapWordHappened &&
+                !text.at(currentSymbolIndex).isPunct())
         {
             cursor.rx() = currentMarginsRect.x();
             cursor.ry() += (fontSize + lineSpacing) * dpmm;
