@@ -155,6 +155,14 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
 {
     if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - symbolWidth))
     {
+        //just another crutch
+        //TODO: refactoring
+        if (cursor.y() > currentMarginsRect.bottomRight().y() - (lineSpacing + fontSize * 2) * dpmm)
+        {
+            cursor.ry() += (fontSize + lineSpacing) * dpmm;
+            return false;
+        }
+
         bool hyphenateHappened = hyphenate(text, currentSymbolIndex);
         bool wrapWordHappened = false;
 
