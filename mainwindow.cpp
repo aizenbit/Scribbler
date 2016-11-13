@@ -267,7 +267,7 @@ void MainWindow::renderPreviousSheet()
     else
         ui->svgView->changeLeftRightMargins(false);
 
-    int lettersToTheEnd = sheetPointers.at(currentSheetNumber + 1) - sheetPointers.at(currentSheetNumber);
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
     ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 
     ui->toolBar->actions()[ToolButton::Next]->setEnabled(true);
