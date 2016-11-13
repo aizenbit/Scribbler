@@ -6,6 +6,7 @@ SvgView::SvgView(QWidget *parent) : QGraphicsView(parent)
     areBordersHidden = false;
     maxScaleFactor = 1.5;
     minScaleFactor = 0.05;
+    itemsToRemove = 0;
 
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setDragMode(ScrollHandDrag);
@@ -118,8 +119,30 @@ int SvgView::renderText(const QStringRef &text)
 
     }
 
+    removeLastSymbols();
+    endOfSheet -= itemsToRemove;
     connectLetters();
     return endOfSheet;
+}
+
+void SvgView::removeLastSymbols()
+{
+    int itemsCount = scene->items().size();
+
+    if (itemsCount < itemsToRemove)
+        return;
+
+    for (int i = 0; i < itemsToRemove; i++)
+    {
+        while (storedSymbolData.last().isEmpty())
+            storedSymbolData.removeLast();
+        while (storedWordItems.last().isEmpty())
+            storedWordItems.removeLast();
+
+        scene->removeItem(storedWordItems.last().last());
+        storedSymbolData.last().removeLast();
+        storedWordItems.last().removeLast();
+    }
 }
 
 void SvgView::prepareSceneToRender()
@@ -129,6 +152,7 @@ void SvgView::prepareSceneToRender()
     storedWordItems.clear();
     storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
     storedSymbolData.push_back(QVector<SymbolData>());
+    itemsToRemove = 0;
 
     if (changeMargins)
         currentMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
@@ -155,14 +179,6 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
 {
     if (cursor.x() > (currentMarginsRect.x() + currentMarginsRect.width() - symbolWidth))
     {
-        //just another crutch
-        //TODO: refactoring
-        if (cursor.y() > currentMarginsRect.bottomRight().y() - (lineSpacing + fontSize * 2) * dpmm)
-        {
-            cursor.ry() += (fontSize + lineSpacing) * dpmm;
-            return false;
-        }
-
         bool hyphenateHappened = hyphenate(text, currentSymbolIndex);
         bool wrapWordHappened = false;
 
@@ -202,6 +218,10 @@ bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
     {
         cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth;
         cursor.ry() += (fontSize + lineSpacing) * dpmm;
+
+        if (cursor.y() > currentMarginsRect.bottomRight().y() - (lineSpacing + fontSize) * dpmm)
+            itemsToRemove = symbolsToWrap;
+
         return true;
     }
 
@@ -210,6 +230,9 @@ bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 
 bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 {
+    if (currentSymbolIndex == 906)
+        int a = 0;
+
     int previousSymbolIndex = currentSymbolIndex - 1;
 
     if (!hyphenateWords || previousSymbolIndex < 0 ||
@@ -269,6 +292,9 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 
     cursor.rx() = previousSymbolCursor.x() + previousSymbolWidth;
     cursor.ry() = previousSymbolCursor.y();
+
+    if (cursor.y() > currentMarginsRect.bottomRight().y() - (lineSpacing + fontSize) * dpmm)
+        itemsToRemove = symbolsToWrap;
 
     return true;
 }

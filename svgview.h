@@ -68,6 +68,7 @@ private:
     int dpmm; //!< dots per millimeter
     int spacesInTab;
     int seed;
+    uint itemsToRemove;
     bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden;
     qreal maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
@@ -94,6 +95,7 @@ private:
     void changeAttribute(QString &attribute, QString parameter, QString newValue); //!< changes value of parameter in XML attribute
     bool wrapWords(QStringRef text, int currentSymbolIndex);
     bool wrapLastSymbols(int symbolsToWrap);
+    void removeLastSymbols();
     bool hyphenate(QStringRef text, int currentSymbolIndex);
     void loadHyphenRules();
     QGraphicsSvgItem * generateHyphen(int symbolsToWrap);
