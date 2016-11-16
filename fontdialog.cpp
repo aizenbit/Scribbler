@@ -294,7 +294,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
 
 void FontDialog::loadFromEditorToFont()
 {
-    if (lastItem != nullptr)
+    if (lastItem != nullptr && isFileItem(lastItem))
     {
         SymbolData newData;
         newData.fileName = lastItem->text(0);

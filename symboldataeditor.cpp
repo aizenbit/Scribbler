@@ -91,7 +91,7 @@ void SymbolDataEditor::limitScale(qreal factor)
 
 void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits)
 {
-    if (scene->items().size() <= 0)
+    if (scene->items().isEmpty())
         return;
 
     QRectF symbolRect = scene->items(Qt::AscendingOrder).at(Item::SymbolItem)->boundingRect();
