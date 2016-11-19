@@ -78,6 +78,7 @@ private slots:
     void renderFirstSheet();
     void renderNextSheet();
     void renderPreviousSheet();
+    void updateCurrentSheet();
     void loadFont();
     void saveSheet(QString fileName = QString());
     void saveAllSheets();

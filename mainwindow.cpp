@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(renderNextSheet()));
 
     connect(fontDialog, SIGNAL(fontReady()),
-            ui->svgView, SLOT(loadFont()));
+            this, SLOT(updateCurrentSheet()));
     errorMessage->setModal(true);
 
     ui->toolBar->actions()[ToolButton::Render]->setShortcut(Qt::ControlModifier + Qt::Key_R);
@@ -276,6 +276,13 @@ void MainWindow::renderPreviousSheet()
         ui->toolBar->actions()[ToolButton::Previous]->setDisabled(true);
 
     showSheetNumber(currentSheetNumber);
+}
+
+void MainWindow::updateCurrentSheet()
+{
+    ui->svgView->loadFont();
+    int lettersToTheEnd = text.length() - sheetPointers.at(currentSheetNumber);
+    ui->svgView->renderText(QStringRef(&text, sheetPointers.at(currentSheetNumber), lettersToTheEnd));
 }
 
 void MainWindow::loadFont()
