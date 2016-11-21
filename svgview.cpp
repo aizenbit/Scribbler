@@ -168,7 +168,7 @@ void SvgView::prepareSceneToRender()
     cursor = QPointF(currentMarginsRect.x(), currentMarginsRect.y());
 
     if (useSeed)
-        srand(seed);
+        qsrand(seed);
     else
         srand(QTime::currentTime().msec());
 
