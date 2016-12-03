@@ -1,0 +1,38 @@
+language: cpp
+
+os:
+  - linux
+
+dist: trusty
+
+compiler:
+  - gcc
+
+env:
+  - QT=5  PPA=ubuntu-sdk-team/ppa
+  - QT=52 PPA=beineri/opt-qt521-trusty
+  - QT=53 PPA=beineri/opt-qt532-trusty
+  - QT=54 PPA=beineri/opt-qt542-trusty
+  - QT=55 PPA=beineri/opt-qt551-trusty
+  - QT=56 PPA=beineri/opt-qt562-trusty
+  - QT=57 PPA=beineri/opt-qt57-trusty
+
+before_install:
+  - '[[ "$TRAVIS_OS_NAME" != linux || -z "$PPA" ]] || sudo add-apt-repository -y ppa:$PPA'
+  - '[ "$TRAVIS_OS_NAME" != linux ] || sudo apt-get -qy update'
+
+install:
+  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || sudo apt-get -qy install qt${QT}base qt${QT}xmlpatterns qt${QT}svg'
+  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || sudo apt-get -qy install qt5-qmake qtbase5-dev libqt5xmlpatterns5-dev libqt5svg5-dev libqt5svg5'
+before_script:
+  - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != g++     ]] || export QMAKESPEC=linux-g++'
+  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || . /opt/qt$QT/bin/qt$QT-env.sh'
+  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || export QT_SELECT=qt5'
+  - mkdir -p "$TRAVIS_BUILD_DIR-build"
+  - pushd "$TRAVIS_BUILD_DIR-build"
+  - qmake -v
+  - qmake -r -Wall -Wlogic -Wparser "$TRAVIS_BUILD_DIR"
+  - popd
+
+script:
+  - make -C "$TRAVIS_BUILD_DIR-build" -j2 all
