@@ -170,7 +170,7 @@ void SvgView::prepareSceneToRender()
     if (useSeed)
         qsrand(seed);
     else
-        srand(QTime::currentTime().msec());
+        qsrand(QTime::currentTime().msec());
 
     hideBorders(areBordersHidden);
 }

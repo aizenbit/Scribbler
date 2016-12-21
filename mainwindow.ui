@@ -26,7 +26,11 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTextEdit" name="textEdit"/>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="acceptRichText">
+        <bool>false</bool>
+       </property>
+      </widget>
       <widget class="SvgView" name="svgView"/>
      </widget>
     </item>
