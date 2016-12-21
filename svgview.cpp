@@ -61,8 +61,7 @@ int SvgView::renderText(const QStringRef &text)
 
             if (cursor.x() > currentMarginsRect.bottomRight().x() - (fontSize + letterSpacing) * dpmm)
             {
-                cursor.rx() = currentMarginsRect.x();
-                cursor.ry() += (fontSize + lineSpacing) * dpmm;
+                cursorToNewLine();
                 storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
                 storedSymbolData.push_back(QVector<SymbolData>());
             }
@@ -154,18 +153,13 @@ void SvgView::prepareSceneToRender()
     storedSymbolData.push_back(QVector<SymbolData>());
     itemsToRemove = 0;
 
-    if (changeMargins)
-        currentMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
-                                            marginsRect.topLeft().y()),
-                                    QPointF(sheetRect.bottomRight().x() - marginsRect.bottomLeft().x(),
-                                            marginsRect.bottomRight().y()));
-    else
-        currentMarginsRect = marginsRect;
+    currentMarginsRect = changedVerticalMargins();
+
 
     scene->addRect(sheetRect);
     scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
 
-    cursor = QPointF(currentMarginsRect.x(), currentMarginsRect.y());
+    randomizeMargins();
 
     if (useSeed)
         qsrand(seed);
@@ -173,6 +167,8 @@ void SvgView::prepareSceneToRender()
         qsrand(QTime::currentTime().msec());
 
     hideBorders(areBordersHidden);
+
+    cursor = QPointF(currentMarginsRect.x(), currentMarginsRect.y());
 }
 
 bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, int currentSymbolIndex)
@@ -188,8 +184,7 @@ bool SvgView::preventGoingBeyondRightMargin(qreal symbolWidth, QStringRef text, 
         if (!hyphenateHappened && !wrapWordHappened &&
                 !text.at(currentSymbolIndex).isPunct())
         {
-            cursor.rx() = currentMarginsRect.x();
-            cursor.ry() += (fontSize + lineSpacing) * dpmm;
+            cursorToNewLine();
             storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
             storedSymbolData.push_back(QVector<SymbolData>());
         }
@@ -278,6 +273,7 @@ bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 
         if (!wrapLastSymbols(symbolsToWrap))
         {
+            randomizeMargins();
             previousSymbolCursor.rx() = currentMarginsRect.x() - previousSymbolWidth;
             previousSymbolCursor.ry() += (fontSize + lineSpacing) * dpmm;
             storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
@@ -310,9 +306,10 @@ bool SvgView::wrapLastSymbols(int symbolsToWrap)
     QGraphicsItem * firstItemToWrap = scene->items(Qt::AscendingOrder)[itemsCount - itemsToWrap];
     qreal firstWrapItemPosX = firstItemToWrap->pos().x();
 
-    if (firstWrapItemPosX == currentMarginsRect.x())
-        return false;
+    /*if (firstWrapItemPosX == currentMarginsRect.x())
+        return false;*/
 
+    randomizeMargins();
     //this is how much you need to move symbols to the left
     qreal leftOffset = firstWrapItemPosX - currentMarginsRect.x();
 
@@ -442,8 +439,7 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
         break;
 
     case '\n':
-        cursor.rx() = currentMarginsRect.x();
-        cursor.ry() += (fontSize + lineSpacing) * dpmm;
+        cursorToNewLine();
         break;
 
     case ' ':
@@ -724,4 +720,39 @@ void SvgView::hideBorders(bool hide)
 void SvgView::changeLeftRightMargins(bool change)
 {
     changeMargins = change;
+}
+
+QRectF SvgView::changedVerticalMargins()
+{
+    QRectF changedMarginsRect;
+
+    if (changeMargins)
+        changedMarginsRect = QRectF(QPointF(sheetRect.topRight().x() - marginsRect.topRight().x(),
+                                            marginsRect.topLeft().y()),
+                                    QPointF(sheetRect.bottomRight().x() - marginsRect.bottomLeft().x(),
+                                            marginsRect.bottomRight().y()));
+    else
+        changedMarginsRect = marginsRect;
+
+    return changedMarginsRect;
+}
+
+void SvgView::randomizeMargins()
+{
+    qreal previousX = currentMarginsRect.x();
+    uint power = 2 * dpmm;
+    qreal shift = power;
+    qreal random = qrand() % power;
+    if (qrand() % 2)
+        random = -random;
+
+    currentMarginsRect = changedVerticalMargins();
+    currentMarginsRect.setLeft(currentMarginsRect.x() + shift + random);
+}
+
+void SvgView::cursorToNewLine()
+{
+    randomizeMargins();
+    cursor.rx() = currentMarginsRect.x();
+    cursor.ry() += (fontSize + lineSpacing) * dpmm;
 }

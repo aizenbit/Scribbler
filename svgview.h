@@ -98,7 +98,10 @@ private:
     void removeLastSymbols();
     bool hyphenate(QStringRef text, int currentSymbolIndex);
     void loadHyphenRules();
+    QRectF changedVerticalMargins();
     QGraphicsSvgItem * generateHyphen(int symbolsToWrap);
+    void randomizeMargins();
+    void cursorToNewLine();
 };
 
 #endif // SVGVIEW_H
