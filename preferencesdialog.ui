@@ -72,14 +72,14 @@
             <item row="2" column="2">
              <widget class="QSpinBox" name="sheetWidthSpinBox">
               <property name="maximum">
-               <number>999</number>
+               <number>9999</number>
               </property>
              </widget>
             </item>
             <item row="3" column="2">
              <widget class="QSpinBox" name="sheetHeightSpinBox">
               <property name="maximum">
-               <number>999</number>
+               <number>9999</number>
               </property>
              </widget>
             </item>
@@ -100,68 +100,106 @@
            </property>
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="1">
-             <widget class="QSpinBox" name="leftMarginsSpinBox">
-              <property name="value">
-               <number>5</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
              <widget class="QLabel" name="label_6">
               <property name="text">
                <string>Left (mm):</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="2">
+             <widget class="QSpinBox" name="topMarginsSpinBox">
+              <property name="maximum">
+               <number>999</number>
+              </property>
+              <property name="value">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
              <widget class="QSpinBox" name="rightMarginsSpinBox">
+              <property name="maximum">
+               <number>999</number>
+              </property>
               <property name="value">
                <number>5</number>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="topMarginsSpinBox">
-              <property name="value">
-               <number>5</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
              <widget class="QLabel" name="label_8">
               <property name="text">
                <string>Top (mm):</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="0" column="2">
+             <widget class="QSpinBox" name="leftMarginsSpinBox">
+              <property name="maximum">
+               <number>999</number>
+              </property>
+              <property name="value">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
              <widget class="QLabel" name="label_7">
               <property name="text">
                <string>Right (mm):</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="4" column="2">
+             <widget class="QSpinBox" name="bottomMarginsSpinBox">
+              <property name="maximum">
+               <number>999</number>
+              </property>
+              <property name="value">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
              <widget class="QLabel" name="label_9">
               <property name="text">
                <string>Bottom (mm):</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QSpinBox" name="bottomMarginsSpinBox">
-              <property name="value">
-               <number>5</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" colspan="2">
+            <item row="7" column="1" colspan="2">
              <widget class="QCheckBox" name="alternateMarginsCheckBox">
               <property name="toolTip">
                <string>Change left and right margins of even sheets</string>
               </property>
               <property name="text">
                <string>Alternate Margins of even Sheets</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_8">
+           <property name="title">
+            <string>Randomization of ...</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="leftMarginRandomCheckBox">
+              <property name="text">
+               <string>Left margin by (mm):</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="leftMarginRandomSpinBox">
+              <property name="maximum">
+               <double>999.990000000000009</double>
               </property>
              </widget>
             </item>
@@ -181,7 +219,10 @@
             <item row="3" column="1">
              <widget class="QDoubleSpinBox" name="lineSpacingSpinBox">
               <property name="minimum">
-               <double>-99.000000000000000</double>
+               <double>-999.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>999.990000000000009</double>
               </property>
               <property name="value">
                <double>8.000000000000000</double>
@@ -247,6 +288,9 @@
             </item>
             <item row="4" column="1">
              <widget class="QDoubleSpinBox" name="penWidthSpinBox">
+              <property name="maximum">
+               <double>999.990000000000009</double>
+              </property>
               <property name="singleStep">
                <double>0.100000000000000</double>
               </property>
@@ -289,7 +333,10 @@
             <item row="1" column="1">
              <widget class="QDoubleSpinBox" name="wordSpacingSpinBox">
               <property name="minimum">
-               <double>-99.000000000000000</double>
+               <double>-999.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>999.990000000000009</double>
               </property>
               <property name="value">
                <double>5.000000000000000</double>
@@ -406,6 +453,9 @@
               </item>
               <item>
                <widget class="QSpinBox" name="spacesInTabSpinBox">
+                <property name="maximum">
+                 <number>999</number>
+                </property>
                 <property name="value">
                  <number>4</number>
                 </property>
@@ -458,7 +508,7 @@
               <item>
                <widget class="QSpinBox" name="seedSpinBox">
                 <property name="maximum">
-                 <number>12345678</number>
+                 <number>999999999</number>
                 </property>
                 <property name="value">
                  <number>12345678</number>

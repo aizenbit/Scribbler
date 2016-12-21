@@ -673,6 +673,8 @@ void SvgView::loadSettingsFromFile()
                                                            settings.value("bottom-margin").toInt() * dpmm));
 
     fontColor = QColor(settings.value("font-color").toString());
+    leftMarginRandomValue = settings.value("left-margin-random-value").toDouble();
+    leftMarginRandomEnabled =  settings.value("left-margin-random-enabled").toBool();
 
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
@@ -739,15 +741,15 @@ QRectF SvgView::changedVerticalMargins()
 
 void SvgView::randomizeMargins()
 {
-    qreal previousX = currentMarginsRect.x();
-    uint power = 2 * dpmm;
-    qreal shift = power;
-    qreal random = qrand() % power;
+    if (!leftMarginRandomEnabled || leftMarginRandomValue == 0)
+        return;
+
+    qreal random = qrand() % uint(leftMarginRandomValue * dpmm);
     if (qrand() % 2)
         random = -random;
 
     currentMarginsRect = changedVerticalMargins();
-    currentMarginsRect.setLeft(currentMarginsRect.x() + shift + random);
+    currentMarginsRect.setLeft(currentMarginsRect.x() + (leftMarginRandomValue * dpmm) + random);
 }
 
 void SvgView::cursorToNewLine()
