@@ -46,7 +46,7 @@ int SvgView::renderText(const QStringRef &text)
 {
     prepareSceneToRender();
     loadHyphenRules();
-
+    drawMarking();
     int endOfSheet = 0;
 
     //Sequentially add the symbols to the scene
@@ -122,6 +122,7 @@ int SvgView::renderText(const QStringRef &text)
     removeLastSymbols();
     endOfSheet -= itemsToRemove;
     connectLetters();
+
     return endOfSheet;
 }
 
@@ -786,4 +787,31 @@ void SvgView::randomizeLetterSpacing()
         random = -random;
 
     currentLetterSpacing += random;
+}
+
+void SvgView::drawMarking()
+{
+    qreal width = 0.25 * dpmm;
+    qreal lineSize = (fontSize + lineSpacing) * dpmm;
+    qreal squareSize = (fontSize + lineSpacing) * dpmm / 2;
+    qreal y = marginsRect.top() + fontSize * dpmm + width;
+
+    QPen pen;
+    pen.setColor(QColor("#a7c0bc"));
+    pen.setWidth(width);
+/*
+    for (; y <= currentMarginsRect.bottom(); y += lineSize)
+        scene->addLine(0.0, y, sceneRect().right(), y, pen);*/
+
+    while (y > 0.0)
+        y -= squareSize;
+
+    for (; y <= sceneRect().bottom(); y += squareSize)
+    {
+        scene->addLine(0.0, y - squareSize, sceneRect().right(), y - squareSize, pen);
+        scene->addLine(0.0, y, sceneRect().right(), y, pen);
+    }
+
+     for (qreal x = sceneRect().left(); x < sceneRect().right(); x += squareSize)
+         scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
 }

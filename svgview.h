@@ -107,6 +107,7 @@ private:
     void randomizeLetterSpacing();
     QPointF symbolPositionRandomValue();
     void cursorToNewLine();
+    void drawMarking();
 };
 
 #endif // SVGVIEW_H
