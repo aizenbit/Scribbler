@@ -68,6 +68,8 @@ FontDialog::FontDialog(QWidget *parent) :
     contextMenu->actions()[ContextAction::Copy]->setEnabled(false);
     ui->fontFileTextEdit->setLineWrapMode(QTextEdit::NoWrap);
     lastItem = nullptr;
+
+    setWindowFlags(Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
 }
 
 FontDialog::~FontDialog()

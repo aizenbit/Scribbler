@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(fontDialog, SIGNAL(fontReady()),
             this, SLOT(updateCurrentSheet()));
     errorMessage->setModal(true);
+    errorMessage->setWindowFlags(Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
 
     ui->toolBar->actions()[ToolButton::Render]->setShortcut(Qt::ControlModifier + Qt::Key_R);
     ui->toolBar->actions()[ToolButton::Print]->setShortcut(Qt::ControlModifier + Qt::Key_P);

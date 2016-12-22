@@ -38,6 +38,8 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
     ui->seedSpinBox->setMaximum(std::numeric_limits<int>::max());
     ui->seedSpinBox->setMinimum(std::numeric_limits<int>::min());
+
+    setWindowFlags(Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
 }
 
 PreferencesDialog::~PreferencesDialog()
