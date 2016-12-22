@@ -127,12 +127,12 @@ int SvgView::renderText(const QStringRef &text)
 
 void SvgView::removeLastSymbols()
 {
-    int itemsCount = scene->items().size();
+    uint itemsCount = scene->items().size();
 
     if (itemsCount < itemsToRemove)
         return;
 
-    for (int i = 0; i < itemsToRemove; i++)
+    for (uint i = 0; i < itemsToRemove; i++)
     {
         while (storedSymbolData.last().isEmpty())
             storedSymbolData.removeLast();
