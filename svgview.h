@@ -71,17 +71,18 @@ private:
     uint itemsToRemove;
     bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden,
-         leftMarginRandomEnabled, symbolJumpRandomEnabled;
+         leftMarginRandomEnabled, symbolJumpRandomEnabled, letterSpacingRandomEnabled;
     qreal maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
     qreal minScaleFactor = 0.05, currentScaleFactor = 1.0;
     qreal fontSize, penWidth, letterSpacing, lineSpacing, wordSpacing,
-          leftMarginRandomValue, symbolJumpRandomValue;
+          leftMarginRandomValue, symbolJumpRandomValue, letterSpacingRandomValue;
     QRectF sheetRect, marginsRect;
     QColor fontColor;
     QVector<QRegularExpression> hyphenRules;
 
     SymbolData symbolData, previousSymbolData;
     QRectF currentMarginsRect;
+    qreal currentLetterSpacing;
     QSizeF symbolBoundingSize;
     QPointF cursor; /*!< cursor is pointing to where will be placed
                          the top left corner of the next character limits */
@@ -103,6 +104,7 @@ private:
     QRectF changedVerticalMargins();
     QGraphicsSvgItem * generateHyphen(int symbolsToWrap);
     void randomizeMargins();
+    void randomizeLetterSpacing();
     QPointF symbolPositionRandomValue();
     void cursorToNewLine();
 };

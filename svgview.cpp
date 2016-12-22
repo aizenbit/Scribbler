@@ -53,13 +53,14 @@ int SvgView::renderText(const QStringRef &text)
     for (int currentSymbolNumber = 0; currentSymbolNumber < text.length(); currentSymbolNumber++)
     {
         QChar symbol = text.at(currentSymbolNumber);
+        randomizeLetterSpacing();
 
         if (!font.contains(symbol))
         {
             processUnknownSymbol(symbol);
             endOfSheet++;
 
-            if (cursor.x() > currentMarginsRect.bottomRight().x() - (fontSize + letterSpacing) * dpmm)
+            if (cursor.x() > currentMarginsRect.bottomRight().x() - (fontSize + currentLetterSpacing) * dpmm)
             {
                 cursorToNewLine();
                 storedWordItems.push_back(QVector<QGraphicsSvgItem *>());
@@ -102,7 +103,7 @@ int SvgView::renderText(const QStringRef &text)
         previousSymbolCursor = cursor;
         previousSymbolData = symbolData;
         previousSymbolWidth = symbolWidth;
-        cursor.rx() += symbolWidth + letterSpacing * dpmm;
+        cursor.rx() += symbolWidth + currentLetterSpacing * dpmm;
         endOfSheet++;
 
         if (symbol.isLetter())
@@ -154,7 +155,6 @@ void SvgView::prepareSceneToRender()
     itemsToRemove = 0;
 
     currentMarginsRect = changedVerticalMargins();
-
 
     scene->addRect(sheetRect);
     scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
@@ -224,9 +224,6 @@ bool SvgView::wrapWords(QStringRef text, int currentSymbolIndex)
 
 bool SvgView::hyphenate(QStringRef text, int currentSymbolIndex)
 {
-    if (currentSymbolIndex == 906)
-        int a = 0;
-
     int previousSymbolIndex = currentSymbolIndex - 1;
 
     if (!hyphenateWords || previousSymbolIndex < 0 ||
@@ -434,7 +431,7 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
     switch (symbol.toLatin1())
     {
     case '\t':
-        cursor.rx() += wordSpacing * dpmm * spacesInTab - letterSpacing * dpmm;
+        cursor.rx() += wordSpacing * dpmm * spacesInTab - currentLetterSpacing * dpmm;
         break;
 
     case '\n':
@@ -442,11 +439,11 @@ void SvgView::processUnknownSymbol(const QChar &symbol)
         break;
 
     case ' ':
-        cursor.rx() += (wordSpacing - letterSpacing) * dpmm;
+        cursor.rx() += (wordSpacing - currentLetterSpacing) * dpmm;
         break;
 
     default:
-        cursor.rx() += (fontSize + letterSpacing) * dpmm;
+        cursor.rx() += (fontSize + currentLetterSpacing) * dpmm;
         break;
     }
 
@@ -676,7 +673,8 @@ void SvgView::loadSettingsFromFile()
     leftMarginRandomEnabled =  settings.value("left-margin-random-enabled").toBool();
     symbolJumpRandomValue = settings.value("symbol-jump-random-value").toDouble();
     symbolJumpRandomEnabled =  settings.value("symbol-jump-random-enabled").toBool();
-
+    letterSpacingRandomValue = settings.value("letter-spacing-random-value").toDouble();
+    letterSpacingRandomEnabled =  settings.value("letter-spacing-random-enabled").toBool();
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 
@@ -742,6 +740,8 @@ QRectF SvgView::changedVerticalMargins()
 
 void SvgView::randomizeMargins()
 {
+    currentMarginsRect = changedVerticalMargins();
+
     if (!leftMarginRandomEnabled || leftMarginRandomValue == 0)
         return;
 
@@ -749,7 +749,6 @@ void SvgView::randomizeMargins()
     if (qrand() % 2)
         random = -random;
 
-    currentMarginsRect = changedVerticalMargins();
     currentMarginsRect.setLeft(currentMarginsRect.x() + (leftMarginRandomValue * dpmm) + random);
 }
 
@@ -774,4 +773,17 @@ QPointF SvgView::symbolPositionRandomValue()
     randomPos.setY(randomY);
 
     return randomPos;
+}
+
+void SvgView::randomizeLetterSpacing()
+{
+    currentLetterSpacing = letterSpacing;
+    if (!letterSpacingRandomEnabled || letterSpacingRandomValue == 0)
+        return;
+
+    qreal random = qrand() % uint(letterSpacingRandomValue * dpmm);
+    if (qrand() % 2)
+        random = -random;
+
+    currentLetterSpacing += random;
 }

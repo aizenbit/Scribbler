@@ -80,6 +80,8 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("left-margin-random-enabled", QVariant(ui->leftMarginRandomCheckBox->isChecked()));
     settings.setValue("symbol-jump-random-value", QVariant(ui->symbolJumpRandomSpinBox->value()));
     settings.setValue("symbol-jump-random-enabled", QVariant(ui->symbolJumpRandomCheckBox->isChecked()));
+    settings.setValue("letter-spacing-random-value", QVariant(ui->letterSpacingRandomSpinBox->value()));
+    settings.setValue("letter-spacing-random-enabled", QVariant(ui->letterSpacingRandomCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -110,13 +112,15 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->setupPointsCheckBox->setChecked(settings.value("setup-points", true).toBool());
     ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
     ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
-    ui->wrapWordsCheckBox->setChecked(  settings.value("wrap-words", true).toBool());
+    ui->wrapWordsCheckBox->setChecked(       settings.value("wrap-words", true).toBool());
     ui->hyphenateWordsCheckBox->setChecked(  settings.value("hyphenate-words", true).toBool());
-    ui->wordSpacingSpinBox->setValue( settings.value("word-spacing", 3.0).toDouble());
-    ui->leftMarginRandomSpinBox->setValue( settings.value("left-margin-random-value", 2.0).toDouble());
-    ui->leftMarginRandomCheckBox->setChecked(  settings.value("left-margin-random-enabled", true).toBool());
-    ui->symbolJumpRandomSpinBox->setValue( settings.value("symbol-jump-random-value", 0.3).toDouble());
-    ui->symbolJumpRandomCheckBox->setChecked(  settings.value("symbol-jump-random-enabled", true).toBool());
+    ui->wordSpacingSpinBox->setValue(        settings.value("word-spacing", 3.0).toDouble());
+    ui->leftMarginRandomSpinBox->setValue(   settings.value("left-margin-random-value", 2.0).toDouble());
+    ui->leftMarginRandomCheckBox->setChecked(settings.value("left-margin-random-enabled", true).toBool());
+    ui->symbolJumpRandomSpinBox->setValue(   settings.value("symbol-jump-random-value", 0.3).toDouble());
+    ui->symbolJumpRandomCheckBox->setChecked(settings.value("symbol-jump-random-enabled", true).toBool());
+    ui->letterSpacingRandomSpinBox->setValue(settings.value("letter-spacing-random-value", 0.1).toDouble());
+    ui->letterSpacingRandomCheckBox->setChecked(settings.value("letter-spacing-random-enabled", true).toBool());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
 
