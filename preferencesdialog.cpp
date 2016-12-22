@@ -76,6 +76,8 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("hyphenate-words", QVariant(ui->hyphenateWordsCheckBox->isChecked()));
     settings.setValue("left-margin-random-value", QVariant(ui->leftMarginRandomSpinBox->value()));
     settings.setValue("left-margin-random-enabled", QVariant(ui->leftMarginRandomCheckBox->isChecked()));
+    settings.setValue("symbol-jump-random-value", QVariant(ui->symbolJumpRandomSpinBox->value()));
+    settings.setValue("symbol-jump-random-enabled", QVariant(ui->symbolJumpRandomCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -111,6 +113,8 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->wordSpacingSpinBox->setValue( settings.value("word-spacing", 3.0).toDouble());
     ui->leftMarginRandomSpinBox->setValue( settings.value("left-margin-random-value", 2.0).toDouble());
     ui->leftMarginRandomCheckBox->setChecked(  settings.value("left-margin-random-enabled", true).toBool());
+    ui->symbolJumpRandomSpinBox->setValue( settings.value("symbol-jump-random-value", 0.3).toDouble());
+    ui->symbolJumpRandomCheckBox->setChecked(  settings.value("symbol-jump-random-enabled", true).toBool());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
 

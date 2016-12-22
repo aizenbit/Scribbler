@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
+    <width>585</width>
     <height>589</height>
    </rect>
   </property>
@@ -201,6 +201,29 @@
               <property name="maximum">
                <double>999.990000000000009</double>
               </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="symbolJumpRandomCheckBox">
+              <property name="text">
+               <string>Symbols jump by (mm):</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="symbolJumpRandomSpinBox">
+              <property name="maximum">
+               <double>999.990000000000009</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
              </widget>
             </item>
            </layout>
@@ -302,7 +325,7 @@
             <item row="4" column="0">
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>Pen width (mm):</string>
+               <string>Pen Width (mm):</string>
               </property>
              </widget>
             </item>
@@ -355,7 +378,7 @@
             <item>
              <widget class="QCheckBox" name="wrapWordsCheckBox">
               <property name="text">
-               <string>Wrap Words</string>
+               <string>Wrap words</string>
               </property>
               <property name="checked">
                <bool>true</bool>

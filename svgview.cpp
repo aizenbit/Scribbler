@@ -95,7 +95,7 @@ int SvgView::renderText(const QStringRef &text)
         QPointF symbolItemPos = cursor;
         symbolItemPos.rx() -= symbolBoundingSize.width() * symbolData.limits.left();
         symbolItemPos.ry() -= symbolBoundingSize.height() * symbolData.limits.top();
-
+        symbolItemPos += symbolPositionRandomValue();
         symbolItem->setPos(symbolItemPos);
         scene->addItem(symbolItem);
 
@@ -675,6 +675,8 @@ void SvgView::loadSettingsFromFile()
     fontColor = QColor(settings.value("font-color").toString());
     leftMarginRandomValue = settings.value("left-margin-random-value").toDouble();
     leftMarginRandomEnabled =  settings.value("left-margin-random-enabled").toBool();
+    symbolJumpRandomValue = settings.value("symbol-jump-random-value").toDouble();
+    symbolJumpRandomEnabled =  settings.value("symbol-jump-random-enabled").toBool();
 
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
@@ -757,4 +759,20 @@ void SvgView::cursorToNewLine()
     randomizeMargins();
     cursor.rx() = currentMarginsRect.x();
     cursor.ry() += (fontSize + lineSpacing) * dpmm;
+}
+
+QPointF SvgView::symbolPositionRandomValue()
+{
+    QPointF randomPos(0.0, 0.0);
+
+    if (!symbolJumpRandomEnabled || symbolJumpRandomValue == 0)
+        return randomPos;
+
+    qreal randomY = qrand() % uint(symbolJumpRandomValue * dpmm);
+    if (qrand() % 2)
+        randomY = -randomY;
+
+    randomPos.setY(randomY);
+
+    return randomPos;
 }
