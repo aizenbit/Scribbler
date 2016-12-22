@@ -12,8 +12,6 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
             this, SLOT(loadSettingsFromFile()));
     connect(ui->VRadioButton, SIGNAL(toggled(bool)),
             this, SLOT(changeSheetOrientation()));
-    connect(ui->colorButton, SIGNAL(clicked()),
-            this, SLOT(setColor()));
 
     sheetSizeSignalMapper = new QSignalMapper(this);
 
@@ -82,6 +80,13 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("symbol-jump-random-enabled", QVariant(ui->symbolJumpRandomCheckBox->isChecked()));
     settings.setValue("letter-spacing-random-value", QVariant(ui->letterSpacingRandomSpinBox->value()));
     settings.setValue("letter-spacing-random-enabled", QVariant(ui->letterSpacingRandomCheckBox->isChecked()));
+    settings.setValue("marking-enabled", QVariant(ui->markingEnabledCheckBox->isChecked()));
+    settings.setValue("marking-color", QVariant(ui->markingColorButton->palette().background().color().name()));
+    settings.setValue("marking-lines", QVariant(ui->markingLinesRadioButton->isChecked()));
+    settings.setValue("marking-check", QVariant(ui->markingCheckRadioButton->isChecked()));
+    settings.setValue("marking-check-size", QVariant(ui->markingCheckSizeSpinBox->value()));
+    settings.setValue("marking-line-size", QVariant(ui->markingLineSizeSpinBox->value()));
+    settings.setValue("marking-pen-width", QVariant(ui->markingPenWidthSpinBox->value()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -110,19 +115,27 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->seedSpinBox->setValue(          settings.value("seed", 12345678).toInt());
     ui->roundCheckBox->setChecked(      settings.value("round-lines", true).toBool());
     ui->setupPointsCheckBox->setChecked(settings.value("setup-points", true).toBool());
-    ui->alternateMarginsCheckBox->setChecked(settings.value("alternate-margins-of-even-sheets", true).toBool());
-    ui->connectLettersCheckBox->setChecked(  settings.value("connect-letters", true).toBool());
-    ui->wrapWordsCheckBox->setChecked(       settings.value("wrap-words", true).toBool());
-    ui->hyphenateWordsCheckBox->setChecked(  settings.value("hyphenate-words", true).toBool());
-    ui->wordSpacingSpinBox->setValue(        settings.value("word-spacing", 3.0).toDouble());
-    ui->leftMarginRandomSpinBox->setValue(   settings.value("left-margin-random-value", 2.0).toDouble());
-    ui->leftMarginRandomCheckBox->setChecked(settings.value("left-margin-random-enabled", true).toBool());
-    ui->symbolJumpRandomSpinBox->setValue(   settings.value("symbol-jump-random-value", 0.3).toDouble());
-    ui->symbolJumpRandomCheckBox->setChecked(settings.value("symbol-jump-random-enabled", true).toBool());
-    ui->letterSpacingRandomSpinBox->setValue(settings.value("letter-spacing-random-value", 0.1).toDouble());
+    ui->alternateMarginsCheckBox->setChecked(   settings.value("alternate-margins-of-even-sheets", true).toBool());
+    ui->connectLettersCheckBox->setChecked(     settings.value("connect-letters", true).toBool());
+    ui->wrapWordsCheckBox->setChecked(          settings.value("wrap-words", true).toBool());
+    ui->hyphenateWordsCheckBox->setChecked(     settings.value("hyphenate-words", true).toBool());
+    ui->wordSpacingSpinBox->setValue(           settings.value("word-spacing", 3.0).toDouble());
+    ui->leftMarginRandomSpinBox->setValue(      settings.value("left-margin-random-value", 2.0).toDouble());
+    ui->leftMarginRandomCheckBox->setChecked(   settings.value("left-margin-random-enabled", true).toBool());
+    ui->symbolJumpRandomSpinBox->setValue(      settings.value("symbol-jump-random-value", 0.3).toDouble());
+    ui->symbolJumpRandomCheckBox->setChecked(   settings.value("symbol-jump-random-enabled", true).toBool());
+    ui->letterSpacingRandomSpinBox->setValue(   settings.value("letter-spacing-random-value", 0.1).toDouble());
     ui->letterSpacingRandomCheckBox->setChecked(settings.value("letter-spacing-random-enabled", true).toBool());
+    ui->markingEnabledCheckBox->setChecked(     settings.value("marking-enabled", true).toBool());
+    ui->markingLinesRadioButton->setChecked(    settings.value("marking-lines", true).toBool());
+    ui->markingCheckRadioButton->setChecked(    settings.value("marking-check", false).toBool());
+    ui->markingCheckSizeSpinBox->setValue(      settings.value("marking-check-size", 5).toDouble());
+    ui->markingLineSizeSpinBox->setValue(       settings.value("marking-line-size", 10).toDouble());
+    ui->markingPenWidthSpinBox->setValue(       settings.value("marking-pen-width", 0.5).toDouble());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
+    ui->markingColorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
+                                           .arg(settings.value("marking-color", "#a7c0bc").toString()));
 
     settings.endGroup();
 
@@ -201,17 +214,27 @@ void PreferencesDialog::changeSheetOrientation()
     changedByProgram = false;
 }
 
-void PreferencesDialog::setColor()
+void PreferencesDialog::setColor(QPushButton *button)
 {
-    QColor currentColor = ui->colorButton->palette().brush(QPalette::Window).color();
+    QColor currentColor = button->palette().brush(QPalette::Window).color();
     QColor newColor = QColorDialog::getColor(currentColor);
 
     if (newColor.isValid())
-        ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
+        button->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                        .arg(newColor.name()));
 }
 
 bool PreferencesDialog::alternateMargins()
 {
     return ui->alternateMarginsCheckBox->isChecked();
+}
+
+void PreferencesDialog::on_colorButton_clicked()
+{
+    setColor(ui->colorButton);
+}
+
+void PreferencesDialog::on_markingColorButton_clicked()
+{
+    setColor(ui->markingColorButton);
 }

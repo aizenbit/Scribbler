@@ -47,8 +47,10 @@ private:
 
 private slots:
     void setSheetSize(int size);
-    void setColor();
+    void setColor(QPushButton * button);
     void changeSheetOrientation();
+    void on_colorButton_clicked();
+    void on_markingColorButton_clicked();
 };
 
 #endif // PREFERENCESDIALOG_H
