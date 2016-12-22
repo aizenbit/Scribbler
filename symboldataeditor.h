@@ -43,6 +43,7 @@ public:
     void setSymbolData(const QPointF _inPoint, const QPointF _outPoint, const QRectF _limits);
     void clear();
     void disableChanges();
+    void disablePoints();
     QPointF getInPoint() const {return toStored(inPoint);}
     QPointF getOutPoint() const {return toStored(outPoint);}
     QRectF getLimits() const {return QRectF(toStored(limits.topLeft()),
@@ -84,7 +85,7 @@ private:
     Item itemToChange;
     Side sideToChange; //for Item::LimitsRect
     qreal pointWidth;
-    bool setupPoints;
+    bool setupPoints, pointsEnabled;
     QPointF inPoint, outPoint, dLimitsCenter;
     QRectF limits;
     QDomDocument doc;

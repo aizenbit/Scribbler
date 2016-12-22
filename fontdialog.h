@@ -77,7 +77,7 @@ private slots:
     void limitTextEdit();
     void setTextFromItem(QTreeWidgetItem *item);
     void loadFromEditorToFont();
-    void enableDrawButtons(bool enable = true);
+    void enableDrawButtons(bool enable = true, bool isLetter = true);
     void showTreeWidgetContextMenu(QPoint pos);
     QTreeWidgetItem * getSymbolItem(QChar key);
     QTreeWidgetItem * getCategoryItem(QChar key);

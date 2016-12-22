@@ -276,7 +276,7 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
             return;
         }
 
-        enableDrawButtons(true);
+        enableDrawButtons(true, item->parent()->text(0).at(0).isLetter());
         ui->choosenSymbolTextEdit->setText(item->parent()->text(0));
         ui->symbolDataEditor->load(fileName);
         QList<SymbolData> dataList = font.values(item->parent()->text(0).at(0));
@@ -289,6 +289,9 @@ void FontDialog::setTextFromItem(QTreeWidgetItem *item)
             }
 
         lastItem = item;
+
+        if (!item->parent()->text(0).at(0).isLetter())
+            ui->symbolDataEditor->disablePoints();
     }
 }
 
@@ -356,7 +359,7 @@ void FontDialog::deleteItem()
     resetSymbolDataEditor();
 }
 
-void FontDialog::enableDrawButtons(bool enable)
+void FontDialog::enableDrawButtons(bool enable, bool isLetter)
 {
     if (!enable && buttonGroup->checkedButton() != nullptr)
     {
@@ -365,8 +368,8 @@ void FontDialog::enableDrawButtons(bool enable)
         buttonGroup->setExclusive(true);
     }
 
-    ui->drawInPointButton->setEnabled(enable);
-    ui->drawOutPointButton->setEnabled(enable);
+    ui->drawInPointButton->setEnabled(enable && isLetter);
+    ui->drawOutPointButton->setEnabled(enable && isLetter);
     ui->drawLimitsButton->setEnabled(enable);
 }
 

@@ -132,6 +132,7 @@ void SymbolDataEditor::setSymbolData(const QPointF _inPoint, const QPointF _outP
         limits = QRectF(fromStored(_limits.topLeft()),
                         fromStored(_limits.bottomRight()));
 
+    pointsEnabled = true;
     correctLimits();
     addDataItems();
 }
@@ -188,14 +189,30 @@ void SymbolDataEditor::disableChanges()
     sideToChange = NoSide;
 }
 
+void SymbolDataEditor::disablePoints()
+{
+    pointsEnabled = false;
+
+    if (itemToChange == Item::InPoint || itemToChange == Item::OutPoint)
+        itemToChange = Item::NoItem;
+
+    if (scene->items().isEmpty())
+        return;
+
+    scene->items(Qt::AscendingOrder).at(Item::InPoint)->hide();
+    scene->items(Qt::AscendingOrder).at(Item::OutPoint)->hide();
+}
+
 void SymbolDataEditor::enableInPointChanges()
 {
-    itemToChange = Item::InPoint;
+    if (pointsEnabled)
+        itemToChange = Item::InPoint;
 }
 
 void SymbolDataEditor::enableOutPointChanges()
 {
-    itemToChange = Item::OutPoint;
+    if (pointsEnabled)
+        itemToChange = Item::OutPoint;
 }
 
 void SymbolDataEditor::enableLimitsChanges()
