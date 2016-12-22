@@ -159,8 +159,6 @@ void SvgView::prepareSceneToRender()
     scene->addRect(sheetRect);
     scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
 
-    randomizeMargins();
-
     if (useSeed)
         qsrand(seed);
     else
@@ -168,6 +166,7 @@ void SvgView::prepareSceneToRender()
 
     hideBorders(areBordersHidden);
 
+    randomizeMargins();
     cursor = QPointF(currentMarginsRect.x(), currentMarginsRect.y());
 }
 
