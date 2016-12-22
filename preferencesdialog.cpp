@@ -82,8 +82,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("letter-spacing-random-enabled", QVariant(ui->letterSpacingRandomCheckBox->isChecked()));
     settings.setValue("marking-enabled", QVariant(ui->markingEnabledCheckBox->isChecked()));
     settings.setValue("marking-color", QVariant(ui->markingColorButton->palette().background().color().name()));
-    settings.setValue("marking-lines", QVariant(ui->markingLinesRadioButton->isChecked()));
-    settings.setValue("marking-check", QVariant(ui->markingCheckRadioButton->isChecked()));
+    settings.setValue("is-marking-lines", QVariant(ui->markingLinesRadioButton->isChecked()));
     settings.setValue("marking-check-size", QVariant(ui->markingCheckSizeSpinBox->value()));
     settings.setValue("marking-line-size", QVariant(ui->markingLineSizeSpinBox->value()));
     settings.setValue("marking-pen-width", QVariant(ui->markingPenWidthSpinBox->value()));
@@ -92,9 +91,9 @@ void PreferencesDialog::loadSettingsToFile()
     emit settingsChanged();
 }
 
-void PreferencesDialog::loadSettingsFromFile()
+void PreferencesDialog::loadSettingsFromFile(bool loadDefault)
 {
-    QSettings settings("Settings.ini", QSettings::IniFormat);
+    QSettings settings(loadDefault ? "" : "Settings.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
     ui->dpiSpinBox->setValue(           settings.value("dpi", 300).toInt());
     ui->letterSpacingSpinBox->setValue( settings.value("letter-spacing", 1.0).toDouble());
@@ -127,11 +126,10 @@ void PreferencesDialog::loadSettingsFromFile()
     ui->letterSpacingRandomSpinBox->setValue(   settings.value("letter-spacing-random-value", 0.1).toDouble());
     ui->letterSpacingRandomCheckBox->setChecked(settings.value("letter-spacing-random-enabled", true).toBool());
     ui->markingEnabledCheckBox->setChecked(     settings.value("marking-enabled", true).toBool());
-    ui->markingLinesRadioButton->setChecked(    settings.value("marking-lines", true).toBool());
-    ui->markingCheckRadioButton->setChecked(    settings.value("marking-check", false).toBool());
+    ui->markingLinesRadioButton->setChecked(    settings.value("is-marking-lines", true).toBool());
     ui->markingCheckSizeSpinBox->setValue(      settings.value("marking-check-size", 5).toDouble());
     ui->markingLineSizeSpinBox->setValue(       settings.value("marking-line-size", 10).toDouble());
-    ui->markingPenWidthSpinBox->setValue(       settings.value("marking-pen-width", 0.5).toDouble());
+    ui->markingPenWidthSpinBox->setValue(       settings.value("marking-pen-width", 0.25).toDouble());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
     ui->markingColorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
@@ -140,6 +138,9 @@ void PreferencesDialog::loadSettingsFromFile()
     settings.endGroup();
 
     setSheetSize(static_cast<int>(SheetSize::Custom)); //this is to set radioButtons values correctly
+
+    if (loadDefault)
+        on_markingFitPushButton_clicked(); //just to be sure, that marking is suited to text by default
 }
 
 void PreferencesDialog::setSheetSize(int size)
@@ -237,4 +238,20 @@ void PreferencesDialog::on_colorButton_clicked()
 void PreferencesDialog::on_markingColorButton_clicked()
 {
     setColor(ui->markingColorButton);
+}
+
+void PreferencesDialog::on_markingFitPushButton_clicked()
+{
+    qreal fontSize = ui->fontSizeSpinBox->value();
+    qreal lineSpacing = ui->lineSpacingSpinBox->value();
+    qreal penWidth = ui->penWidthSpinBox->value();
+
+    ui->markingLineSizeSpinBox->setValue(fontSize + lineSpacing);
+    ui->markingCheckSizeSpinBox->setValue((fontSize + lineSpacing) / 2);
+    ui->markingPenWidthSpinBox->setValue(penWidth / 2);
+}
+
+void PreferencesDialog::on_DefaultPushButton_clicked()
+{
+    loadSettingsFromFile(true);
 }

@@ -71,13 +71,15 @@ private:
     uint itemsToRemove;
     bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden,
-         leftMarginRandomEnabled, symbolJumpRandomEnabled, letterSpacingRandomEnabled;
+         leftMarginRandomEnabled, symbolJumpRandomEnabled, letterSpacingRandomEnabled,
+         markingEnabled, isMarkingLines;
     qreal maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
     qreal minScaleFactor = 0.05, currentScaleFactor = 1.0;
     qreal fontSize, penWidth, letterSpacing, lineSpacing, wordSpacing,
-          leftMarginRandomValue, symbolJumpRandomValue, letterSpacingRandomValue;
+          leftMarginRandomValue, symbolJumpRandomValue, letterSpacingRandomValue,
+          markingCheckSize, markingLineSize, markingPenWidth;
     QRectF sheetRect, marginsRect;
-    QColor fontColor;
+    QColor fontColor, markingColor;
     QVector<QRegularExpression> hyphenRules;
 
     SymbolData symbolData, previousSymbolData;

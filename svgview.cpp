@@ -670,12 +670,21 @@ void SvgView::loadSettingsFromFile()
                                                            settings.value("bottom-margin").toInt() * dpmm));
 
     fontColor = QColor(settings.value("font-color").toString());
+
     leftMarginRandomValue = settings.value("left-margin-random-value").toDouble();
     leftMarginRandomEnabled =  settings.value("left-margin-random-enabled").toBool();
     symbolJumpRandomValue = settings.value("symbol-jump-random-value").toDouble();
     symbolJumpRandomEnabled =  settings.value("symbol-jump-random-enabled").toBool();
     letterSpacingRandomValue = settings.value("letter-spacing-random-value").toDouble();
     letterSpacingRandomEnabled =  settings.value("letter-spacing-random-enabled").toBool();
+
+    markingEnabled = settings.value("marking-enabled").toBool();
+    isMarkingLines = settings.value("is-marking-lines").toBool();
+    markingColor = QColor(settings.value("marking-color").toString());
+    markingCheckSize = settings.value("marking-check-size").toDouble();
+    markingLineSize = settings.value("marking-line-size").toDouble();
+    markingPenWidth = settings.value("marking-pen-width").toDouble();
+
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 
@@ -791,27 +800,35 @@ void SvgView::randomizeLetterSpacing()
 
 void SvgView::drawMarking()
 {
-    qreal width = 0.25 * dpmm;
-    qreal lineSize = (fontSize + lineSpacing) * dpmm;
-    qreal squareSize = (fontSize + lineSpacing) * dpmm / 2;
+    if (!markingEnabled)
+        return;
+
+    qreal width = markingPenWidth * dpmm;
+    qreal lineSize = markingLineSize * dpmm;
+    qreal checkSize = markingCheckSize * dpmm;
     qreal y = marginsRect.top() + fontSize * dpmm + width;
 
     QPen pen;
-    pen.setColor(QColor("#a7c0bc"));
+    pen.setColor(markingColor);
     pen.setWidth(width);
-/*
-    for (; y <= currentMarginsRect.bottom(); y += lineSize)
-        scene->addLine(0.0, y, sceneRect().right(), y, pen);*/
 
-    while (y > 0.0)
-        y -= squareSize;
-
-    for (; y <= sceneRect().bottom(); y += squareSize)
+    if (isMarkingLines)
     {
-        scene->addLine(0.0, y - squareSize, sceneRect().right(), y - squareSize, pen);
-        scene->addLine(0.0, y, sceneRect().right(), y, pen);
+        for (; y <= currentMarginsRect.bottom(); y += lineSize)
+            scene->addLine(0.0, y, sceneRect().right(), y, pen);
     }
+    else
+    {
+        while (y > 0.0)
+            y -= checkSize;
 
-     for (qreal x = sceneRect().left(); x < sceneRect().right(); x += squareSize)
-         scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
+        for (; y <= sceneRect().bottom(); y += checkSize)
+        {
+            scene->addLine(0.0, y - checkSize, sceneRect().right(), y - checkSize, pen);
+            scene->addLine(0.0, y, sceneRect().right(), y, pen);
+        }
+
+         for (qreal x = sceneRect().left(); x < sceneRect().right(); x += checkSize)
+             scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
+    }
 }

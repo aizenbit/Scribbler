@@ -27,7 +27,7 @@ public:
 
 public slots:
     void loadSettingsToFile();
-    void loadSettingsFromFile();
+    void loadSettingsFromFile(bool loadDefault = false);
     bool alternateMargins();
 
 signals:
@@ -51,6 +51,8 @@ private slots:
     void changeSheetOrientation();
     void on_colorButton_clicked();
     void on_markingColorButton_clicked();
+    void on_markingFitPushButton_clicked();
+    void on_DefaultPushButton_clicked();
 };
 
 #endif // PREFERENCESDIALOG_H
