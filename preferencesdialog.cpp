@@ -137,8 +137,8 @@ void PreferencesDialog::loadSettingsFromFile(bool loadDefault)
     ui->markingPenWidthSpinBox->setValue(       settings.value("marking-pen-width", 0.25).toDouble());
     ui->rightMarginsCheckBox->setChecked(       settings.value("draw-right-margins", true).toBool());
     ui->leftMarginsCheckBox->setChecked(        settings.value("draw-left-margins", false).toBool());
-    ui->leftMarginsIndentSpinBox->setValue(     settings.value("left-margins-indent", 2).toDouble());
-    ui->rightMarginsIndentSpinBox->setValue(    settings.value("right-margins-indent", 2).toDouble());
+    ui->leftMarginsIndentSpinBox->setValue(     settings.value("left-margins-indent", 10).toDouble());
+    ui->rightMarginsIndentSpinBox->setValue(    settings.value("right-margins-indent", 20).toDouble());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
     ui->markingColorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")

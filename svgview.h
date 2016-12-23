@@ -72,14 +72,14 @@ private:
     bool useCustomFontColor, changeMargins, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden,
          leftMarginRandomEnabled, symbolJumpRandomEnabled, letterSpacingRandomEnabled,
-         markingEnabled, isMarkingLines, drawMargins;
+         markingEnabled, isMarkingLines, drawLeftMargins, drawRightMargins;
     qreal maxScaleFactor = 1.5; //NOTE: If this is exceeded, graphic artifacts will occure
     qreal minScaleFactor = 0.05, currentScaleFactor = 1.0;
     qreal fontSize, penWidth, letterSpacing, lineSpacing, wordSpacing,
           leftMarginRandomValue, symbolJumpRandomValue, letterSpacingRandomValue,
-          markingCheckSize, markingLineSize, markingPenWidth;
+          markingCheckSize, markingLineSize, markingPenWidth, leftMarginsIndent, rightMarginsIndent;
     QRectF sheetRect, marginsRect;
-    QColor fontColor, markingColor;
+    QColor fontColor, markingColor, marginsColor;
     QVector<QRegularExpression> hyphenRules;
 
     SymbolData symbolData, previousSymbolData;
@@ -110,6 +110,7 @@ private:
     QPointF symbolPositionRandomValue();
     void cursorToNewLine();
     void drawMarking();
+    void drawMargins();
 };
 
 #endif // SVGVIEW_H

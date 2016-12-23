@@ -47,6 +47,7 @@ int SvgView::renderText(const QStringRef &text)
     prepareSceneToRender();
     loadHyphenRules();
     drawMarking();
+    drawMargins();
     int endOfSheet = 0;
 
     //Sequentially add the symbols to the scene
@@ -685,6 +686,12 @@ void SvgView::loadSettingsFromFile()
     markingLineSize = settings.value("marking-line-size").toDouble();
     markingPenWidth = settings.value("marking-pen-width").toDouble();
 
+    drawLeftMargins =    settings.value("draw-left-margins").toBool();
+    drawRightMargins =   settings.value("draw-right-margins").toBool();
+    leftMarginsIndent =  settings.value("left-margins-indent").toDouble();
+    rightMarginsIndent = settings.value("right-margins-indent").toDouble();
+    marginsColor = QColor(settings.value("margins-color").toString());
+
     loadFont(settings.value("last-used-font", "Font/DefaultFont.ini").toString());
     settings.endGroup();
 
@@ -832,21 +839,32 @@ void SvgView::drawMarking()
          for (qreal x = sceneRect().left(); x < sceneRect().right(); x += checkSize)
              scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
     }
+}
 
-    drawMargins = true;
-
-    if (!drawMargins)
+void SvgView::drawMargins()
+{
+    if (!(drawLeftMargins || drawRightMargins))
         return;
 
-    qreal x;
+    QPen pen;
+    pen.setColor(marginsColor);
+    pen.setWidth(markingPenWidth * dpmm * 2);
+    qreal leftX, rightX;
 
     if (changeMargins)
-        x = scene->items(Qt::AscendingOrder).at(1)->boundingRect().left();
+    {
+        rightX = rightMarginsIndent * dpmm;
+        leftX = sceneRect().right() - leftMarginsIndent * dpmm;
+    }
     else
-        x = scene->items(Qt::AscendingOrder).at(1)->boundingRect().right();
+    {
+        rightX = sceneRect().right() - rightMarginsIndent * dpmm;
+        leftX = leftMarginsIndent * dpmm;
+    }
 
-    pen.setColor(Qt::darkRed);
-    pen.setWidth(width * 2);
+    if (drawLeftMargins)
+        scene->addLine(leftX, 0.0, leftX, sceneRect().bottom(), pen);
 
-    scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
+    if (drawRightMargins)
+        scene->addLine(rightX, 0.0, rightX, sceneRect().bottom(), pen);
 }
