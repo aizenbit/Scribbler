@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>634</height>
+    <width>609</width>
+    <height>601</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Preferences - Scribbler</string>
@@ -126,10 +132,10 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="label_8">
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Top (mm):</string>
+               <string>Right (mm):</string>
               </property>
              </widget>
             </item>
@@ -143,13 +149,6 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Right (mm):</string>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="2">
              <widget class="QSpinBox" name="bottomMarginsSpinBox">
               <property name="maximum">
@@ -160,6 +159,26 @@
               </property>
              </widget>
             </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Top (mm):</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1" colspan="2">
+             <widget class="QCheckBox" name="alternateMarginsCheckBox">
+              <property name="toolTip">
+               <string>Change left and right margins of even sheets</string>
+              </property>
+              <property name="text">
+               <string>Alternate Margins of even Sheets</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="4" column="1">
              <widget class="QLabel" name="label_9">
               <property name="text">
@@ -167,13 +186,13 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="1" colspan="2">
-             <widget class="QCheckBox" name="alternateMarginsCheckBox">
-              <property name="toolTip">
-               <string>Change left and right margins of even sheets</string>
-              </property>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="hideMarginsCheckBox">
               <property name="text">
-               <string>Alternate Margins of even Sheets</string>
+               <string>Hide margins</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

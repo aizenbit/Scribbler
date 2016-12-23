@@ -65,6 +65,7 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("left-margin", QVariant(ui->leftMarginsSpinBox->value()));
     settings.setValue("top-margin", QVariant(ui->topMarginsSpinBox->value()));
     settings.setValue("bottom-margin", QVariant(ui->bottomMarginsSpinBox->value()));
+    settings.setValue("hide-margins", QVariant(ui->hideMarginsCheckBox->isChecked()));
     settings.setValue("is-sheet-orientation-vertical", QVariant(ui->VRadioButton->isChecked()));
     settings.setValue("alternate-margins-of-even-sheets", QVariant(ui->alternateMarginsCheckBox->isChecked()));
     settings.setValue("connect-letters", QVariant(ui->connectLettersCheckBox->isChecked()));
@@ -113,6 +114,7 @@ void PreferencesDialog::loadSettingsFromFile(bool loadDefault)
     ui->leftMarginsSpinBox->setValue(   settings.value("left-margin", 10).toInt());
     ui->topMarginsSpinBox->setValue(    settings.value("top-margin", 10).toInt());
     ui->bottomMarginsSpinBox->setValue( settings.value("bottom-margin", 5).toInt());
+    ui->hideMarginsCheckBox->setChecked(settings.value("hide-margins", true).toBool());
     ui->VRadioButton->setChecked(       settings.value("is-sheet-orientation-vertical", true).toBool());
     ui->fontColorCheckBox->setChecked(  settings.value("use-custom-font-color", true).toBool());
     ui->useSeedCheckBox->setChecked(    settings.value("use-seed", true).toBool());

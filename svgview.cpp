@@ -161,6 +161,9 @@ void SvgView::prepareSceneToRender()
     scene->addRect(sheetRect);
     scene->addRect(currentMarginsRect, QPen(Qt::darkGray));
 
+    if (hideMarginsRect)
+        scene->items(Qt::AscendingOrder).at(1)->setVisible(false);
+
     if (useSeed)
         qsrand(seed);
     else
@@ -669,6 +672,7 @@ void SvgView::loadSettingsFromFile()
                                                        settings.value("top-margin").toInt() * dpmm),
                          sheetRect.bottomRight() - QPointF(settings.value("right-margin").toInt() * dpmm,
                                                            settings.value("bottom-margin").toInt() * dpmm));
+    hideMarginsRect = settings.value("hide-margins").toBool();
 
     fontColor = QColor(settings.value("font-color").toString());
 
@@ -732,7 +736,9 @@ void SvgView::hideBorders(bool hide)
 {
     areBordersHidden = hide;
     scene->items(Qt::AscendingOrder).at(0)->setVisible(!hide); //sheetRect
-    scene->items(Qt::AscendingOrder).at(1)->setVisible(!hide); //marginsRect
+
+    if (!hideMarginsRect)
+        scene->items(Qt::AscendingOrder).at(1)->setVisible(!hide); //marginsRect
 }
 
 void SvgView::changeLeftRightMargins(bool change)

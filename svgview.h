@@ -69,7 +69,7 @@ private:
     int spacesInTab;
     int seed;
     uint itemsToRemove;
-    bool useCustomFontColor, changeMargins, connectingLetters,
+    bool useCustomFontColor, changeMargins, hideMarginsRect, connectingLetters,
          useSeed, roundLines, wordWrap, hyphenateWords, areBordersHidden,
          leftMarginRandomEnabled, symbolJumpRandomEnabled, letterSpacingRandomEnabled,
          markingEnabled, isMarkingLines, drawLeftMargins, drawRightMargins;
