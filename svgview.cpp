@@ -827,7 +827,7 @@ void SvgView::drawMarking()
     }
     else
     {
-        while (y > 0.0)
+        while (y > checkSize * 2)
             y -= checkSize;
 
         for (; y <= sceneRect().bottom(); y += checkSize)
