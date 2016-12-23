@@ -53,6 +53,7 @@ private slots:
     void on_markingColorButton_clicked();
     void on_markingFitPushButton_clicked();
     void on_DefaultPushButton_clicked();
+    void on_marginsColorButton_clicked();
 };
 
 #endif // PREFERENCESDIALOG_H

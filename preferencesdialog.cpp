@@ -86,6 +86,11 @@ void PreferencesDialog::loadSettingsToFile()
     settings.setValue("marking-check-size", QVariant(ui->markingCheckSizeSpinBox->value()));
     settings.setValue("marking-line-size", QVariant(ui->markingLineSizeSpinBox->value()));
     settings.setValue("marking-pen-width", QVariant(ui->markingPenWidthSpinBox->value()));
+    settings.setValue("margins-color", QVariant(ui->marginsColorButton->palette().background().color().name()));
+    settings.setValue("left-margins-indent", QVariant(ui->leftMarginsIndentSpinBox->value()));
+    settings.setValue("right-margins-indent", QVariant(ui->rightMarginsIndentSpinBox->value()));
+    settings.setValue("draw-left-margins", QVariant(ui->leftMarginsCheckBox->isChecked()));
+    settings.setValue("draw-right-margins", QVariant(ui->rightMarginsCheckBox->isChecked()));
     settings.endGroup();
 
     emit settingsChanged();
@@ -130,10 +135,16 @@ void PreferencesDialog::loadSettingsFromFile(bool loadDefault)
     ui->markingCheckSizeSpinBox->setValue(      settings.value("marking-check-size", 5).toDouble());
     ui->markingLineSizeSpinBox->setValue(       settings.value("marking-line-size", 10).toDouble());
     ui->markingPenWidthSpinBox->setValue(       settings.value("marking-pen-width", 0.25).toDouble());
+    ui->rightMarginsCheckBox->setChecked(       settings.value("draw-right-margins", true).toBool());
+    ui->leftMarginsCheckBox->setChecked(        settings.value("draw-left-margins", false).toBool());
+    ui->leftMarginsIndentSpinBox->setValue(     settings.value("left-margins-indent", 2).toDouble());
+    ui->rightMarginsIndentSpinBox->setValue(    settings.value("right-margins-indent", 2).toDouble());
     ui->colorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("font-color", "#0097ff").toString()));
     ui->markingColorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
                                            .arg(settings.value("marking-color", "#a7c0bc").toString()));
+    ui->marginsColorButton->setStyleSheet(QString("QPushButton { background-color : %1; border-style: inset;}")
+                                           .arg(settings.value("margins-color", "#c67d98").toString()));
 
     settings.endGroup();
 
@@ -238,6 +249,11 @@ void PreferencesDialog::on_colorButton_clicked()
 void PreferencesDialog::on_markingColorButton_clicked()
 {
     setColor(ui->markingColorButton);
+}
+
+void PreferencesDialog::on_marginsColorButton_clicked()
+{
+    setColor(ui->marginsColorButton);
 }
 
 void PreferencesDialog::on_markingFitPushButton_clicked()

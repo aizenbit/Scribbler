@@ -92,6 +92,9 @@ MainWindow::MainWindow(QWidget *parent) :
     currentSheetNumber = 0;
 
     preferencesDialog->loadSettingsFromFile();
+    QTime dieTime = QTime::currentTime().addMSecs(1000);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     preferencesDialog->loadSettingsToFile();
 }
 
