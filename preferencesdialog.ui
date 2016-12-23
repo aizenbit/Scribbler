@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>585</width>
-    <height>550</height>
+    <height>627</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -635,13 +635,13 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
           <widget class="QGroupBox" name="groupBox_9">
            <property name="title">
             <string>Sheet Marking</string>
            </property>
-           <layout class="QFormLayout" name="formLayout_2">
+           <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="0">
              <widget class="QCheckBox" name="markingEnabledCheckBox">
               <property name="text">
@@ -652,31 +652,45 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="markingFitPushButton">
+              <property name="text">
+               <string>Fit To Font Settings</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="markingLinesRadioButton">
+                <property name="text">
+                 <string>Lines</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="markingCheckRadioButton">
+                <property name="text">
+                 <string>Check</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
             <item row="2" column="0">
-             <widget class="QRadioButton" name="markingLinesRadioButton">
-              <property name="text">
-               <string>Lines</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QRadioButton" name="markingCheckRadioButton">
-              <property name="text">
-               <string>Check</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
              <widget class="QLabel" name="label_16">
               <property name="text">
                <string>Line Size (mm) :</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="markingLineSizeSpinBox">
               <property name="maximum">
                <double>999.990000000000009</double>
@@ -686,14 +700,14 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_17">
               <property name="text">
                <string>Check Size (mm):</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
+            <item row="3" column="1">
              <widget class="QDoubleSpinBox" name="markingCheckSizeSpinBox">
               <property name="maximum">
                <double>999.990000000000009</double>
@@ -703,14 +717,14 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="4" column="0">
              <widget class="QLabel" name="label_18">
               <property name="text">
                <string>Pen width (mm):</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="4" column="1">
              <widget class="QDoubleSpinBox" name="markingPenWidthSpinBox">
               <property name="maximum">
                <double>999.990000000000009</double>
@@ -720,24 +734,17 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="5" column="0">
              <widget class="QLabel" name="label_19">
               <property name="text">
                <string>Color:</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
+            <item row="5" column="1">
              <widget class="QPushButton" name="markingColorButton">
               <property name="text">
                <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QPushButton" name="markingFitPushButton">
-              <property name="text">
-               <string>Fit To Font Settings</string>
               </property>
              </widget>
             </item>

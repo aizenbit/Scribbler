@@ -806,6 +806,7 @@ void SvgView::drawMarking()
     qreal width = markingPenWidth * dpmm;
     qreal lineSize = markingLineSize * dpmm;
     qreal checkSize = markingCheckSize * dpmm;
+    //y is under the first line of text
     qreal y = marginsRect.top() + fontSize * dpmm + width;
 
     QPen pen;
@@ -831,4 +832,21 @@ void SvgView::drawMarking()
          for (qreal x = sceneRect().left(); x < sceneRect().right(); x += checkSize)
              scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
     }
+
+    drawMargins = true;
+
+    if (!drawMargins)
+        return;
+
+    qreal x;
+
+    if (changeMargins)
+        x = scene->items(Qt::AscendingOrder).at(1)->boundingRect().left();
+    else
+        x = scene->items(Qt::AscendingOrder).at(1)->boundingRect().right();
+
+    pen.setColor(Qt::darkRed);
+    pen.setWidth(width * 2);
+
+    scene->addLine(x, 0.0, x, sceneRect().bottom(), pen);
 }
