@@ -215,6 +215,32 @@ void MainWindow::showHowToBox()
     howToBox.exec();
 }
 
+void MainWindow::on_actionShortcuts_triggered()
+{
+    QMessageBox shortcutsBox;
+    shortcutsBox.setWindowTitle(tr("How To"));
+    shortcutsBox.setText(tr("<strong>Scribbler</strong> ") + version);
+    shortcutsBox.setInformativeText("<p>" + tr("<h3>Shortcuts:</h3>"
+                                           "<strong>In the Main Window</strong>:"
+                                           "<ol>"
+                                           "<li><b>Ctrl + R</b> - Convert to handwritten</li>"
+                                           "<li><b>Ctrl + P</b> - Print</li>"
+                                           "<li><b>Ctrl + S</b> - Save</li>"
+                                           "<li><b>Ctrl + →</b> - Next Sheet</li>"
+                                           "<li><b>Ctrl + ←</b> - Previous sheet</li>"
+                                           "</ol>"
+                                           "<strong>In the Font Editor</strong>:"
+                                           "<ol>"
+                                           "<li><b>Alt + 1 </b> - Set the connection point with the previous letter</li>"
+                                           "<li><b>Alt + 2</b> - Set the connection point with the next letter</li>"
+                                           "<li><b>Alt + 3 </b> - Set the row height and the width of the letter</li>"
+                                           "</ol>"
+                                           "Also, you can found the full manual here:<br>"
+                                           "<a href=https://github.com/aizenbit/Scribbler/wiki/User-manual>"
+                                           "https://github.com/aizenbit/Scribbler/wiki/User-manual</a>")+"</p>");
+    shortcutsBox.exec();
+}
+
 void MainWindow::renderFirstSheet()
 {
     sheetPointers.clear();

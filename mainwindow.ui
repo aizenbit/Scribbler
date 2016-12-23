@@ -71,6 +71,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHowTo"/>
+    <addaction name="actionShortcuts"/>
     <addaction name="actionLicenses_and_Credits"/>
     <addaction name="actionAbout_Scribbler"/>
    </widget>
@@ -179,6 +180,11 @@
   <action name="actionLoad_Text_from_File">
    <property name="text">
     <string>&amp;Load Text from File</string>
+   </property>
+  </action>
+  <action name="actionShortcuts">
+   <property name="text">
+    <string>&amp;Shortcuts</string>
    </property>
   </action>
  </widget>

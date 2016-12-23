@@ -88,6 +88,7 @@ private slots:
     void loadSettings();
     void countMissedCharacters();
     void showSheetNumber(int number);
+    void on_actionShortcuts_triggered();
 };
 
 #endif // MAINWINDOW_H
