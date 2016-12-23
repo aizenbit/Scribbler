@@ -238,6 +238,9 @@ void MainWindow::renderFirstSheet()
 
 void MainWindow::renderNextSheet()
 {
+    if (!ui->toolBar->actions()[ToolButton::Next]->isEnabled())
+        return;
+
     currentSheetNumber++;
 
     if (preferencesDialog->alternateMargins())
@@ -264,6 +267,9 @@ void MainWindow::renderNextSheet()
 
 void MainWindow::renderPreviousSheet()
 {
+    if (!ui->toolBar->actions()[ToolButton::Previous]->isEnabled())
+        return;
+
     currentSheetNumber--;
 
     if (preferencesDialog->alternateMargins())
@@ -503,9 +509,12 @@ void MainWindow::loadTextFromFile()
 void MainWindow::loadSettings()
 {
     ui->svgView->loadSettingsFromFile();
+    int sheetNumber = currentSheetNumber;
+    renderFirstSheet();
 
-    if (currentSheetNumber == 0)
-        this->renderFirstSheet();
+    while (currentSheetNumber < sheetNumber && ui->toolBar->actions()[ToolButton::Next]->isEnabled())
+        renderNextSheet();
+
 }
 
 void MainWindow::preparePrinter(QPrinter *printer)
