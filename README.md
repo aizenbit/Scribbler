@@ -6,7 +6,9 @@ Scribbler allows you to create handwritten text from a typed text by simulating 
 It can be used to design invitations, greetings and inscriptions of celebrations. However, Scribbler is designed to generate large amounts of text, not only short inscriptions, so it can also be used for writing handwritten letters. Check it. =)
 
 ----
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/aizenbit/Scribbler/blob/master/LICENSE "MIT") [![Travis](https://img.shields.io/travis/aizenbit/Scribbler.svg)](https://travis-ci.org/aizenbit/Scribbler/ "Travis CI")
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/aizenbit/Scribbler/blob/master/LICENSE "MIT") [![Travis](https://img.shields.io/travis/aizenbit/Scribbler.svg)](https://travis-ci.org/aizenbit/Scribbler/ "Travis CI") [![Build status](https://ci.appveyor.com/api/projects/status/uersg3d5vb3kpgav?svg=true)](https://ci.appveyor.com/project/aizenbit/scribbler)
+
+
 
 ----
 
