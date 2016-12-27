@@ -9,7 +9,7 @@ matrix:
       env: QT=53 PPA=beineri/opt-qt532-trusty
     - os: linux
       compiler: gcc
-      env: QT=57 PPA=beineri/opt-qt57-trusty
+      env: QT=57 PPA=beineri/opt-qt571-trusty
     - os: osx
       compiler: clang
       env: QT=5 
@@ -29,7 +29,7 @@ before_script:
   - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != g++     ]] || export QMAKESPEC=linux-g++'
   - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || . /opt/qt$QT/bin/qt$QT-env.sh'
   - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || export QT_SELECT=qt5'
-  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != g++     ]] || export QMAKESPEC=macx-g++'
+  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != clang++ ]] || export QMAKESPEC=macx-clang'
   - mkdir -p "$TRAVIS_BUILD_DIR-build"
   - pushd "$TRAVIS_BUILD_DIR-build"
   - qmake -v
