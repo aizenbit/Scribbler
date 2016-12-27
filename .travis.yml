@@ -1,33 +1,35 @@
 language: cpp
 
-os:
-  - linux
-
 dist: trusty
 
-compiler:
-  - gcc
-
-env:
-  - QT=5  PPA=ubuntu-sdk-team/ppa
-  - QT=52 PPA=beineri/opt-qt521-trusty
-  - QT=53 PPA=beineri/opt-qt532-trusty
-  - QT=54 PPA=beineri/opt-qt542-trusty
-  - QT=55 PPA=beineri/opt-qt551-trusty
-  - QT=56 PPA=beineri/opt-qt562-trusty
-  - QT=57 PPA=beineri/opt-qt57-trusty
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      env: QT=53 PPA=beineri/opt-qt532-trusty
+    - os: linux
+      compiler: gcc
+      env: QT=57 PPA=beineri/opt-qt57-trusty
+    - os: osx
+      compiler: clang
+      env: QT=5 
 
 before_install:
   - '[[ "$TRAVIS_OS_NAME" != linux || -z "$PPA" ]] || sudo add-apt-repository -y ppa:$PPA'
   - '[ "$TRAVIS_OS_NAME" != linux ] || sudo apt-get -qy update'
-
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
+  
 install:
   - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || sudo apt-get -qy install qt${QT}base qt${QT}xmlpatterns qt${QT}svg'
   - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || sudo apt-get -qy install qt5-qmake qtbase5-dev libqt5xmlpatterns5-dev libqt5svg5-dev libqt5svg5'
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install qt$QT'
+  - '[ "$TRAVIS_OS_NAME" != osx ] || brew link --force qt$QT'
+  
 before_script:
   - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != g++     ]] || export QMAKESPEC=linux-g++'
   - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || . /opt/qt$QT/bin/qt$QT-env.sh'
   - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || export QT_SELECT=qt5'
+  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != g++     ]] || export QMAKESPEC=macx-g++'
   - mkdir -p "$TRAVIS_BUILD_DIR-build"
   - pushd "$TRAVIS_BUILD_DIR-build"
   - qmake -v
