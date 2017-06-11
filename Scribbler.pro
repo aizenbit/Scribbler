@@ -31,9 +31,10 @@ FORMS    += mainwindow.ui \
     preferencesdialog.ui \
     fontdialog.ui
 
-CONFIG   += c++11
+CONFIG   += c++11 static-libstdc++
 
 RC_ICONS = resources\favicon.ico
+win32:RC_FILE = Scribbler.rc
 
 RESOURCES += \
     resources/resources.qrc
