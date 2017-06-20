@@ -61,6 +61,7 @@ private:
     QButtonGroup *buttonGroup;
     QTreeWidgetItem *lastItem;
     QMenu *contextMenu;
+    QFileDialog *symbolsFileDialog;
 
     QString fontFileName;
     QMultiMap<QChar, SymbolData> font;
@@ -86,6 +87,7 @@ private slots:
     bool isCategoryItem(QTreeWidgetItem *item);
     void showError();
     void resetSymbolDataEditor();
+    void resetSymbolsFileDialog(const QString &directory);
 };
 
 #endif // FONTDIALOG_H

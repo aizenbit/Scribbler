@@ -16,6 +16,12 @@ FontDialog::FontDialog(QWidget *parent) :
     contextMenu->addAction(tr("Delete"));
     contextMenu->addAction(tr("Copy to choosen symbol"));
 
+    symbolsFileDialog = new QFileDialog(0, tr("Choose"), "",
+                                        tr("SVG") +
+                                           "(*.svg);;" +
+                                        tr("All Files") +
+                                           "(*.*)");
+
     connect(ui->choosenSymbolTextEdit, SIGNAL(textChanged()),
             this, SLOT(limitTextEdit()));
     connect(ui->fontFilePushButton, SIGNAL(clicked()),
@@ -42,6 +48,8 @@ FontDialog::FontDialog(QWidget *parent) :
             ui->symbolDataEditor, SLOT(enableOutPointChanges()));
     connect(ui->drawLimitsButton, SIGNAL(toggled(bool)),
             ui->symbolDataEditor, SLOT(enableLimitsChanges()));
+    connect(symbolsFileDialog, SIGNAL(directoryEntered(QString)),
+            this, SLOT(resetSymbolsFileDialog(QString)));
 
     ui->drawInPointButton->setShortcut(Qt::AltModifier + Qt::Key_1);
     ui->drawOutPointButton->setShortcut(Qt::AltModifier + Qt::Key_2);
@@ -77,6 +85,7 @@ FontDialog::~FontDialog()
     delete ui;
     delete buttonGroup;
     delete contextMenu;
+    delete symbolsFileDialog;
 }
 
 void FontDialog::loadFont()
@@ -146,11 +155,10 @@ void FontDialog::loadFont()
 
 void FontDialog::addNewSymbols()
 {
-    QStringList files = QFileDialog::getOpenFileNames(0, tr("Choose"), "",
-                                                         tr("SVG") +
-                                                            "(*.svg);;" +
-                                                         tr("All Files") +
-                                                            "(*.*)");
+    symbolsFileDialog->setDirectory(fontFileName);
+    symbolsFileDialog->exec();
+    QStringList files = symbolsFileDialog->selectedFiles();
+
     if (files.isEmpty())
         return;
 
@@ -435,11 +443,10 @@ void FontDialog::copyToChoosenSymbol()
 
 void FontDialog::autoLoadSymbols()
 {
-    QStringList files = QFileDialog::getOpenFileNames(0, tr("Choose"), "",
-                                                         tr("SVG") +
-                                                            "(*.svg);;" +
-                                                         tr("All Files") +
-                                                            "(*.*)");
+    symbolsFileDialog->setDirectory(fontFileName);
+    symbolsFileDialog->exec();
+    QStringList files = symbolsFileDialog->selectedFiles();
+
     if (files.isEmpty())
         return;
 
@@ -609,4 +616,17 @@ void FontDialog::resetSymbolDataEditor()
     ui->symbolDataEditor->disableChanges();
     ui->symbolDataEditor->clear();
     lastItem = nullptr;
+}
+
+void FontDialog::resetSymbolsFileDialog(const QString &directory)
+{
+    if (QFileInfo(fontFileName).absolutePath() == QDir(directory).absolutePath())
+        return;
+
+    symbolsFileDialog->setDirectory(fontFileName);
+
+    QMessageBox messageBox;
+    messageBox.setIcon(QMessageBox::Warning);
+    messageBox.setText(tr("Symbols must be in the same folder as the font."));
+    messageBox.exec();
 }
