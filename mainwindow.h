@@ -44,7 +44,7 @@ protected:
       bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
-    const QString version = "1.1";
+    const QString version = "1.1.1";
 
     enum ToolButton : int {
         Render,
